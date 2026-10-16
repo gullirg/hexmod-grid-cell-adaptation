@@ -15,7 +15,7 @@ The analyses use 3,938 grid cells from six published rat datasets. Four datasets
 | Sargolini et al. (2006) | 7 | NIRD Research Data Archive, https://doi.org/10.11582/2017.00019 | CC BY 4.0 |
 | Brun et al. (2008) | 5 | NIRD Research Data Archive, https://doi.org/10.11582/2018.00015 | CC BY 4.0 |
 | Barry et al. (2012) | 118 | Not publicly available; available from the original authors on request | |
-| Ólafsdóttir and Barry (2015) | 61 | Not publicly available; available from the original authors on request | |
+| Ólafsdóttir et al. (2016) | 61 | Not publicly available; available from the original authors on request | |
 
 The raw data are not redistributed here. Instructions and scripts to download the public datasets and to reproduce the analyses will be added to this repository. When using these data, please cite the original papers and the dataset records listed above.
 
