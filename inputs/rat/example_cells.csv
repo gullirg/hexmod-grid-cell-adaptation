@@ -1,0 +1,25 @@
+panel,position,role,dataset,animal_id,session_id,cell_id,t_start_s,t_end_s,selection
+Fig2A,1,conjunctive example,vollan2025,V11,V11_5,424,,,"last five conjunctive cells (Rayleigh vector length above 0.3) of the session, in canonical order"
+Fig2A,2,conjunctive example,vollan2025,V11,V11_5,427,,,"last five conjunctive cells (Rayleigh vector length above 0.3) of the session, in canonical order"
+Fig2A,3,conjunctive example,vollan2025,V11,V11_5,431,,,"last five conjunctive cells (Rayleigh vector length above 0.3) of the session, in canonical order"
+Fig2A,4,conjunctive example,vollan2025,V11,V11_5,447,,,"last five conjunctive cells (Rayleigh vector length above 0.3) of the session, in canonical order"
+Fig2A,5,conjunctive example,vollan2025,V11,V11_5,450,,,"last five conjunctive cells (Rayleigh vector length above 0.3) of the session, in canonical order"
+Fig3A,1,example cell,brun2008,B1,B1_2,2,143,155,"same cell as Supp Fig 2A; trajectory, spikes and field visits in the time window"
+Fig3B,1,example cell,brun2008,B1,B1_2,2,143,155,"same cell as Supp Fig 2A; trajectory, spikes and field visits in the time window"
+SuppFig2A,1,example cell,brun2008,B1,B1_2,2,,,"first cell in canonical order whose best time shift (largest spatial information) lies between 100 and 150 ms; maps at the best shift, 0 ms and minus the best shift"
+Fig4A,1,small-scale example,vollan2025,V10,V10_1,341,126,138,second cell in canonical order with gridness above 1.0 among the cells of the session in module 1 (module_labels.csv)
+Fig4A,2,large-scale example,vollan2025,V10,V10_1,770,126,138,second cell in canonical order with gridness above 1.0 among the cells of the session in module 3 (module_labels.csv)
+Fig4B,1,small-scale example,vollan2025,V10,V10_1,341,126,138,second cell in canonical order with gridness above 1.0 among the cells of the session in module 1 (module_labels.csv)
+Fig4B,2,large-scale example,vollan2025,V10,V10_1,770,126,138,second cell in canonical order with gridness above 1.0 among the cells of the session in module 3 (module_labels.csv)
+SuppFig3A,1,"small scale, low gridness",olafsdottir2016,F1,F1_4,19,,,"cell drawn at random from the subset: module-classified cells with mean rate below 20 Hz, 0.3 < scale / environment size < 0.5, 0.5 < gridness <= 0.7"
+SuppFig3A,2,"small scale, low gridness",vollan2025,V16,V16_3,381,,,"cell drawn at random from the subset: module-classified cells with mean rate below 20 Hz, 0.3 < scale / environment size < 0.5, 0.5 < gridness <= 0.7"
+SuppFig3A,3,"small scale, medium gridness",vollan2025,V14,V14_1,196,,,"cell drawn at random from the subset: module-classified cells with mean rate below 20 Hz, 0.3 < scale / environment size < 0.5, 0.7 < gridness <= 0.9"
+SuppFig3A,4,"small scale, medium gridness",vollan2025,V16,V16_3,291,,,"cell drawn at random from the subset: module-classified cells with mean rate below 20 Hz, 0.3 < scale / environment size < 0.5, 0.7 < gridness <= 0.9"
+SuppFig3A,5,"small scale, high gridness",vollan2025,V18,V18_2,1126,,,"cell drawn at random from the subset: module-classified cells with mean rate below 20 Hz, 0.3 < scale / environment size < 0.5, 0.9 < gridness <= 1.5"
+SuppFig3A,6,"small scale, high gridness",vollan2025,V10,V10_1,375,,,"cell drawn at random from the subset: module-classified cells with mean rate below 20 Hz, 0.3 < scale / environment size < 0.5, 0.9 < gridness <= 1.5"
+SuppFig3A,7,"large scale, low gridness",vollan2025,V18,V18_2,879,,,"cell drawn at random from the subset: module-classified cells with mean rate below 20 Hz, 0.6 < scale / environment size < 0.8, 0.5 < gridness <= 0.7"
+SuppFig3A,8,"large scale, low gridness",vollan2025,V8,V8_1,77,,,"cell drawn at random from the subset: module-classified cells with mean rate below 20 Hz, 0.6 < scale / environment size < 0.8, 0.5 < gridness <= 0.7"
+SuppFig3A,9,"large scale, medium gridness",vollan2025,V15,V15_2,907,,,"cell drawn at random from the subset: module-classified cells with mean rate below 20 Hz, 0.6 < scale / environment size < 0.8, 0.7 < gridness <= 0.9"
+SuppFig3A,10,"large scale, medium gridness",vollan2025,V10,V10_2,983,,,"cell drawn at random from the subset: module-classified cells with mean rate below 20 Hz, 0.6 < scale / environment size < 0.8, 0.7 < gridness <= 0.9"
+SuppFig3A,11,"large scale, high gridness",vollan2025,V8,V8_2,157,,,"cell drawn at random from the subset: module-classified cells with mean rate below 20 Hz, 0.6 < scale / environment size < 0.8, 0.9 < gridness <= 1.5"
+SuppFig3A,12,"large scale, high gridness",vollan2025,V10,V10_2,982,,,"cell drawn at random from the subset: module-classified cells with mean rate below 20 Hz, 0.6 < scale / environment size < 0.8, 0.9 < gridness <= 1.5"

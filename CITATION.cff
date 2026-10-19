@@ -1,0 +1,194 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the paper (preferred citation below) and the datasets you use (references below; details in docs/DATA.md)."
+type: software
+title: "Analysis code for: Firing rate adaptation in grid cells produces macroscopic hexadirectional modulation"
+version: "1.0.0"
+license:
+  - MIT
+  - CC-BY-4.0
+repository-code: "https://github.com/gullirg/hexmod-grid-cell-adaptation"
+keywords:
+  - grid cells
+  - entorhinal cortex
+  - firing rate adaptation
+  - hexadirectional modulation
+authors:
+  - family-names: Reggio
+    given-names: Guglielmo
+    orcid: "https://orcid.org/0009-0005-9302-0610"
+    affiliation: "UCL Institute of Cognitive Neuroscience; UCL Queen Square Institute of Neurology"
+  - family-names: Kim
+    given-names: Misun
+    affiliation: "UCL Institute of Cognitive Neuroscience; UCL Queen Square Institute of Neurology"
+  - family-names: Ji
+    given-names: Zilong
+    affiliation: "UCL Institute of Cognitive Neuroscience; UCL Queen Square Institute of Neurology"
+  - family-names: Bush
+    given-names: Daniel
+    affiliation: "Department of Neuroscience, Physiology and Pharmacology, University College London"
+  - family-names: Barry
+    given-names: Caswell
+    affiliation: "Research Department of Cell and Developmental Biology, University College London"
+  - family-names: Burgess
+    given-names: Neil
+    affiliation: "UCL Institute of Cognitive Neuroscience; UCL Queen Square Institute of Neurology"
+preferred-citation:
+  type: article
+  title: "Firing rate adaptation in grid cells produces macroscopic hexadirectional modulation"
+  year: 2026
+  authors:
+    - family-names: Reggio
+      given-names: Guglielmo
+      orcid: "https://orcid.org/0009-0005-9302-0610"
+    - family-names: Kim
+      given-names: Misun
+    - family-names: Ji
+      given-names: Zilong
+    - family-names: Bush
+      given-names: Daniel
+    - family-names: Barry
+      given-names: Caswell
+    - family-names: Burgess
+      given-names: Neil
+references:
+  - type: article
+    title: "Left-right-alternating theta sweeps in entorhinal-hippocampal maps of space"
+    authors:
+      - family-names: Vollan
+        given-names: A. Z.
+      - family-names: Gardner
+        given-names: R. J.
+      - family-names: Moser
+        given-names: M.-B.
+      - family-names: Moser
+        given-names: E. I.
+    journal: "Nature"
+    volume: 639
+    start: 995
+    end: 1005
+    year: 2025
+    doi: "10.1038/s41586-024-08527-1"
+    identifiers:
+      - type: doi
+        value: "10.25493/R5FR-EDG"
+        description: "Data record (EBRAINS)"
+  - type: article
+    title: "Progressive increase in grid scale from dorsal to ventral medial entorhinal cortex"
+    authors:
+      - family-names: Brun
+        given-names: V. H.
+      - family-names: Solstad
+        given-names: T.
+      - family-names: Kjelstrup
+        given-names: K. B.
+      - family-names: Fyhn
+        given-names: M.
+      - family-names: Witter
+        given-names: M. P.
+      - family-names: Moser
+        given-names: E. I.
+      - family-names: Moser
+        given-names: M.-B.
+    journal: "Hippocampus"
+    volume: 18
+    start: 1200
+    end: 1212
+    year: 2008
+    doi: "10.1002/hipo.20504"
+    identifiers:
+      - type: doi
+        value: "10.11582/2018.00015"
+        description: "Data record (NIRD Research Data Archive)"
+  - type: article
+    title: "Microstructure of a spatial map in the entorhinal cortex"
+    authors:
+      - family-names: Hafting
+        given-names: T.
+      - family-names: Fyhn
+        given-names: M.
+      - family-names: Molden
+        given-names: S.
+      - family-names: Moser
+        given-names: M.-B.
+      - family-names: Moser
+        given-names: E. I.
+    journal: "Nature"
+    volume: 436
+    start: 801
+    end: 806
+    year: 2005
+    doi: "10.1038/nature03721"
+    identifiers:
+      - type: doi
+        value: "10.11582/2017.00017"
+        description: "Data record (NIRD Research Data Archive)"
+  - type: article
+    title: "Conjunctive representation of position, direction, and velocity in entorhinal cortex"
+    authors:
+      - family-names: Sargolini
+        given-names: F.
+      - family-names: Fyhn
+        given-names: M.
+      - family-names: Hafting
+        given-names: T.
+      - family-names: McNaughton
+        given-names: B. L.
+      - family-names: Witter
+        given-names: M. P.
+      - family-names: Moser
+        given-names: M.-B.
+      - family-names: Moser
+        given-names: E. I.
+    journal: "Science"
+    volume: 312
+    start: 758
+    end: 762
+    year: 2006
+    doi: "10.1126/science.1125572"
+    identifiers:
+      - type: doi
+        value: "10.11582/2017.00019"
+        description: "Data record (NIRD Research Data Archive)"
+  - type: article
+    title: "Grid cell firing patterns signal environmental novelty by expansion"
+    authors:
+      - family-names: Barry
+        given-names: C.
+      - family-names: Ginzberg
+        given-names: L. L.
+      - family-names: "O'Keefe"
+        given-names: J.
+      - family-names: Burgess
+        given-names: N.
+    journal: "Proceedings of the National Academy of Sciences USA"
+    volume: 109
+    issue: "43"
+    start: 17687
+    end: 17692
+    year: 2012
+    doi: "10.1073/pnas.1209918109"
+  - type: article
+    title: "Coordinated grid and place cell replay during rest"
+    authors:
+      - family-names: "Ólafsdóttir"
+        given-names: H. F.
+      - family-names: Carpenter
+        given-names: F.
+      - family-names: Barry
+        given-names: C.
+    journal: "Nature Neuroscience"
+    volume: 19
+    start: 792
+    end: 794
+    year: 2016
+    doi: "10.1038/nn.4291"
+  - type: data
+    title: "Rat grid cell recordings: familiar-box sessions of Barry et al. (2012) and open-field sessions of Ólafsdóttir et al. (2016)"
+    authors:
+      - family-names: Barry
+        given-names: Caswell
+    publisher:
+      name: "Zenodo"
+    year: 2026
+    doi: "10.5281/zenodo.23477461"
+    license: CC-BY-4.0

@@ -1,0 +1,20 @@
+# One environment for the analyses, the figures and the tests.
+#   conda env create -f environment.yml
+#   conda activate hexmod
+#   pip install -e .
+# The analysis pins are the versions with which the published numbers were computed.
+name: hexmod
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - numpy=1.23.5
+  - scipy=1.13.0
+  - pandas=1.5.3
+  - scikit-image=0.20.0
+  - matplotlib=3.8.0
+  - h5py
+  - requests
+  - tqdm
+  - pytest
+  - pip

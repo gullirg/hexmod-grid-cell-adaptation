@@ -1,0 +1,63 @@
+# Text rules, unit tests and the smoke run of the pipeline on synthetic data.
+# Tests that need the raw datasets (marker "data"), reference results ("frozen") or a long run ("slow")
+# are skipped here; see docs/CONVENTIONS.md, section Tests.
+name: tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-14]
+    defaults:
+      run:
+        shell: bash -el {0}
+    env:
+      PYTHONPATH: ${{ github.workspace }}/src
+      PYTHONNOUSERSITE: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      MPLBACKEND: Agg
+      HEXMOD_WORKERS: "2"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create the environment from environment.yml
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-file: environment.yml
+          cache-environment: true
+
+      - name: Install the package
+        run: python -m pip install -e . --no-deps
+
+      - name: Import check
+        run: >-
+          python -c "import hexmod, hexmod.config, hexmod.stats, hexmod.circular, hexmod.io,
+          hexmod.parallel, hexmod.runlog, hexmod.synthetic; print(hexmod.__version__)"
+
+      - name: Text rules
+        env:
+          HEXMOD_RESULTS: ${{ runner.temp }}/hexmod_results
+        run: python -m pytest -q -p no:cacheprovider tests/test_text_rules.py
+
+      - name: Unit tests
+        env:
+          HEXMOD_RESULTS: ${{ runner.temp }}/hexmod_results
+        run: python -m pytest -q -p no:cacheprovider -m "not data and not frozen and not slow and not smoke"
+
+      - name: Smoke run of the pipeline on synthetic data
+        env:
+          HEXMOD_RESULTS: ${{ runner.temp }}/hexmod_results
+        run: python -m pytest -q -p no:cacheprovider -m smoke

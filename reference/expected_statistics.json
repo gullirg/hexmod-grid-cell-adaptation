@@ -1,0 +1,5018 @@
+{
+ "schema": "hexmod-expected-statistics/2",
+ "statistics": [
+  {
+   "key": "cohort.barry2012.n_animals",
+   "kind": "printed",
+   "location": "Table 1, Barry et al. (2012)",
+   "printed": "7",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 7
+  },
+  {
+   "key": "cohort.barry2012.n_cells",
+   "kind": "printed",
+   "location": "Table 1, Barry et al. (2012)",
+   "printed": "118",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 118
+  },
+  {
+   "key": "cohort.barry2012.n_sessions",
+   "kind": "printed",
+   "location": "Table 1, Barry et al. (2012)",
+   "printed": "57",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 57
+  },
+  {
+   "key": "cohort.brun2008.n_animals",
+   "kind": "printed",
+   "location": "Table 1, Brun et al. (2008)",
+   "printed": "1",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 1
+  },
+  {
+   "key": "cohort.brun2008.n_cells",
+   "kind": "printed",
+   "location": "Table 1, Brun et al. (2008)",
+   "printed": "5",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 5
+  },
+  {
+   "key": "cohort.brun2008.n_sessions",
+   "kind": "printed",
+   "location": "Table 1, Brun et al. (2008)",
+   "printed": "2",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "cohort.conjunctive.n_animals",
+   "kind": "printed",
+   "location": "Results; Methods",
+   "printed": "21 animals",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 21
+  },
+  {
+   "key": "cohort.conjunctive.n_cells",
+   "kind": "printed",
+   "location": "Results; Methods",
+   "printed": "1,171",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 1171
+  },
+  {
+   "key": "cohort.conjunctive.n_sessions",
+   "kind": "printed",
+   "location": "Methods",
+   "printed": "55 sessions",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 55
+  },
+  {
+   "key": "cohort.hafting2005.n_animals",
+   "kind": "printed",
+   "location": "Table 1, Hafting et al. (2005)",
+   "printed": "2",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "cohort.hafting2005.n_cells",
+   "kind": "printed",
+   "location": "Table 1, Hafting et al. (2005)",
+   "printed": "23",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 23
+  },
+  {
+   "key": "cohort.hafting2005.n_sessions",
+   "kind": "printed",
+   "location": "Table 1, Hafting et al. (2005)",
+   "printed": "3",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 3
+  },
+  {
+   "key": "cohort.n_animals",
+   "kind": "printed",
+   "location": "Results; Methods; Table 1",
+   "printed": "32 animals",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 32
+  },
+  {
+   "key": "cohort.n_cells",
+   "kind": "printed",
+   "location": "Results; Methods; Table 1",
+   "printed": "3,938 grid cells",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 3938
+  },
+  {
+   "key": "cohort.n_sessions",
+   "kind": "printed",
+   "location": "Results; Methods; Table 1",
+   "printed": "112 sessions",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 112
+  },
+  {
+   "key": "cohort.olafsdottir2016.n_animals",
+   "kind": "printed",
+   "location": "Table 1, Ólafsdóttir et al. (2016)",
+   "printed": "6",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 6
+  },
+  {
+   "key": "cohort.olafsdottir2016.n_cells",
+   "kind": "printed",
+   "location": "Table 1, Ólafsdóttir et al. (2016)",
+   "printed": "61",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 61
+  },
+  {
+   "key": "cohort.olafsdottir2016.n_sessions",
+   "kind": "printed",
+   "location": "Table 1, Ólafsdóttir et al. (2016)",
+   "printed": "24",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 24
+  },
+  {
+   "key": "cohort.rule.min_running_time_min",
+   "kind": "printed",
+   "location": "Methods; Table 1 legend (the rule counts position samples faster than 5 cm/s: 30,000 samples, 10 min at 50 Hz)",
+   "printed": "at least 10 minutes",
+   "step": "step02_cohort",
+   "tolerance": 1e-08,
+   "value": 10.0
+  },
+  {
+   "key": "cohort.rule.min_samples_above_speed",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 30000
+  },
+  {
+   "key": "cohort.rule.speed_threshold_cm_s",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 5
+  },
+  {
+   "key": "cohort.sargolini2006.n_animals",
+   "kind": "printed",
+   "location": "Table 1, Sargolini et al. (2006)",
+   "printed": "1",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 1
+  },
+  {
+   "key": "cohort.sargolini2006.n_cells",
+   "kind": "printed",
+   "location": "Table 1, Sargolini et al. (2006)",
+   "printed": "7",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 7
+  },
+  {
+   "key": "cohort.sargolini2006.n_sessions",
+   "kind": "printed",
+   "location": "Table 1, Sargolini et al. (2006)",
+   "printed": "2",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "cohort.vollan2025.n_animals",
+   "kind": "printed",
+   "location": "Table 1, Vollan et al. (2025)",
+   "printed": "15",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 15
+  },
+  {
+   "key": "cohort.vollan2025.n_cells",
+   "kind": "printed",
+   "location": "Table 1, Vollan et al. (2025)",
+   "printed": "3,724",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 3724
+  },
+  {
+   "key": "cohort.vollan2025.n_sessions",
+   "kind": "printed",
+   "location": "Table 1, Vollan et al. (2025)",
+   "printed": "24",
+   "step": "step02_cohort",
+   "tolerance": 0,
+   "value": 24
+  },
+  {
+   "key": "fig3f.longer.df",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(3575)",
+   "step": "step06_visit_sequences",
+   "tolerance": 0,
+   "value": 3575
+  },
+  {
+   "key": "fig3f.longer.mean",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "mean -0.006",
+   "step": "step06_visit_sequences",
+   "tolerance": 6.48751523612395e-12,
+   "value": -0.0064875152361239495
+  },
+  {
+   "key": "fig3f.longer.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "p = 0.036",
+   "step": "step06_visit_sequences",
+   "tolerance": 3.575313189550256e-11,
+   "value": 0.03575313189550256
+  },
+  {
+   "key": "fig3f.longer.t",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(3575) = -2.10",
+   "step": "step06_visit_sequences",
+   "tolerance": 2.1005184387217956e-09,
+   "value": -2.1005184387217954
+  },
+  {
+   "key": "fig3f.n_cells",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "n = 3,576 cells",
+   "step": "step06_visit_sequences",
+   "tolerance": 0,
+   "value": 3576
+  },
+  {
+   "key": "fig3f.paired.df",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(3575)",
+   "step": "step06_visit_sequences",
+   "tolerance": 0,
+   "value": 3575
+  },
+  {
+   "key": "fig3f.paired.mean_diff",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "0.014",
+   "step": "step06_visit_sequences",
+   "tolerance": 1.4118745632086433e-11,
+   "value": 0.014118745632086432
+  },
+  {
+   "key": "fig3f.paired.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "p = 0.004",
+   "step": "step06_visit_sequences",
+   "tolerance": 3.702424865315304e-12,
+   "value": 0.0037024248653153035
+  },
+  {
+   "key": "fig3f.paired.t",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(3575) = 2.90",
+   "step": "step06_visit_sequences",
+   "tolerance": 2.904375658172435e-09,
+   "value": 2.9043756581724347
+  },
+  {
+   "key": "fig3f.shorter.df",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(3575)",
+   "step": "step06_visit_sequences",
+   "tolerance": 0,
+   "value": 3575
+  },
+  {
+   "key": "fig3f.shorter.mean",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "mean 0.008",
+   "step": "step06_visit_sequences",
+   "tolerance": 7.631230395962484e-12,
+   "value": 0.007631230395962484
+  },
+  {
+   "key": "fig3f.shorter.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "p = 0.012",
+   "step": "step06_visit_sequences",
+   "tolerance": 1.158166377775954e-11,
+   "value": 0.011581663777759538
+  },
+  {
+   "key": "fig3f.shorter.t",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(3575) = 2.53",
+   "step": "step06_visit_sequences",
+   "tolerance": 2.525943153241181e-09,
+   "value": 2.525943153241181
+  },
+  {
+   "key": "supp4.bin_edges.first_s",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "from 0.05 to 20 s",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 4.978706836786395e-11,
+   "value": 0.049787068367863944
+  },
+  {
+   "key": "supp4.bin_edges.last_s",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend (the last edge is 20.09 s)",
+   "printed": "from 0.05 to 20 s",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 2.008553692318767e-08,
+   "value": 20.085536923187668
+  },
+  {
+   "key": "supp4.bootstrap.n_resamples",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "1,000 bootstrap resamples",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 0,
+   "value": 1000
+  },
+  {
+   "key": "supp4.bootstrap.pct_double_preferred",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "99%",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 0.5,
+   "value": 99.1
+  },
+  {
+   "key": "supp4.bootstrap.tau_fast_high_s",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend (this bootstrap gives 0.568 s)",
+   "printed": "0.56 s",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 0.005,
+   "value": 0.5675699048163854
+  },
+  {
+   "key": "supp4.bootstrap.tau_fast_low_s",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "0.21 s",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 0.02,
+   "value": 0.21233705753500243
+  },
+  {
+   "key": "supp4.bootstrap.tau_single_high_s",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "0.81 s",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 1e-06,
+   "value": 0.8064629424539623
+  },
+  {
+   "key": "supp4.bootstrap.tau_single_low_s",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "0.31 s",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 1e-06,
+   "value": 0.30846948842108396
+  },
+  {
+   "key": "supp4.bootstrap.tau_slow_high_s",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend (the upper fit bound is 50 s)",
+   "printed": "more than 10 s",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 0.02,
+   "value": 49.999999999999986
+  },
+  {
+   "key": "supp4.bootstrap.tau_slow_low_s",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "1.3 s",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 0.02,
+   "value": 1.2635397858579802
+  },
+  {
+   "key": "supp4.delta_aic",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "ΔAIC = -59",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 5.913849769118963e-08,
+   "value": -59.13849769118963
+  },
+  {
+   "key": "supp4.delta_bic",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "ΔBIC = -59",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 5.8744048536517195e-08,
+   "value": -58.74404853651719
+  },
+  {
+   "key": "supp4.double.chi2",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "χ² = 21",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 2.0828705322349958e-08,
+   "value": 20.828705322349958
+  },
+  {
+   "key": "supp4.double.dof",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "4 residual degrees of freedom",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 0,
+   "value": 4
+  },
+  {
+   "key": "supp4.double.tau_fast_s",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend; Discussion",
+   "printed": "τ = 0.30 s",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 2.9996574103173126e-10,
+   "value": 0.29996574103173124
+  },
+  {
+   "key": "supp4.double.tau_slow_s",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend; Discussion",
+   "printed": "2.6 s",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 2.642918885884425e-09,
+   "value": 2.642918885884425
+  },
+  {
+   "key": "supp4.f_test.F",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "F(2, 4) = 6.1",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 6.0626425612195615e-09,
+   "value": 6.062642561219561
+  },
+  {
+   "key": "supp4.f_test.df1",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "F(2, 4)",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "supp4.f_test.df2",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "F(2, 4)",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 0,
+   "value": 4
+  },
+  {
+   "key": "supp4.f_test.p",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "p = 0.06",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 6.153258747673992e-11,
+   "value": 0.06153258747673991
+  },
+  {
+   "key": "supp4.n_bins",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "nine logarithmically spaced bins",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 0,
+   "value": 9
+  },
+  {
+   "key": "supp4.n_cells",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "3,938 cells",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 0,
+   "value": 3938
+  },
+  {
+   "key": "supp4.n_cells_last_bin",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "3,936 in the last bin",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 0,
+   "value": 3936
+  },
+  {
+   "key": "supp4.single.chi2",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "84",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 8.396720301353959e-08,
+   "value": 83.96720301353959
+  },
+  {
+   "key": "supp4.single.dof",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "with 6 (9 bins minus 3 parameters)",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 0,
+   "value": 6
+  },
+  {
+   "key": "supp4.single.tau_s",
+   "kind": "printed",
+   "location": "Supp Fig 4 legend",
+   "printed": "τ = 0.45 s",
+   "step": "step07_adaptation_timescales",
+   "tolerance": 4.526153076587595e-10,
+   "value": 0.45261530765875946
+  },
+  {
+   "key": "methods.interfield_median_s.small_third",
+   "kind": "printed",
+   "location": "Discussion",
+   "printed": "median 1.4 s",
+   "step": "step08_methods_numbers",
+   "tolerance": 1.440000000001892e-09,
+   "value": 1.4400000000018918
+  },
+  {
+   "key": "methods.ratio_0_1s_to_above_3s",
+   "kind": "printed",
+   "location": "Methods",
+   "printed": "~8% reduction",
+   "step": "step08_methods_numbers",
+   "tolerance": 9.231549405188536e-10,
+   "value": 0.9231549405188536
+  },
+  {
+   "key": "methods.running_speed_cm_s",
+   "kind": "printed",
+   "location": "Methods",
+   "printed": "19 cm/s",
+   "step": "step08_methods_numbers",
+   "tolerance": 1.9505945925587178e-08,
+   "value": 19.505945925587177
+  },
+  {
+   "key": "methods.shift_max_ms",
+   "kind": "printed",
+   "location": "Results; Methods; Supp Fig 2 legend (the largest shift analysed is 380 ms)",
+   "printed": "+400 ms",
+   "step": "step08_methods_numbers",
+   "tolerance": 0,
+   "value": 380
+  },
+  {
+   "key": "methods.shift_min_ms",
+   "kind": "printed",
+   "location": "Results; Methods; Supp Fig 2 legend",
+   "printed": "-400 ms",
+   "step": "step08_methods_numbers",
+   "tolerance": 0,
+   "value": -400
+  },
+  {
+   "key": "methods.tau_s",
+   "kind": "printed",
+   "location": "Results; Methods",
+   "printed": "2 s",
+   "step": "step08_methods_numbers",
+   "tolerance": 2e-09,
+   "value": 2.0
+  },
+  {
+   "key": "fig2b.binomial.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "p = 0.22",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 2.1967191561522468e-10,
+   "value": 0.21967191561522467
+  },
+  {
+   "key": "fig2b.n_aligned",
+   "kind": "printed",
+   "location": "Results; Fig 2B legend",
+   "printed": "564",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 0,
+   "value": 564
+  },
+  {
+   "key": "fig2b.n_cells",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "Of 1,171 conjunctive cells",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 0,
+   "value": 1171
+  },
+  {
+   "key": "fig2b.n_misaligned",
+   "kind": "printed",
+   "location": "Fig 2B legend",
+   "printed": "607",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 0,
+   "value": 607
+  },
+  {
+   "key": "fig2b.pct_aligned",
+   "kind": "printed",
+   "location": "Results; Fig 2B legend",
+   "printed": "48%",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 4.816396242527754e-08,
+   "value": 48.16396242527754
+  },
+  {
+   "key": "fig2c.circular_sd.median_deg",
+   "kind": "printed",
+   "location": "Results; Fig 2C legend",
+   "printed": "73°",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 7.305863103970446e-08,
+   "value": 73.05863103970445
+  },
+  {
+   "key": "fig2c.circular_sd.q25_deg",
+   "kind": "printed",
+   "location": "Fig 2C panel",
+   "printed": "66.0 (IQR 66.0 to 80.0)",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 6.596672386661956e-08,
+   "value": 65.96672386661956
+  },
+  {
+   "key": "fig2c.circular_sd.q75_deg",
+   "kind": "printed",
+   "location": "Fig 2C panel",
+   "printed": "80.0 (IQR 66.0 to 80.0)",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 8.001894576684914e-08,
+   "value": 80.01894576684913
+  },
+  {
+   "key": "fig2c.n_animals",
+   "kind": "printed",
+   "location": "Fig 2C legend",
+   "printed": "15 animals",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 0,
+   "value": 15
+  },
+  {
+   "key": "fig2c.n_cells",
+   "kind": "printed",
+   "location": "Fig 2C legend",
+   "printed": "1,160 cells",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 0,
+   "value": 1160
+  },
+  {
+   "key": "fig2d.fisher_lee.r",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "r = 0.001",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 1.262215284999204e-12,
+   "value": 0.0012622152849992038
+  },
+  {
+   "key": "fig2d.n_animals",
+   "kind": "printed",
+   "location": "Methods",
+   "printed": "21 animals",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 0,
+   "value": 21
+  },
+  {
+   "key": "fig2d.n_cells",
+   "kind": "printed",
+   "location": "Results; Methods; Fig 2D legend",
+   "printed": "n = 890",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 0,
+   "value": 890
+  },
+  {
+   "key": "fig2d.n_conjunctive",
+   "kind": "printed",
+   "location": "Methods",
+   "printed": "888",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 0,
+   "value": 888
+  },
+  {
+   "key": "fig2d.n_sessions",
+   "kind": "printed",
+   "location": "Fig 2D panel",
+   "printed": "47 sessions",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 0,
+   "value": 47
+  },
+  {
+   "key": "fig2d.permutation.n_perm",
+   "kind": "printed",
+   "location": "Methods",
+   "printed": "20,000 permutations",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 0,
+   "value": 20000
+  },
+  {
+   "key": "fig2d.permutation.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "p = 0.16",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 1.639918004099795e-10,
+   "value": 0.1639918004099795
+  },
+  {
+   "key": "fig2e.binomial.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "p = 0.020",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 1.956826199715453e-11,
+   "value": 0.01956826199715453
+  },
+  {
+   "key": "fig2e.min_p_holm",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "Holm-corrected p ≥ 0.23",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 2.3141927478250096e-10,
+   "value": 0.23141927478250096
+  },
+  {
+   "key": "fig2e.n_animals",
+   "kind": "printed",
+   "location": "Results; Methods; Fig 2E legend",
+   "printed": "12 animals",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 0,
+   "value": 12
+  },
+  {
+   "key": "fig2e.n_cells",
+   "kind": "printed",
+   "location": "Methods; Fig 2E legend",
+   "printed": "1,082 cells",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 0,
+   "value": 1082
+  },
+  {
+   "key": "fig2e.n_p_below_0_05",
+   "kind": "printed",
+   "location": "Results; Fig 2E legend",
+   "printed": "Three",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 0,
+   "value": 3
+  },
+  {
+   "key": "fig2e.p_below_0_05.1",
+   "kind": "printed",
+   "location": "Fig 2E panel",
+   "printed": "0.019",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 1.9284939565208414e-11,
+   "value": 0.019284939565208412
+  },
+  {
+   "key": "fig2e.p_below_0_05.2",
+   "kind": "printed",
+   "location": "Fig 2E panel",
+   "printed": "0.037",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 3.6676130552644865e-11,
+   "value": 0.03667613055264486
+  },
+  {
+   "key": "fig2e.p_below_0_05.3",
+   "kind": "printed",
+   "location": "Fig 2E panel",
+   "printed": "0.046",
+   "step": "step10_conjunctive_cells",
+   "tolerance": 4.574278964001179e-11,
+   "value": 0.045742789640011786
+  },
+  {
+   "key": "fig3c.mean_pct_change.0_1s",
+   "kind": "printed",
+   "location": "Fig 3C panel",
+   "printed": "-6.19%",
+   "step": "step12_rat_statistics",
+   "tolerance": 6.188826559123556e-09,
+   "value": -6.188826559123555
+  },
+  {
+   "key": "fig3c.mean_pct_change.1_2s",
+   "kind": "printed",
+   "location": "Fig 3C panel",
+   "printed": "+0.39%",
+   "step": "step12_rat_statistics",
+   "tolerance": 3.8888380845650705e-10,
+   "value": 0.38888380845650705
+  },
+  {
+   "key": "fig3c.mean_pct_change.2_3s",
+   "kind": "printed",
+   "location": "Fig 3C panel",
+   "printed": "+2.39%",
+   "step": "step12_rat_statistics",
+   "tolerance": 2.3888770543049614e-09,
+   "value": 2.3888770543049613
+  },
+  {
+   "key": "fig3c.mean_pct_change.above_3s",
+   "kind": "printed",
+   "location": "Fig 3C panel",
+   "printed": "+2.84%",
+   "step": "step12_rat_statistics",
+   "tolerance": 2.8399806894079537e-09,
+   "value": 2.8399806894079536
+  },
+  {
+   "key": "fig3c.posthoc.0_1s_vs_1_2s.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "all pairs p < 0.001 except 2-3 s versus > 3 s",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 1.2781062777236085e-102
+  },
+  {
+   "key": "fig3c.posthoc.0_1s_vs_1_2s.p_holm",
+   "kind": "printed",
+   "location": "Fig 3C panel (bracket)",
+   "printed": "***",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 5.112425110894434e-102
+  },
+  {
+   "key": "fig3c.posthoc.0_1s_vs_2_3s.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "all pairs p < 0.001 except 2-3 s versus > 3 s",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 1.3750152033317002e-134
+  },
+  {
+   "key": "fig3c.posthoc.0_1s_vs_2_3s.p_holm",
+   "kind": "printed",
+   "location": "Fig 3C panel (bracket)",
+   "printed": "***",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 6.875076016658501e-134
+  },
+  {
+   "key": "fig3c.posthoc.0_1s_vs_above_3s.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "all pairs p < 0.001 except 2-3 s versus > 3 s",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 3.720904262027444e-187
+  },
+  {
+   "key": "fig3c.posthoc.0_1s_vs_above_3s.p_holm",
+   "kind": "printed",
+   "location": "Fig 3C panel (bracket)",
+   "printed": "***",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 2.2325425572164663e-186
+  },
+  {
+   "key": "fig3c.posthoc.1_2s_vs_2_3s.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "all pairs p < 0.001 except 2-3 s versus > 3 s",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 2.822056515697359e-10
+  },
+  {
+   "key": "fig3c.posthoc.1_2s_vs_above_3s.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "all pairs p < 0.001 except 2-3 s versus > 3 s",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 6.463463282353566e-17
+  },
+  {
+   "key": "fig3c.posthoc.2_3s_vs_above_3s.df",
+   "kind": "printed",
+   "location": "Fig 3C panel",
+   "printed": "t(3937)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 3937
+  },
+  {
+   "key": "fig3c.posthoc.2_3s_vs_above_3s.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "p = 0.12",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.2046860285454972e-10,
+   "value": 0.12046860285454972
+  },
+  {
+   "key": "fig3c.posthoc.2_3s_vs_above_3s.t",
+   "kind": "printed",
+   "location": "Fig 3C panel",
+   "printed": "t(3937) = -1.55",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.553146139679379e-09,
+   "value": -1.5531461396793789
+  },
+  {
+   "key": "fig3c.rm_anova.F",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "F(3,11811)=375.8",
+   "step": "step12_rat_statistics",
+   "tolerance": 3.757525820528324e-07,
+   "value": 375.7525820528324
+  },
+  {
+   "key": "fig3c.rm_anova.df1",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "F(3,11811)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 3
+  },
+  {
+   "key": "fig3c.rm_anova.df2",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "F(3,11811)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 11811
+  },
+  {
+   "key": "fig3c.rm_anova.p",
+   "kind": "printed",
+   "location": "Results; Fig 3C legend",
+   "printed": "p<0.001",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 4.120668499662508e-233
+  },
+  {
+   "key": "fig3d.d",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "Cohen's d = -0.65",
+   "step": "step12_rat_statistics",
+   "tolerance": 6.547397180098896e-10,
+   "value": -0.6547397180098896
+  },
+  {
+   "key": "fig3d.df",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(3937)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 3937
+  },
+  {
+   "key": "fig3d.n_cells",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "3,938 grid cells",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 3938
+  },
+  {
+   "key": "fig3d.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "p < 0.001",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 2.0339905985156257e-307
+  },
+  {
+   "key": "fig3d.pct_negative",
+   "kind": "printed",
+   "location": "Fig 3D panel",
+   "printed": "77.0%",
+   "step": "step12_rat_statistics",
+   "tolerance": 7.704418486541391e-08,
+   "value": 77.04418486541391
+  },
+  {
+   "key": "fig3d.t",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(3937) = -41.1",
+   "step": "step12_rat_statistics",
+   "tolerance": 4.108719970089978e-08,
+   "value": -41.08719970089978
+  },
+  {
+   "key": "fig4c.df",
+   "kind": "printed",
+   "location": "Results; Fig 4C legend",
+   "printed": "t(3937)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 3937
+  },
+  {
+   "key": "fig4c.mean_aligned",
+   "kind": "printed",
+   "location": "Fig 4C panel",
+   "printed": "0.32285",
+   "step": "step12_rat_statistics",
+   "tolerance": 3.228464801535668e-10,
+   "value": 0.3228464801535668
+  },
+  {
+   "key": "fig4c.mean_misaligned",
+   "kind": "printed",
+   "location": "Fig 4C panel",
+   "printed": "0.32068",
+   "step": "step12_rat_statistics",
+   "tolerance": 3.206788378601611e-10,
+   "value": 0.3206788378601611
+  },
+  {
+   "key": "fig4c.p",
+   "kind": "printed",
+   "location": "Results; Fig 4C legend",
+   "printed": "p<0.001",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 4.5827202333793905e-28
+  },
+  {
+   "key": "fig4c.pct_higher",
+   "kind": "printed",
+   "location": "Fig 4C legend (the Results say about 1% higher)",
+   "printed": "only 0.7% higher",
+   "step": "step12_rat_statistics",
+   "tolerance": 6.759542687225751e-10,
+   "value": 0.675954268722575
+  },
+  {
+   "key": "fig4c.t",
+   "kind": "printed",
+   "location": "Results; Fig 4C legend",
+   "printed": "t(3937)=11.1",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.1068996081948975e-08,
+   "value": 11.068996081948974
+  },
+  {
+   "key": "fig4d.anova.F",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "F(2,3935)=7.1",
+   "step": "step12_rat_statistics",
+   "tolerance": 7.055496902834318e-09,
+   "value": 7.055496902834318
+  },
+  {
+   "key": "fig4d.anova.df1",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "F(2,3935)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig4d.anova.df2",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "F(2,3935)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 3935
+  },
+  {
+   "key": "fig4d.anova.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "p<0.001",
+   "step": "step12_rat_statistics",
+   "tolerance": 8.736100192217434e-13,
+   "value": 0.0008736100192217434
+  },
+  {
+   "key": "fig4d.n.large",
+   "kind": "printed",
+   "location": "Methods",
+   "printed": "1313",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 1313
+  },
+  {
+   "key": "fig4d.n.medium",
+   "kind": "printed",
+   "location": "Methods",
+   "printed": "1312",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 1312
+  },
+  {
+   "key": "fig4d.n.small",
+   "kind": "printed",
+   "location": "Methods",
+   "printed": "1313",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 1313
+  },
+  {
+   "key": "fig4d.posthoc.medium_vs_large.p_holm",
+   "kind": "printed",
+   "location": "Fig 4D panel (bracket)",
+   "printed": "no bracket",
+   "step": "step12_rat_statistics",
+   "tolerance": 7.674176774678324e-10,
+   "value": 0.7674176774678323
+  },
+  {
+   "key": "fig4d.posthoc.small_vs_large.p_holm",
+   "kind": "printed",
+   "location": "Fig 4D panel (bracket)",
+   "printed": "**",
+   "step": "step12_rat_statistics",
+   "tolerance": 4.298853655101499e-12,
+   "value": 0.004298853655101498
+  },
+  {
+   "key": "fig4d.posthoc.small_vs_medium.p_holm",
+   "kind": "printed",
+   "location": "Fig 4D panel (bracket)",
+   "printed": "**",
+   "step": "step12_rat_statistics",
+   "tolerance": 4.218728903924459e-12,
+   "value": 0.0042187289039244584
+  },
+  {
+   "key": "fig4d.scale_edges_cm.0",
+   "kind": "printed",
+   "location": "Fig 4D panel",
+   "printed": "27.6 cm",
+   "step": "step12_rat_statistics",
+   "tolerance": 2.7596472798162683e-08,
+   "value": 27.59647279816268
+  },
+  {
+   "key": "fig4d.scale_edges_cm.1",
+   "kind": "printed",
+   "location": "Results; Methods",
+   "printed": "62 cm",
+   "step": "step12_rat_statistics",
+   "tolerance": 6.17928513940976e-08,
+   "value": 61.792851394097596
+  },
+  {
+   "key": "fig4d.scale_edges_cm.2",
+   "kind": "printed",
+   "location": "Results; Methods",
+   "printed": "86 cm",
+   "step": "step12_rat_statistics",
+   "tolerance": 8.610474521499107e-08,
+   "value": 86.10474521499107
+  },
+  {
+   "key": "fig4d.scale_edges_cm.3",
+   "kind": "printed",
+   "location": "Fig 4D panel",
+   "printed": "154.8 cm",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.548255824673674e-07,
+   "value": 154.82558246736738
+  },
+  {
+   "key": "fig5.alpha_edges.0",
+   "kind": "printed",
+   "location": "Fig 5 panel",
+   "printed": "-0.160",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.5997431317420433e-10,
+   "value": -0.15997431317420432
+  },
+  {
+   "key": "fig5.alpha_edges.1",
+   "kind": "printed",
+   "location": "Fig 5 panel",
+   "printed": "-0.0614",
+   "step": "step12_rat_statistics",
+   "tolerance": 6.139826789191264e-11,
+   "value": -0.06139826789191264
+  },
+  {
+   "key": "fig5.alpha_edges.2",
+   "kind": "printed",
+   "location": "Fig 5 panel",
+   "printed": "-0.0182",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.8150830493400124e-11,
+   "value": -0.018150830493400123
+  },
+  {
+   "key": "fig5.alpha_edges.3",
+   "kind": "printed",
+   "location": "Fig 5 panel",
+   "printed": "0.171",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.7067912096351785e-10,
+   "value": 0.17067912096351784
+  },
+  {
+   "key": "fig5.proximity_edges.0",
+   "kind": "printed",
+   "location": "Fig 5 panel",
+   "printed": "-0.0658",
+   "step": "step12_rat_statistics",
+   "tolerance": 6.579198003284576e-11,
+   "value": -0.06579198003284575
+  },
+  {
+   "key": "fig5.proximity_edges.1",
+   "kind": "printed",
+   "location": "Fig 5 panel",
+   "printed": "-0.00281",
+   "step": "step12_rat_statistics",
+   "tolerance": 2.809621418147649e-12,
+   "value": -0.002809621418147649
+  },
+  {
+   "key": "fig5.proximity_edges.2",
+   "kind": "printed",
+   "location": "Fig 5 panel",
+   "printed": "0.00604",
+   "step": "step12_rat_statistics",
+   "tolerance": 6.035441385952174e-12,
+   "value": 0.006035441385952174
+  },
+  {
+   "key": "fig5.proximity_edges.3",
+   "kind": "printed",
+   "location": "Fig 5 panel",
+   "printed": "0.0542",
+   "step": "step12_rat_statistics",
+   "tolerance": 5.4191540097726865e-11,
+   "value": 0.054191540097726865
+  },
+  {
+   "key": "fig5a.df",
+   "kind": "printed",
+   "location": "Results; Fig 5A legend",
+   "printed": "t(3937)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 3937
+  },
+  {
+   "key": "fig5a.p",
+   "kind": "printed",
+   "location": "Results; Fig 5A legend",
+   "printed": "p=0.8",
+   "step": "step12_rat_statistics",
+   "tolerance": 8.120335704187484e-10,
+   "value": 0.8120335704187484
+  },
+  {
+   "key": "fig5a.t",
+   "kind": "printed",
+   "location": "Results; Fig 5A legend",
+   "printed": "t(3937)=-0.2",
+   "step": "step12_rat_statistics",
+   "tolerance": 2.378193693923535e-10,
+   "value": -0.23781936939235346
+  },
+  {
+   "key": "fig5b.anova.F",
+   "kind": "printed",
+   "location": "Fig 5B panel",
+   "printed": "F(2,1310) = 4.0",
+   "step": "step12_rat_statistics",
+   "tolerance": 4.013330304625063e-09,
+   "value": 4.013330304625063
+  },
+  {
+   "key": "fig5b.anova.df1",
+   "kind": "printed",
+   "location": "Fig 5B panel",
+   "printed": "F(2,1310)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig5b.anova.df2",
+   "kind": "printed",
+   "location": "Fig 5B panel",
+   "printed": "F(2,1310)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 1310
+  },
+  {
+   "key": "fig5b.anova.p",
+   "kind": "printed",
+   "location": "Fig 5B panel",
+   "printed": "p = 0.018",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.8295776898235455e-11,
+   "value": 0.018295776898235454
+  },
+  {
+   "key": "fig5b.no.df",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(447)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 447
+  },
+  {
+   "key": "fig5b.no.n",
+   "kind": "printed",
+   "location": "Fig 5B legend",
+   "printed": "n=448",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 448
+  },
+  {
+   "key": "fig5b.no.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "p=0.4",
+   "step": "step12_rat_statistics",
+   "tolerance": 4.129592554992362e-10,
+   "value": 0.4129592554992362
+  },
+  {
+   "key": "fig5b.no.t",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(447) = 0.8",
+   "step": "step12_rat_statistics",
+   "tolerance": 8.194625630264761e-10,
+   "value": 0.8194625630264761
+  },
+  {
+   "key": "fig5b.posthoc.strong_vs_no.p_holm",
+   "kind": "printed",
+   "location": "Fig 5B panel (bracket)",
+   "printed": "*",
+   "step": "step12_rat_statistics",
+   "tolerance": 3.134692955740979e-11,
+   "value": 0.03134692955740979
+  },
+  {
+   "key": "fig5b.posthoc.strong_vs_weak.p_holm",
+   "kind": "printed",
+   "location": "Fig 5B panel (bracket)",
+   "printed": "no bracket",
+   "step": "step12_rat_statistics",
+   "tolerance": 5.645917494461625e-11,
+   "value": 0.05645917494461625
+  },
+  {
+   "key": "fig5b.posthoc.weak_vs_no.p_holm",
+   "kind": "printed",
+   "location": "Fig 5B panel (bracket)",
+   "printed": "no bracket",
+   "step": "step12_rat_statistics",
+   "tolerance": 5.681715860410341e-10,
+   "value": 0.5681715860410341
+  },
+  {
+   "key": "fig5b.strong.d",
+   "kind": "printed",
+   "location": "Results; Fig 5B legend",
+   "printed": "Cohen's d=-0.14",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.363995145293546e-10,
+   "value": -0.1363995145293546
+  },
+  {
+   "key": "fig5b.strong.df",
+   "kind": "printed",
+   "location": "Results; Fig 5B legend",
+   "printed": "t(434)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 434
+  },
+  {
+   "key": "fig5b.strong.n",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "n=435",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 435
+  },
+  {
+   "key": "fig5b.strong.p",
+   "kind": "printed",
+   "location": "Results; Fig 5B legend",
+   "printed": "p=0.005",
+   "step": "step12_rat_statistics",
+   "tolerance": 4.653649269882926e-12,
+   "value": 0.004653649269882926
+  },
+  {
+   "key": "fig5b.strong.t",
+   "kind": "printed",
+   "location": "Results; Fig 5B legend",
+   "printed": "t(434)=-2.8",
+   "step": "step12_rat_statistics",
+   "tolerance": 2.8448374277402875e-09,
+   "value": -2.8448374277402873
+  },
+  {
+   "key": "fig5b.weak.df",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(429)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 429
+  },
+  {
+   "key": "fig5b.weak.n",
+   "kind": "printed",
+   "location": "Fig 5B legend",
+   "printed": "n=430",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 430
+  },
+  {
+   "key": "fig5b.weak.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "p=0.9",
+   "step": "step12_rat_statistics",
+   "tolerance": 9.3425176132292e-10,
+   "value": 0.93425176132292
+  },
+  {
+   "key": "fig5b.weak.t",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(429)=0.08",
+   "step": "step12_rat_statistics",
+   "tolerance": 8.254509286249099e-11,
+   "value": 0.08254509286249098
+  },
+  {
+   "key": "fig5c.strong_bottom.df",
+   "kind": "printed",
+   "location": "Results; Fig 5C legend",
+   "printed": "t(442)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 442
+  },
+  {
+   "key": "fig5c.strong_bottom.n",
+   "kind": "printed",
+   "location": "Fig 5C panel",
+   "printed": "443",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 443
+  },
+  {
+   "key": "fig5c.strong_bottom.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "p=0.2",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.7330764959614266e-10,
+   "value": 0.17330764959614264
+  },
+  {
+   "key": "fig5c.strong_bottom.t",
+   "kind": "printed",
+   "location": "Results; Fig 5C legend",
+   "printed": "t(442)=1.4",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.3638540245493911e-09,
+   "value": 1.363854024549391
+  },
+  {
+   "key": "fig5c.strong_top_vs_bottom.df",
+   "kind": "printed",
+   "location": "Fig 5C legend",
+   "printed": "t(876)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 876
+  },
+  {
+   "key": "fig5c.strong_top_vs_bottom.p",
+   "kind": "printed",
+   "location": "Fig 5C legend",
+   "printed": "p=0.003",
+   "step": "step12_rat_statistics",
+   "tolerance": 2.8146758132807824e-12,
+   "value": 0.002814675813280782
+  },
+  {
+   "key": "fig5c.strong_top_vs_bottom.t",
+   "kind": "printed",
+   "location": "Fig 5C legend",
+   "printed": "t(876)=-3.0",
+   "step": "step12_rat_statistics",
+   "tolerance": 2.995767132769111e-09,
+   "value": -2.9957671327691107
+  },
+  {
+   "key": "supp1.even.p",
+   "kind": "printed",
+   "location": "Results; Supp Fig 1A legend",
+   "printed": "significantly negative in each half",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 1.7764739854623942e-191
+  },
+  {
+   "key": "supp1.even.t",
+   "kind": "printed",
+   "location": "Supp Fig 1A panel",
+   "printed": "-31.2",
+   "step": "step12_rat_statistics",
+   "tolerance": 3.1229263144227485e-08,
+   "value": -31.229263144227485
+  },
+  {
+   "key": "supp1.odd.p",
+   "kind": "printed",
+   "location": "Results; Supp Fig 1A legend",
+   "printed": "significantly negative in each half",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 1.4378345643647562e-238
+  },
+  {
+   "key": "supp1.odd.t",
+   "kind": "printed",
+   "location": "Supp Fig 1A panel",
+   "printed": "-35.4",
+   "step": "step12_rat_statistics",
+   "tolerance": 3.540040117227108e-08,
+   "value": -35.40040117227108
+  },
+  {
+   "key": "supp1.odd_vs_even.df",
+   "kind": "printed",
+   "location": "Supp Fig 1A panel",
+   "printed": "t(3937)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 3937
+  },
+  {
+   "key": "supp1.odd_vs_even.p",
+   "kind": "printed",
+   "location": "Supp Fig 1A panel",
+   "printed": "p = 0.016",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.6482139205538877e-11,
+   "value": 0.016482139205538877
+  },
+  {
+   "key": "supp1.odd_vs_even.t",
+   "kind": "printed",
+   "location": "Supp Fig 1A panel",
+   "printed": "t(3937) = -2.40",
+   "step": "step12_rat_statistics",
+   "tolerance": 2.3990889732369864e-09,
+   "value": -2.3990889732369864
+  },
+  {
+   "key": "supp1.pearson_df",
+   "kind": "printed",
+   "location": "Supp Fig 1B legend",
+   "printed": "r(3936)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 3936
+  },
+  {
+   "key": "supp1.pearson_p",
+   "kind": "printed",
+   "location": "Supp Fig 1B legend",
+   "printed": "p<0.001",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 3.2287301359738657e-88
+  },
+  {
+   "key": "supp1.pearson_r",
+   "kind": "printed",
+   "location": "Supp Fig 1B legend",
+   "printed": "r(3936)=0.31",
+   "step": "step12_rat_statistics",
+   "tolerance": 3.095706046191448e-10,
+   "value": 0.30957060461914476
+  },
+  {
+   "key": "supp2.alpha_original.d",
+   "kind": "printed",
+   "location": "Supp Fig 2E panel",
+   "printed": "d = -0.667",
+   "step": "step12_rat_statistics",
+   "tolerance": 6.66682634941377e-10,
+   "value": -0.6666826349413769
+  },
+  {
+   "key": "supp2.alpha_original_vs_shifted.df",
+   "kind": "printed",
+   "location": "Supp Fig 2E legend",
+   "printed": "t(3753)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 3753
+  },
+  {
+   "key": "supp2.alpha_original_vs_shifted.p",
+   "kind": "printed",
+   "location": "Supp Fig 2E legend",
+   "printed": "p<0.001",
+   "step": "step12_rat_statistics",
+   "tolerance": 3.704348678527241e-14,
+   "value": 3.704348678527241e-05
+  },
+  {
+   "key": "supp2.alpha_original_vs_shifted.t",
+   "kind": "printed",
+   "location": "Supp Fig 2E legend",
+   "printed": "t(3753)=-4.13",
+   "step": "step12_rat_statistics",
+   "tolerance": 4.130142488147496e-09,
+   "value": -4.130142488147495
+  },
+  {
+   "key": "supp2.alpha_shifted.d",
+   "kind": "printed",
+   "location": "Supp Fig 2E panel",
+   "printed": "d = -0.611",
+   "step": "step12_rat_statistics",
+   "tolerance": 6.106926243822309e-10,
+   "value": -0.6106926243822308
+  },
+  {
+   "key": "supp2.example_best_shift_ms",
+   "kind": "printed",
+   "location": "Supp Fig 2A legend",
+   "printed": "120 ms",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 120
+  },
+  {
+   "key": "supp2.median_best_shift_ms",
+   "kind": "printed",
+   "location": "Results; Supp Fig 2C legend",
+   "printed": "40 ms",
+   "step": "step12_rat_statistics",
+   "tolerance": 4e-08,
+   "value": 40.0
+  },
+  {
+   "key": "supp2.n_cells",
+   "kind": "printed",
+   "location": "Supp Fig 2 panel",
+   "printed": "3,938",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 3938
+  },
+  {
+   "key": "supp2.n_cells_kept",
+   "kind": "printed",
+   "location": "Supp Fig 2E panel",
+   "printed": "3,754 of 3,938 cells kept",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 3754
+  },
+  {
+   "key": "supp2.posthoc.0_1s_vs_1_2s.p_holm",
+   "kind": "printed",
+   "location": "Supp Fig 2D panel (bracket)",
+   "printed": "***",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 1.5499496621282446e-74
+  },
+  {
+   "key": "supp2.posthoc.0_1s_vs_2_3s.p_holm",
+   "kind": "printed",
+   "location": "Supp Fig 2D panel (bracket)",
+   "printed": "***",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 2.6271462008530767e-106
+  },
+  {
+   "key": "supp2.posthoc.0_1s_vs_above_3s.p_holm",
+   "kind": "printed",
+   "location": "Supp Fig 2D panel (bracket)",
+   "printed": "***",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 9.803315785599145e-146
+  },
+  {
+   "key": "supp2.rm_anova.F",
+   "kind": "printed",
+   "location": "Supp Fig 2D legend",
+   "printed": "F(3,11259)=294.7",
+   "step": "step12_rat_statistics",
+   "tolerance": 2.9467444441617884e-07,
+   "value": 294.6744444161788
+  },
+  {
+   "key": "supp2.rm_anova.df1",
+   "kind": "printed",
+   "location": "Supp Fig 2D legend",
+   "printed": "F(3,11259)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 3
+  },
+  {
+   "key": "supp2.rm_anova.df2",
+   "kind": "printed",
+   "location": "Supp Fig 2D legend",
+   "printed": "F(3,11259)",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 11259
+  },
+  {
+   "key": "supp2.rm_anova.p",
+   "kind": "printed",
+   "location": "Supp Fig 2D legend",
+   "printed": "p<0.001",
+   "step": "step12_rat_statistics",
+   "tolerance": 1e-15,
+   "value": 3.627627376622108e-184
+  },
+  {
+   "key": "supp3.large.deviation.scale",
+   "kind": "printed",
+   "location": "Supp Fig 3B legend",
+   "printed": "scale=0.04",
+   "step": "step12_rat_statistics",
+   "tolerance": 4.4422258945643906e-11,
+   "value": 0.0444222589456439
+  },
+  {
+   "key": "supp3.large.deviation.shape",
+   "kind": "printed",
+   "location": "Supp Fig 3B legend",
+   "printed": "shape=2.1",
+   "step": "step12_rat_statistics",
+   "tolerance": 2.0750719501818922e-09,
+   "value": 2.075071950181892
+  },
+  {
+   "key": "supp3.large.n_cells",
+   "kind": "printed",
+   "location": "Supp Fig 3B to 3D panels",
+   "printed": "1,199 cells",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 1199
+  },
+  {
+   "key": "supp3.large.n_fields",
+   "kind": "printed",
+   "location": "Supp Fig 3B to 3D panels",
+   "printed": "4,082 fields",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 4082
+  },
+  {
+   "key": "supp3.large.rate_across_cells.scale",
+   "kind": "printed",
+   "location": "Supp Fig 3C legend",
+   "printed": "scale=1.1",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.0905397583729531e-09,
+   "value": 1.090539758372953
+  },
+  {
+   "key": "supp3.large.rate_across_cells.shape",
+   "kind": "printed",
+   "location": "Supp Fig 3C legend",
+   "printed": "shape=3.3",
+   "step": "step12_rat_statistics",
+   "tolerance": 3.3504431006638782e-09,
+   "value": 3.350443100663878
+  },
+  {
+   "key": "supp3.large.rate_within_cell.scale",
+   "kind": "printed",
+   "location": "Supp Fig 3D legend",
+   "printed": "scale=0.1",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.4080396303480105e-10,
+   "value": 0.14080396303480106
+  },
+  {
+   "key": "supp3.large.rate_within_cell.shape",
+   "kind": "printed",
+   "location": "Supp Fig 3D legend",
+   "printed": "shape=7.1",
+   "step": "step12_rat_statistics",
+   "tolerance": 7.10207282839646e-09,
+   "value": 7.10207282839646
+  },
+  {
+   "key": "supp3.small.deviation.scale",
+   "kind": "printed",
+   "location": "Supp Fig 3B legend",
+   "printed": "scale=0.07",
+   "step": "step12_rat_statistics",
+   "tolerance": 6.60245299593622e-11,
+   "value": 0.0660245299593622
+  },
+  {
+   "key": "supp3.small.deviation.shape",
+   "kind": "printed",
+   "location": "Supp Fig 3B legend",
+   "printed": "shape=2.0",
+   "step": "step12_rat_statistics",
+   "tolerance": 2.022505855146209e-09,
+   "value": 2.0225058551462087
+  },
+  {
+   "key": "supp3.small.n_cells",
+   "kind": "printed",
+   "location": "Supp Fig 3B to 3D panels",
+   "printed": "1,178 cells",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 1178
+  },
+  {
+   "key": "supp3.small.n_fields",
+   "kind": "printed",
+   "location": "Supp Fig 3B to 3D panels",
+   "printed": "12,667 fields",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 12667
+  },
+  {
+   "key": "supp3.small.rate_across_cells.scale",
+   "kind": "printed",
+   "location": "Supp Fig 3C legend",
+   "printed": "scale=1.4",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.4221219007644983e-09,
+   "value": 1.4221219007644983
+  },
+  {
+   "key": "supp3.small.rate_across_cells.shape",
+   "kind": "printed",
+   "location": "Supp Fig 3C legend",
+   "printed": "shape=3.2",
+   "step": "step12_rat_statistics",
+   "tolerance": 3.152324461552829e-09,
+   "value": 3.152324461552829
+  },
+  {
+   "key": "supp3.small.rate_within_cell.scale",
+   "kind": "printed",
+   "location": "Supp Fig 3D legend",
+   "printed": "scale=0.1",
+   "step": "step12_rat_statistics",
+   "tolerance": 9.694333315119423e-11,
+   "value": 0.09694333315119422
+  },
+  {
+   "key": "supp3.small.rate_within_cell.shape",
+   "kind": "printed",
+   "location": "Supp Fig 3D legend",
+   "printed": "shape=10.3",
+   "step": "step12_rat_statistics",
+   "tolerance": 1.0315304492784313e-08,
+   "value": 10.315304492784312
+  },
+  {
+   "key": "supp5.median_sd_deg",
+   "kind": "printed",
+   "location": "Methods; Supp Fig 5B legend",
+   "printed": "73°",
+   "step": "step12_rat_statistics",
+   "tolerance": 7.305863103970446e-08,
+   "value": 73.05863103970445
+  },
+  {
+   "key": "supp5.median_sixfold_pct",
+   "kind": "printed",
+   "location": "Results; Methods; Supp Fig 5B legend",
+   "printed": "0.003%",
+   "step": "step12_rat_statistics",
+   "tolerance": 3.3953301471415687e-12,
+   "value": 0.0033953301471415682
+  },
+  {
+   "key": "supp5.n_cells",
+   "kind": "printed",
+   "location": "Supp Fig 5B legend",
+   "printed": "1,171 conjunctive cells",
+   "step": "step12_rat_statistics",
+   "tolerance": 0,
+   "value": 1171
+  },
+  {
+   "key": "supp5.narrowest_sd_deg",
+   "kind": "printed",
+   "location": "Methods; Supp Fig 5B legend",
+   "printed": "43°",
+   "step": "step12_rat_statistics",
+   "tolerance": 4.333317979192566e-08,
+   "value": 43.33317979192566
+  },
+  {
+   "key": "supp5.narrowest_sixfold_pct",
+   "kind": "printed",
+   "location": "Methods; Supp Fig 5B legend",
+   "printed": "0.3%",
+   "step": "step12_rat_statistics",
+   "tolerance": 3.2056796285131326e-10,
+   "value": 0.3205679628513132
+  },
+  {
+   "key": "fig1.broad.circular_sd_deg",
+   "kind": "printed",
+   "location": "Fig 1C legend; Methods; Supp Fig 5A legend",
+   "printed": "67.5°",
+   "step": "step27_simulation_statistics",
+   "tolerance": 6.746062504653993e-08,
+   "value": 67.46062504653993
+  },
+  {
+   "key": "fig1.broad.sixfold",
+   "kind": "printed",
+   "location": "Fig 1C legend",
+   "printed": "zero",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1e-15,
+   "value": 0.0
+  },
+  {
+   "key": "fig1.narrow.circular_sd_deg",
+   "kind": "printed",
+   "location": "Fig 1C legend; Methods",
+   "printed": "15°",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.5000000000000002e-08,
+   "value": 15.0
+  },
+  {
+   "key": "fig1.narrow.kappa",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.5105536409469525e-08,
+   "value": 15.105536409469524
+  },
+  {
+   "key": "fig1.narrow.sixfold",
+   "kind": "printed",
+   "location": "Fig 1C legend; Methods; Supp Fig 5A legend",
+   "printed": "59%",
+   "step": "step27_simulation_statistics",
+   "tolerance": 5.929256133949723e-10,
+   "value": 0.5929256133949723
+  },
+  {
+   "key": "fig6c.large_p0.max_pct",
+   "kind": "printed",
+   "location": "Fig 6C panel (the Results say up to ±5% variation)",
+   "printed": "+3.99%",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.991138595427117e-09,
+   "value": 3.991138595427117
+  },
+  {
+   "key": "fig6c.large_p0.min_pct",
+   "kind": "printed",
+   "location": "Fig 6C panel",
+   "printed": "-2.63%",
+   "step": "step27_simulation_statistics",
+   "tolerance": 2.629954714415888e-09,
+   "value": -2.629954714415888
+  },
+  {
+   "key": "fig6c.large_p0.sd_pct",
+   "kind": "printed",
+   "location": "Fig 6C panel",
+   "printed": "SD 1.49",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.489868093534311e-09,
+   "value": 1.489868093534311
+  },
+  {
+   "key": "fig6d.large.d",
+   "kind": "printed",
+   "location": "Fig 6D panel",
+   "printed": "d 0.92",
+   "step": "step27_simulation_statistics",
+   "tolerance": 9.171688080194369e-10,
+   "value": 0.9171688080194369
+  },
+  {
+   "key": "fig6d.large.df",
+   "kind": "printed",
+   "location": "Fig 6D panel",
+   "printed": "t(9999)",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 9999
+  },
+  {
+   "key": "fig6d.large.mean_aligned",
+   "kind": "printed",
+   "location": "Fig 6D panel",
+   "printed": "0.0853",
+   "step": "step27_simulation_statistics",
+   "tolerance": 8.533825590892364e-11,
+   "value": 0.08533825590892363
+  },
+  {
+   "key": "fig6d.large.mean_misaligned",
+   "kind": "printed",
+   "location": "Fig 6D panel",
+   "printed": "0.0684",
+   "step": "step27_simulation_statistics",
+   "tolerance": 6.840186812173976e-11,
+   "value": 0.06840186812173976
+  },
+  {
+   "key": "fig6d.large.t",
+   "kind": "printed",
+   "location": "Fig 6D panel",
+   "printed": "t(9999) = 91.7",
+   "step": "step27_simulation_statistics",
+   "tolerance": 9.17168808019437e-08,
+   "value": 91.7168808019437
+  },
+  {
+   "key": "fig6d.small.d",
+   "kind": "printed",
+   "location": "Fig 6D panel",
+   "printed": "d 1.76",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.7577413941067834e-09,
+   "value": 1.7577413941067832
+  },
+  {
+   "key": "fig6d.small.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 9999
+  },
+  {
+   "key": "fig6d.small.mean_aligned",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.994010694604308e-10,
+   "value": 0.1994010694604308
+  },
+  {
+   "key": "fig6d.small.mean_misaligned",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.4521254727909646e-10,
+   "value": 0.14521254727909647
+  },
+  {
+   "key": "fig6d.small.t",
+   "kind": "printed",
+   "location": "Fig 6D panel",
+   "printed": "t 175.8",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.7577413941067836e-07,
+   "value": 175.77413941067834
+  },
+  {
+   "key": "fig7.alpha_threshold",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 5.000000000000001e-11,
+   "value": 0.05
+  },
+  {
+   "key": "fig7.large.n_participants",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1500
+  },
+  {
+   "key": "fig7.participants_per_experiment",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 30
+  },
+  {
+   "key": "fig7.small.n_participants",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1500
+  },
+  {
+   "key": "fig7a.large.df",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(29)",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7a.large.n",
+   "kind": "printed",
+   "location": "Results; Fig 7A legend",
+   "printed": "30 virtual participants",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 30
+  },
+  {
+   "key": "fig7a.large.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "p<0.001",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1e-15,
+   "value": 8.352870098776951e-08
+  },
+  {
+   "key": "fig7a.large.t",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(29)=-7.1",
+   "step": "step27_simulation_statistics",
+   "tolerance": 7.093618913625676e-09,
+   "value": -7.093618913625676
+  },
+  {
+   "key": "fig7a.small.df",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(29)",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7a.small.n",
+   "kind": "printed",
+   "location": "Results; Fig 7A legend",
+   "printed": "30 virtual participants",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 30
+  },
+  {
+   "key": "fig7a.small.p",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "p<0.001",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1e-15,
+   "value": 1.717600788530248e-20
+  },
+  {
+   "key": "fig7a.small.t",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "t(29)=-23.6",
+   "step": "step27_simulation_statistics",
+   "tolerance": 2.362570895799755e-08,
+   "value": -23.62570895799755
+  },
+  {
+   "key": "fig7b.large.fold_1.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7b.large.fold_1.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 7.460183323848477e-10,
+   "value": 0.7460183323848477
+  },
+  {
+   "key": "fig7b.large.fold_1.significant",
+   "kind": "printed",
+   "location": "Results; Fig 7B legend (large modules: 2- and 3-fold)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7b.large.fold_1.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.2699758500583395e-10,
+   "value": 0.3269975850058339
+  },
+  {
+   "key": "fig7b.large.fold_2.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7b.large.fold_2.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 2.340344230164573e-11,
+   "value": 0.023403442301645726
+  },
+  {
+   "key": "fig7b.large.fold_2.significant",
+   "kind": "printed",
+   "location": "Results; Fig 7B legend (large modules: 2- and 3-fold)",
+   "printed": "significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1
+  },
+  {
+   "key": "fig7b.large.fold_2.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 2.3930768650781576e-09,
+   "value": 2.3930768650781573
+  },
+  {
+   "key": "fig7b.large.fold_3.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7b.large.fold_3.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.5967308828162046e-11,
+   "value": 0.03596730882816204
+  },
+  {
+   "key": "fig7b.large.fold_3.significant",
+   "kind": "printed",
+   "location": "Results; Fig 7B legend (large modules: 2- and 3-fold)",
+   "printed": "significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1
+  },
+  {
+   "key": "fig7b.large.fold_3.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 2.1994811329250143e-09,
+   "value": 2.199481132925014
+  },
+  {
+   "key": "fig7b.large.fold_4.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7b.large.fold_4.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 6.256767943453059e-10,
+   "value": 0.6256767943453059
+  },
+  {
+   "key": "fig7b.large.fold_4.significant",
+   "kind": "printed",
+   "location": "Results; Fig 7B legend (large modules: 2- and 3-fold)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7b.large.fold_4.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.930691927175704e-10,
+   "value": 0.49306919271757044
+  },
+  {
+   "key": "fig7b.large.fold_5.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7b.large.fold_5.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 6.065120802113435e-10,
+   "value": 0.6065120802113434
+  },
+  {
+   "key": "fig7b.large.fold_5.significant",
+   "kind": "printed",
+   "location": "Results; Fig 7B legend (large modules: 2- and 3-fold)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7b.large.fold_5.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 5.207246094105752e-10,
+   "value": 0.5207246094105752
+  },
+  {
+   "key": "fig7b.large.fold_6.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7b.large.fold_6.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.2750350990209144e-10,
+   "value": 0.12750350990209142
+  },
+  {
+   "key": "fig7b.large.fold_6.significant",
+   "kind": "printed",
+   "location": "Results; Fig 7B legend (large modules: 2- and 3-fold)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7b.large.fold_6.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.568968444899919e-09,
+   "value": 1.5689684448999188
+  },
+  {
+   "key": "fig7b.large.fold_7.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7b.large.fold_7.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 8.841299126003472e-10,
+   "value": 0.8841299126003472
+  },
+  {
+   "key": "fig7b.large.fold_7.significant",
+   "kind": "printed",
+   "location": "Results; Fig 7B legend (large modules: 2- and 3-fold)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7b.large.fold_7.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.4702468872336326e-10,
+   "value": 0.14702468872336324
+  },
+  {
+   "key": "fig7b.small.fold_1.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7b.small.fold_1.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.779540433959219e-10,
+   "value": 0.17795404339592188
+  },
+  {
+   "key": "fig7b.small.fold_1.significant",
+   "kind": "printed",
+   "location": "Results; Fig 7B legend (small modules: 6-fold)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7b.small.fold_1.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.380590130033343e-09,
+   "value": 1.380590130033343
+  },
+  {
+   "key": "fig7b.small.fold_2.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7b.small.fold_2.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 7.405375088987239e-10,
+   "value": 0.7405375088987238
+  },
+  {
+   "key": "fig7b.small.fold_2.significant",
+   "kind": "printed",
+   "location": "Results; Fig 7B legend (small modules: 6-fold)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7b.small.fold_2.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.3432861163036304e-10,
+   "value": -0.33432861163036304
+  },
+  {
+   "key": "fig7b.small.fold_3.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7b.small.fold_3.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 8.314138665226968e-10,
+   "value": 0.8314138665226968
+  },
+  {
+   "key": "fig7b.small.fold_3.significant",
+   "kind": "printed",
+   "location": "Results; Fig 7B legend (small modules: 6-fold)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7b.small.fold_3.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 2.1481653146261904e-10,
+   "value": -0.21481653146261903
+  },
+  {
+   "key": "fig7b.small.fold_4.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7b.small.fold_4.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.5245029933640817e-10,
+   "value": 0.4524502993364081
+  },
+  {
+   "key": "fig7b.small.fold_4.significant",
+   "kind": "printed",
+   "location": "Results; Fig 7B legend (small modules: 6-fold)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7b.small.fold_4.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 7.615965265918922e-10,
+   "value": 0.7615965265918921
+  },
+  {
+   "key": "fig7b.small.fold_5.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7b.small.fold_5.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 5.820722836473085e-10,
+   "value": 0.5820722836473085
+  },
+  {
+   "key": "fig7b.small.fold_5.significant",
+   "kind": "printed",
+   "location": "Results; Fig 7B legend (small modules: 6-fold)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7b.small.fold_5.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 5.565979891070309e-10,
+   "value": -0.5565979891070308
+  },
+  {
+   "key": "fig7b.small.fold_6.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7b.small.fold_6.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1e-15,
+   "value": 8.430886311568348e-24
+  },
+  {
+   "key": "fig7b.small.fold_6.significant",
+   "kind": "printed",
+   "location": "Results; Fig 7B legend (small modules: 6-fold)",
+   "printed": "significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1
+  },
+  {
+   "key": "fig7b.small.fold_6.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.1038576376766344e-08,
+   "value": 31.03857637676634
+  },
+  {
+   "key": "fig7b.small.fold_7.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7b.small.fold_7.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 5.927042079049264e-10,
+   "value": 0.5927042079049264
+  },
+  {
+   "key": "fig7b.small.fold_7.significant",
+   "kind": "printed",
+   "location": "Results; Fig 7B legend (small modules: 6-fold)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7b.small.fold_7.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 5.409047283946299e-10,
+   "value": -0.5409047283946299
+  },
+  {
+   "key": "fig7c.large.location_controlled.count_0",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.large.location_controlled.count_120",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.large.location_controlled.count_150",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 9
+  },
+  {
+   "key": "fig7c.large.location_controlled.count_180",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 14
+  },
+  {
+   "key": "fig7c.large.location_controlled.count_210",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 5
+  },
+  {
+   "key": "fig7c.large.location_controlled.count_240",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig7c.large.location_controlled.count_270",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.large.location_controlled.count_30",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.large.location_controlled.count_300",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.large.location_controlled.count_330",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.large.location_controlled.count_60",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.large.location_controlled.count_90",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.large.simple.count_0",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1
+  },
+  {
+   "key": "fig7c.large.simple.count_120",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 3
+  },
+  {
+   "key": "fig7c.large.simple.count_150",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 7
+  },
+  {
+   "key": "fig7c.large.simple.count_180",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 5
+  },
+  {
+   "key": "fig7c.large.simple.count_210",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 4
+  },
+  {
+   "key": "fig7c.large.simple.count_240",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 7
+  },
+  {
+   "key": "fig7c.large.simple.count_270",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.large.simple.count_30",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.large.simple.count_300",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.large.simple.count_330",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.large.simple.count_60",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1
+  },
+  {
+   "key": "fig7c.large.simple.count_90",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig7c.small.location_controlled.count_0",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.location_controlled.count_120",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.location_controlled.count_150",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1
+  },
+  {
+   "key": "fig7c.small.location_controlled.count_180",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 27
+  },
+  {
+   "key": "fig7c.small.location_controlled.count_210",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig7c.small.location_controlled.count_240",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.location_controlled.count_270",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.location_controlled.count_30",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.location_controlled.count_300",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.location_controlled.count_330",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.location_controlled.count_60",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.location_controlled.count_90",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.simple.count_0",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.simple.count_120",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.simple.count_150",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 3
+  },
+  {
+   "key": "fig7c.small.simple.count_180",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 24
+  },
+  {
+   "key": "fig7c.small.simple.count_210",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 3
+  },
+  {
+   "key": "fig7c.small.simple.count_240",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.simple.count_270",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.simple.count_30",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.simple.count_300",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.simple.count_330",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.simple.count_60",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7c.small.simple.count_90",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7d.large.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7d.large.n",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 30
+  },
+  {
+   "key": "fig7d.large.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1e-15,
+   "value": 3.025093415442013e-12
+  },
+  {
+   "key": "fig7d.large.t",
+   "kind": "printed",
+   "location": "Fig 7D panel",
+   "printed": "-11.4143",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.1414318696308999e-08,
+   "value": -11.414318696308998
+  },
+  {
+   "key": "fig7d.small.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7d.small.n",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 30
+  },
+  {
+   "key": "fig7d.small.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1e-15,
+   "value": 6.3496643878934875e-28
+  },
+  {
+   "key": "fig7d.small.t",
+   "kind": "printed",
+   "location": "Fig 7D panel",
+   "printed": "-43.3605",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.336050525554043e-08,
+   "value": -43.360505255540424
+  },
+  {
+   "key": "fig7e.large.fold_1.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7e.large.fold_1.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 9.204035331682174e-10,
+   "value": 0.9204035331682173
+  },
+  {
+   "key": "fig7e.large.fold_1.significant",
+   "kind": "printed",
+   "location": "Results (only 6-fold symmetry in both modules)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7e.large.fold_1.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.0079920185766731e-10,
+   "value": 0.1007992018576673
+  },
+  {
+   "key": "fig7e.large.fold_2.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7e.large.fold_2.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 2.88617489034257e-10,
+   "value": 0.288617489034257
+  },
+  {
+   "key": "fig7e.large.fold_2.significant",
+   "kind": "printed",
+   "location": "Results (only 6-fold symmetry in both modules)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7e.large.fold_2.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.0809716376474091e-09,
+   "value": -1.080971637647409
+  },
+  {
+   "key": "fig7e.large.fold_3.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7e.large.fold_3.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 8.696358770857106e-10,
+   "value": 0.8696358770857106
+  },
+  {
+   "key": "fig7e.large.fold_3.significant",
+   "kind": "printed",
+   "location": "Results (only 6-fold symmetry in both modules)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7e.large.fold_3.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.6558068800943197e-10,
+   "value": -0.16558068800943196
+  },
+  {
+   "key": "fig7e.large.fold_4.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7e.large.fold_4.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 7.531740114262113e-10,
+   "value": 0.7531740114262113
+  },
+  {
+   "key": "fig7e.large.fold_4.significant",
+   "kind": "printed",
+   "location": "Results (only 6-fold symmetry in both modules)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7e.large.fold_4.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.1745342927019075e-10,
+   "value": 0.3174534292701907
+  },
+  {
+   "key": "fig7e.large.fold_5.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7e.large.fold_5.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 5.909649030470516e-11,
+   "value": 0.05909649030470516
+  },
+  {
+   "key": "fig7e.large.fold_5.significant",
+   "kind": "printed",
+   "location": "Results (only 6-fold symmetry in both modules)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7e.large.fold_5.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.9646869247006198e-09,
+   "value": 1.9646869247006196
+  },
+  {
+   "key": "fig7e.large.fold_6.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7e.large.fold_6.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1e-15,
+   "value": 1.877072776793559e-07
+  },
+  {
+   "key": "fig7e.large.fold_6.significant",
+   "kind": "printed",
+   "location": "Results (only 6-fold symmetry in both modules)",
+   "printed": "significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1
+  },
+  {
+   "key": "fig7e.large.fold_6.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 6.788877541787099e-09,
+   "value": 6.788877541787099
+  },
+  {
+   "key": "fig7e.large.fold_7.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7e.large.fold_7.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 6.364221184649768e-10,
+   "value": 0.6364221184649768
+  },
+  {
+   "key": "fig7e.large.fold_7.significant",
+   "kind": "printed",
+   "location": "Results (only 6-fold symmetry in both modules)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7e.large.fold_7.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.777322369769686e-10,
+   "value": -0.4777322369769686
+  },
+  {
+   "key": "fig7e.small.fold_1.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7e.small.fold_1.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 6.925035928756338e-10,
+   "value": 0.6925035928756338
+  },
+  {
+   "key": "fig7e.small.fold_1.significant",
+   "kind": "printed",
+   "location": "Results (only 6-fold symmetry in both modules)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7e.small.fold_1.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.994291157655723e-10,
+   "value": 0.3994291157655723
+  },
+  {
+   "key": "fig7e.small.fold_2.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7e.small.fold_2.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.6348585551451354e-10,
+   "value": 0.4634858555145135
+  },
+  {
+   "key": "fig7e.small.fold_2.significant",
+   "kind": "printed",
+   "location": "Results (only 6-fold symmetry in both modules)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7e.small.fold_2.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 7.429541870573461e-10,
+   "value": -0.7429541870573461
+  },
+  {
+   "key": "fig7e.small.fold_3.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7e.small.fold_3.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.721304132995427e-10,
+   "value": 0.47213041329954264
+  },
+  {
+   "key": "fig7e.small.fold_3.significant",
+   "kind": "printed",
+   "location": "Results (only 6-fold symmetry in both modules)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7e.small.fold_3.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 7.285321856789732e-10,
+   "value": -0.7285321856789732
+  },
+  {
+   "key": "fig7e.small.fold_4.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7e.small.fold_4.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.088119391905375e-10,
+   "value": 0.4088119391905375
+  },
+  {
+   "key": "fig7e.small.fold_4.significant",
+   "kind": "printed",
+   "location": "Results (only 6-fold symmetry in both modules)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7e.small.fold_4.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 8.381314991280633e-10,
+   "value": 0.8381314991280632
+  },
+  {
+   "key": "fig7e.small.fold_5.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7e.small.fold_5.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.1084939736439514e-10,
+   "value": 0.11084939736439513
+  },
+  {
+   "key": "fig7e.small.fold_5.significant",
+   "kind": "printed",
+   "location": "Results (only 6-fold symmetry in both modules)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7e.small.fold_5.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.644606796937506e-09,
+   "value": 1.644606796937506
+  },
+  {
+   "key": "fig7e.small.fold_6.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7e.small.fold_6.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1e-15,
+   "value": 4.92445838483855e-24
+  },
+  {
+   "key": "fig7e.small.fold_6.significant",
+   "kind": "printed",
+   "location": "Results (only 6-fold symmetry in both modules)",
+   "printed": "significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1
+  },
+  {
+   "key": "fig7e.small.fold_6.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.1636175223707065e-08,
+   "value": 31.636175223707063
+  },
+  {
+   "key": "fig7e.small.fold_7.df",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 29
+  },
+  {
+   "key": "fig7e.small.fold_7.p",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 5.986890014344984e-10,
+   "value": 0.5986890014344983
+  },
+  {
+   "key": "fig7e.small.fold_7.significant",
+   "kind": "printed",
+   "location": "Results (only 6-fold symmetry in both modules)",
+   "printed": "not significant",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7e.small.fold_7.t",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 5.321307621617752e-10,
+   "value": 0.5321307621617751
+  },
+  {
+   "key": "fig7f.first_participant",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 30
+  },
+  {
+   "key": "fig7f.large.location_controlled.fold_1.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig7f.large.location_controlled.fold_1.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.0816326530612245e-11,
+   "value": 0.04081632653061224
+  },
+  {
+   "key": "fig7f.large.location_controlled.fold_2.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig7f.large.location_controlled.fold_2.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.0816326530612245e-11,
+   "value": 0.04081632653061224
+  },
+  {
+   "key": "fig7f.large.location_controlled.fold_3.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 5
+  },
+  {
+   "key": "fig7f.large.location_controlled.fold_3.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.0204081632653062e-10,
+   "value": 0.10204081632653061
+  },
+  {
+   "key": "fig7f.large.location_controlled.fold_4.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig7f.large.location_controlled.fold_4.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.0816326530612245e-11,
+   "value": 0.04081632653061224
+  },
+  {
+   "key": "fig7f.large.location_controlled.fold_5.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig7f.large.location_controlled.fold_5.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.0816326530612245e-11,
+   "value": 0.04081632653061224
+  },
+  {
+   "key": "fig7f.large.location_controlled.fold_6.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 49
+  },
+  {
+   "key": "fig7f.large.location_controlled.fold_6.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1e-09,
+   "value": 1.0
+  },
+  {
+   "key": "fig7f.large.location_controlled.fold_7.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig7f.large.location_controlled.fold_7.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.0816326530612245e-11,
+   "value": 0.04081632653061224
+  },
+  {
+   "key": "fig7f.large.simple.fold_1.count",
+   "kind": "printed",
+   "location": "Fig 7F panel",
+   "printed": "19 of 49",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 19
+  },
+  {
+   "key": "fig7f.large.simple.fold_1.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.8775510204081634e-10,
+   "value": 0.3877551020408163
+  },
+  {
+   "key": "fig7f.large.simple.fold_2.count",
+   "kind": "printed",
+   "location": "Fig 7F panel",
+   "printed": "41 of 49",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 41
+  },
+  {
+   "key": "fig7f.large.simple.fold_2.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 8.367346938775512e-10,
+   "value": 0.8367346938775511
+  },
+  {
+   "key": "fig7f.large.simple.fold_3.count",
+   "kind": "printed",
+   "location": "Fig 7F panel",
+   "printed": "17 of 49",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 17
+  },
+  {
+   "key": "fig7f.large.simple.fold_3.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.469387755102041e-10,
+   "value": 0.3469387755102041
+  },
+  {
+   "key": "fig7f.large.simple.fold_4.count",
+   "kind": "printed",
+   "location": "Fig 7F panel",
+   "printed": "12 of 49",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 12
+  },
+  {
+   "key": "fig7f.large.simple.fold_4.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 2.4489795918367346e-10,
+   "value": 0.24489795918367346
+  },
+  {
+   "key": "fig7f.large.simple.fold_5.count",
+   "kind": "printed",
+   "location": "Fig 7F panel",
+   "printed": "6 of 49",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 6
+  },
+  {
+   "key": "fig7f.large.simple.fold_5.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.2244897959183673e-10,
+   "value": 0.12244897959183673
+  },
+  {
+   "key": "fig7f.large.simple.fold_6.count",
+   "kind": "printed",
+   "location": "Fig 7F panel",
+   "printed": "39 of 49",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 39
+  },
+  {
+   "key": "fig7f.large.simple.fold_6.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 7.959183673469388e-10,
+   "value": 0.7959183673469388
+  },
+  {
+   "key": "fig7f.large.simple.fold_7.count",
+   "kind": "printed",
+   "location": "Fig 7F panel",
+   "printed": "1 of 49",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1
+  },
+  {
+   "key": "fig7f.large.simple.fold_7.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 2.0408163265306123e-11,
+   "value": 0.02040816326530612
+  },
+  {
+   "key": "fig7f.last_participant",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1499
+  },
+  {
+   "key": "fig7f.n_experiments",
+   "kind": "printed",
+   "location": "Fig 7F panel (the Results and Methods say 50 repetitions)",
+   "printed": "49",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 49
+  },
+  {
+   "key": "fig7f.small.location_controlled.fold_1.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig7f.small.location_controlled.fold_1.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.0816326530612245e-11,
+   "value": 0.04081632653061224
+  },
+  {
+   "key": "fig7f.small.location_controlled.fold_2.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 3
+  },
+  {
+   "key": "fig7f.small.location_controlled.fold_2.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 6.122448979591836e-11,
+   "value": 0.061224489795918366
+  },
+  {
+   "key": "fig7f.small.location_controlled.fold_3.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 4
+  },
+  {
+   "key": "fig7f.small.location_controlled.fold_3.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 8.163265306122449e-11,
+   "value": 0.08163265306122448
+  },
+  {
+   "key": "fig7f.small.location_controlled.fold_4.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 9
+  },
+  {
+   "key": "fig7f.small.location_controlled.fold_4.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.8367346938775513e-10,
+   "value": 0.1836734693877551
+  },
+  {
+   "key": "fig7f.small.location_controlled.fold_5.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 3
+  },
+  {
+   "key": "fig7f.small.location_controlled.fold_5.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 6.122448979591836e-11,
+   "value": 0.061224489795918366
+  },
+  {
+   "key": "fig7f.small.location_controlled.fold_6.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 49
+  },
+  {
+   "key": "fig7f.small.location_controlled.fold_6.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1e-09,
+   "value": 1.0
+  },
+  {
+   "key": "fig7f.small.location_controlled.fold_7.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 5
+  },
+  {
+   "key": "fig7f.small.location_controlled.fold_7.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.0204081632653062e-10,
+   "value": 0.10204081632653061
+  },
+  {
+   "key": "fig7f.small.simple.fold_1.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 16
+  },
+  {
+   "key": "fig7f.small.simple.fold_1.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.2653061224489796e-10,
+   "value": 0.32653061224489793
+  },
+  {
+   "key": "fig7f.small.simple.fold_2.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 15
+  },
+  {
+   "key": "fig7f.small.simple.fold_2.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.061224489795919e-10,
+   "value": 0.30612244897959184
+  },
+  {
+   "key": "fig7f.small.simple.fold_3.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 4
+  },
+  {
+   "key": "fig7f.small.simple.fold_3.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 8.163265306122449e-11,
+   "value": 0.08163265306122448
+  },
+  {
+   "key": "fig7f.small.simple.fold_4.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 6
+  },
+  {
+   "key": "fig7f.small.simple.fold_4.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.2244897959183673e-10,
+   "value": 0.12244897959183673
+  },
+  {
+   "key": "fig7f.small.simple.fold_5.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1
+  },
+  {
+   "key": "fig7f.small.simple.fold_5.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 2.0408163265306123e-11,
+   "value": 0.02040816326530612
+  },
+  {
+   "key": "fig7f.small.simple.fold_6.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 49
+  },
+  {
+   "key": "fig7f.small.simple.fold_6.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1e-09,
+   "value": 1.0
+  },
+  {
+   "key": "fig7f.small.simple.fold_7.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 3
+  },
+  {
+   "key": "fig7f.small.simple.fold_7.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 6.122448979591836e-11,
+   "value": 0.061224489795918366
+  },
+  {
+   "key": "fig7f_50.first_participant",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 0
+  },
+  {
+   "key": "fig7f_50.large.location_controlled.fold_1.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig7f_50.large.location_controlled.fold_1.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.0000000000000004e-11,
+   "value": 0.04
+  },
+  {
+   "key": "fig7f_50.large.location_controlled.fold_2.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig7f_50.large.location_controlled.fold_2.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.0000000000000004e-11,
+   "value": 0.04
+  },
+  {
+   "key": "fig7f_50.large.location_controlled.fold_3.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 5
+  },
+  {
+   "key": "fig7f_50.large.location_controlled.fold_3.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.0000000000000002e-10,
+   "value": 0.1
+  },
+  {
+   "key": "fig7f_50.large.location_controlled.fold_4.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig7f_50.large.location_controlled.fold_4.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.0000000000000004e-11,
+   "value": 0.04
+  },
+  {
+   "key": "fig7f_50.large.location_controlled.fold_5.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 3
+  },
+  {
+   "key": "fig7f_50.large.location_controlled.fold_5.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 6e-11,
+   "value": 0.06
+  },
+  {
+   "key": "fig7f_50.large.location_controlled.fold_6.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 50
+  },
+  {
+   "key": "fig7f_50.large.location_controlled.fold_6.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1e-09,
+   "value": 1.0
+  },
+  {
+   "key": "fig7f_50.large.location_controlled.fold_7.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig7f_50.large.location_controlled.fold_7.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.0000000000000004e-11,
+   "value": 0.04
+  },
+  {
+   "key": "fig7f_50.large.simple.fold_1.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 19
+  },
+  {
+   "key": "fig7f_50.large.simple.fold_1.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.8000000000000003e-10,
+   "value": 0.38
+  },
+  {
+   "key": "fig7f_50.large.simple.fold_2.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 42
+  },
+  {
+   "key": "fig7f_50.large.simple.fold_2.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 8.4e-10,
+   "value": 0.84
+  },
+  {
+   "key": "fig7f_50.large.simple.fold_3.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 18
+  },
+  {
+   "key": "fig7f_50.large.simple.fold_3.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.6e-10,
+   "value": 0.36
+  },
+  {
+   "key": "fig7f_50.large.simple.fold_4.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 12
+  },
+  {
+   "key": "fig7f_50.large.simple.fold_4.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 2.4e-10,
+   "value": 0.24
+  },
+  {
+   "key": "fig7f_50.large.simple.fold_5.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 6
+  },
+  {
+   "key": "fig7f_50.large.simple.fold_5.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.2e-10,
+   "value": 0.12
+  },
+  {
+   "key": "fig7f_50.large.simple.fold_6.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 39
+  },
+  {
+   "key": "fig7f_50.large.simple.fold_6.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 7.800000000000001e-10,
+   "value": 0.78
+  },
+  {
+   "key": "fig7f_50.large.simple.fold_7.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1
+  },
+  {
+   "key": "fig7f_50.large.simple.fold_7.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 2.0000000000000002e-11,
+   "value": 0.02
+  },
+  {
+   "key": "fig7f_50.last_participant",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1499
+  },
+  {
+   "key": "fig7f_50.n_experiments",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 50
+  },
+  {
+   "key": "fig7f_50.small.location_controlled.fold_1.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 2
+  },
+  {
+   "key": "fig7f_50.small.location_controlled.fold_1.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 4.0000000000000004e-11,
+   "value": 0.04
+  },
+  {
+   "key": "fig7f_50.small.location_controlled.fold_2.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 3
+  },
+  {
+   "key": "fig7f_50.small.location_controlled.fold_2.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 6e-11,
+   "value": 0.06
+  },
+  {
+   "key": "fig7f_50.small.location_controlled.fold_3.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 4
+  },
+  {
+   "key": "fig7f_50.small.location_controlled.fold_3.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 8.000000000000001e-11,
+   "value": 0.08
+  },
+  {
+   "key": "fig7f_50.small.location_controlled.fold_4.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 9
+  },
+  {
+   "key": "fig7f_50.small.location_controlled.fold_4.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.8e-10,
+   "value": 0.18
+  },
+  {
+   "key": "fig7f_50.small.location_controlled.fold_5.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 3
+  },
+  {
+   "key": "fig7f_50.small.location_controlled.fold_5.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 6e-11,
+   "value": 0.06
+  },
+  {
+   "key": "fig7f_50.small.location_controlled.fold_6.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 50
+  },
+  {
+   "key": "fig7f_50.small.location_controlled.fold_6.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1e-09,
+   "value": 1.0
+  },
+  {
+   "key": "fig7f_50.small.location_controlled.fold_7.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 5
+  },
+  {
+   "key": "fig7f_50.small.location_controlled.fold_7.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.0000000000000002e-10,
+   "value": 0.1
+  },
+  {
+   "key": "fig7f_50.small.simple.fold_1.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 16
+  },
+  {
+   "key": "fig7f_50.small.simple.fold_1.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3.2000000000000003e-10,
+   "value": 0.32
+  },
+  {
+   "key": "fig7f_50.small.simple.fold_2.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 15
+  },
+  {
+   "key": "fig7f_50.small.simple.fold_2.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 3e-10,
+   "value": 0.3
+  },
+  {
+   "key": "fig7f_50.small.simple.fold_3.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 4
+  },
+  {
+   "key": "fig7f_50.small.simple.fold_3.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 8.000000000000001e-11,
+   "value": 0.08
+  },
+  {
+   "key": "fig7f_50.small.simple.fold_4.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 6
+  },
+  {
+   "key": "fig7f_50.small.simple.fold_4.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.2e-10,
+   "value": 0.12
+  },
+  {
+   "key": "fig7f_50.small.simple.fold_5.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 1
+  },
+  {
+   "key": "fig7f_50.small.simple.fold_5.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 2.0000000000000002e-11,
+   "value": 0.02
+  },
+  {
+   "key": "fig7f_50.small.simple.fold_6.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 50
+  },
+  {
+   "key": "fig7f_50.small.simple.fold_6.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1e-09,
+   "value": 1.0
+  },
+  {
+   "key": "fig7f_50.small.simple.fold_7.count",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 3
+  },
+  {
+   "key": "fig7f_50.small.simple.fold_7.rate",
+   "kind": "reported",
+   "location": "",
+   "printed": "",
+   "step": "step27_simulation_statistics",
+   "tolerance": 6e-11,
+   "value": 0.06
+  },
+  {
+   "key": "fig8.v_opt_scale_per_tau",
+   "kind": "printed",
+   "location": "Results; Methods",
+   "printed": "1.33 × scale/τ",
+   "step": "step27_simulation_statistics",
+   "tolerance": 1.3326827218660933e-09,
+   "value": 1.3326827218660933
+  },
+  {
+   "key": "fig8d.n_runs",
+   "kind": "printed",
+   "location": "Fig 8D panel",
+   "printed": "111 runs",
+   "step": "step27_simulation_statistics",
+   "tolerance": 0,
+   "value": 111
+  },
+  {
+   "key": "discussion.optimal_speed_4m_grid_m_s",
+   "kind": "printed",
+   "location": "Discussion",
+   "printed": "slow (2.7 m/s)",
+   "step": "step40_check_statistics",
+   "tolerance": 2.6653654437321866e-09,
+   "value": 2.6653654437321865
+  },
+  {
+   "key": "discussion.optimal_speed_8m_grid_m_s",
+   "kind": "printed",
+   "location": "Discussion",
+   "printed": "fast (5.3 m/s)",
+   "step": "step40_check_statistics",
+   "tolerance": 5.330730887464373e-09,
+   "value": 5.330730887464373
+  },
+  {
+   "key": "fig2b.pct_misaligned",
+   "kind": "printed",
+   "location": "Fig 2B legend",
+   "printed": "52%",
+   "step": "step40_check_statistics",
+   "tolerance": 5.1836037574722466e-08,
+   "value": 51.83603757472246
+  },
+  {
+   "key": "fig2d.n_cells_six_largest_animals",
+   "kind": "printed",
+   "location": "Fig 2D legend",
+   "printed": "766 cells",
+   "step": "step40_check_statistics",
+   "tolerance": 0,
+   "value": 766
+  },
+  {
+   "key": "fig2e.expected_below_0_05",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "0.6 expected by chance",
+   "step": "step40_check_statistics",
+   "tolerance": 6.000000000000001e-10,
+   "value": 0.6000000000000001
+  },
+  {
+   "key": "fig3f.longer.d",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "d = -0.04",
+   "step": "step40_check_statistics",
+   "tolerance": 3.5125922852089164e-11,
+   "value": -0.03512592285208916
+  },
+  {
+   "key": "fig3f.paired.d",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "d = 0.05",
+   "step": "step40_check_statistics",
+   "tolerance": 4.856842645215293e-11,
+   "value": 0.04856842645215293
+  },
+  {
+   "key": "fig3f.shorter.d",
+   "kind": "printed",
+   "location": "Results",
+   "printed": "Cohen's d = 0.04",
+   "step": "step40_check_statistics",
+   "tolerance": 4.2240088301012027e-11,
+   "value": 0.04224008830101202
+  },
+  {
+   "key": "fig7a.large.d",
+   "kind": "printed",
+   "location": "Results (d_z with the SD of the paired differences computed with ddof 0, t / sqrt(n - 1), as in the Fig 7 statistics table; with ddof 1, as for the other effect sizes, -1.30)",
+   "printed": "Cohen's d=-1.3",
+   "step": "step40_check_statistics",
+   "tolerance": 1.3172519630648512e-09,
+   "value": -1.3172519630648512
+  },
+  {
+   "key": "fig7a.small.d",
+   "kind": "printed",
+   "location": "Results (d_z with the SD of the paired differences computed with ddof 0, t / sqrt(n - 1), as in the Fig 7 statistics table; with ddof 1, as for the other effect sizes, -4.31)",
+   "printed": "Cohen's d=-4.4",
+   "step": "step40_check_statistics",
+   "tolerance": 4.387184014627959e-09,
+   "value": -4.387184014627959
+  },
+  {
+   "key": "supp5.cosine_width_vonmises_sixfold_pct",
+   "kind": "printed",
+   "location": "Supp Fig 5A legend",
+   "printed": "0.008%",
+   "step": "step40_check_statistics",
+   "tolerance": 8.096390555327481e-12,
+   "value": 0.00809639055532748
+  },
+  {
+   "key": "supp5.max_conjunctive_sd_deg",
+   "kind": "printed",
+   "location": "Supp Fig 5 legend",
+   "printed": "none can be broader than 89°",
+   "step": "step40_check_statistics",
+   "tolerance": 8.890904979002566e-08,
+   "value": 88.90904979002565
+  }
+ ]
+}

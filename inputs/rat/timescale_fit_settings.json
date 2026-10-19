@@ -1,0 +1,59 @@
+{
+ "description": "Settings of the least-squares fits of one and two exponentials to the binned firing-rate change (Supp Fig 4), passed to scipy.optimize.curve_fit; weighted fits use sigma = s.e.m. of each bin mean and absolute_sigma = True. single: c + a exp(-t / tau), parameters (a, tau, c); double: c + a1 exp(-t / t1) + a2 exp(-t / t2), parameters (a1, t1, a2, t2, c), reported with t1 <= t2. p0 holds the starting values; the string mean_of_bin_means stands for the mean of the bin means. extra_starts lists further starting values; of all starts the fit with the lowest residual sum of squares is kept (the first on ties). bounds holds the lower and upper bounds (null: unbounded); method and max_nfev are passed to curve_fit.",
+ "double": {
+  "bounds": [
+   [
+    null,
+    0.01,
+    null,
+    0.01,
+    null
+   ],
+   [
+    null,
+    50.0,
+    null,
+    50.0,
+    null
+   ]
+  ],
+  "extra_starts": [],
+  "max_nfev": 20000,
+  "method": "trf",
+  "p0": [
+   -20.0,
+   0.3,
+   -5.0,
+   2.0,
+   3.0
+  ]
+ },
+ "single": {
+  "bounds": [
+   [
+    null,
+    0.01,
+    null
+   ],
+   [
+    null,
+    50.0,
+    null
+   ]
+  ],
+  "extra_starts": [
+   [
+    -20.0,
+    0.5,
+    3.0
+   ]
+  ],
+  "max_nfev": 20000,
+  "method": "trf",
+  "p0": [
+   0.0,
+   2.0,
+   "mean_of_bin_means"
+  ]
+ }
+}

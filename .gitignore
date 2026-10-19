@@ -1,0 +1,34 @@
+# raw data and results are never committed
+/data/
+/results/
+# caches
+*.pkl
+*.pickle
+.cache/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+# figure fonts are installed locally only
+*.ttf
+*.otf
+# raw data files and notebooks are never committed
+*.mat
+*.h5
+*.hdf5
+*.ipynb
+.ipynb_checkpoints/
+# tools, environments and logs
+.ruff_cache/
+.venv/
+.env
+*.log
+nohup.out
+.coverage
+htmlcov/
+# editors and operating systems
+.DS_Store
+.vscode/
+.idea/

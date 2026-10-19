@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hexmod"
+version = "1.0.0"
+description = "Analysis code for 'Firing rate adaptation in grid cells produces macroscopic hexadirectional modulation'"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "scipy",
+    "pandas",
+    "scikit-image",
+    "matplotlib",
+    "h5py",
+    "requests",
+    "tqdm",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "smoke: quick end-to-end run on synthetic data (runs in CI, no data needed)",
+    "data: needs the raw datasets in HEXMOD_DATA (skipped when they are absent)",
+    "frozen: compares with reference results in HEXMOD_FROZEN (skipped when it is not set)",
+    "slow: takes more than a few minutes (run with --runslow or HEXMOD_RUN_SLOW=1)",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
