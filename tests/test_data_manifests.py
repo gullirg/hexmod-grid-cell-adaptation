@@ -346,13 +346,16 @@ def test_data_folder_passes_size_check(data_dir):
 class _Server:
     """Local HTTP server with Range support; can ignore ranges or drop the first connection.
 
-    ``files`` is the content of ``/file.bin`` (bytes) or a mapping ``{path: bytes}``.
+    ``files`` is the content of ``/file.bin`` (bytes) or a mapping ``{path: bytes}``. With ``watch``
+    (a path), the size of that file when each request arrives is recorded in ``watched_sizes``
+    (0 when it does not exist).
     """
 
-    def __init__(self, files, honour_range=True, drop_first=False):
+    def __init__(self, files, honour_range=True, drop_first=False, watch=None):
         self.files = {"file.bin": files} if isinstance(files, bytes) else dict(files)
         self.honour_range, self.drop_first = honour_range, drop_first
-        self.ranges, self.paths = [], []
+        self.ranges, self.paths, self.watched_sizes = [], [], []
+        self.watch = Path(watch) if watch is not None else None
         outer = self
 
         class Handler(BaseHTTPRequestHandler):
@@ -367,6 +370,8 @@ class _Server:
                 rng = self.headers.get("Range")
                 outer.ranges.append(rng)
                 outer.paths.append(self.path.lstrip("/"))
+                if outer.watch is not None:
+                    outer.watched_sizes.append(outer.watch.stat().st_size if outer.watch.exists() else 0)
                 start = 0
                 if rng and outer.honour_range:
                     start = int(re.match(r"bytes=(\d+)-", rng).group(1))
@@ -436,13 +441,24 @@ def test_download_restarts_when_range_is_ignored(tmp_path, blob):
 
 
 def test_download_retries_after_dropped_connection(tmp_path, blob):
+    """A dropped connection is retried, resuming from the end of the partial file.
+
+    The server drops the first connection after a third of the file. The drop falls on a block
+    boundary, so the bytes received before it reach the partial file whether or not the HTTP client
+    library discards a block that is only partly read when the connection breaks. Exactly two
+    requests are made, and the completed file passes its size, sha256 and md5 checks.
+    """
     pytest.importorskip("requests")
     target = tmp_path / "file.bin"
-    with _Server(blob, drop_first=True) as srv:
-        dsrc.download_file(lambda: srv.url, target, len(blob), sha256(blob), md5=hashlib.md5(blob).hexdigest(),
-                           backoff=0)
-        assert srv.ranges[0] is None and srv.ranges[1].startswith("bytes=") and len(srv.ranges) == 2
-    assert target.read_bytes() == blob
+    part = tmp_path / "file.bin.part"
+    drop = len(blob) // 3                       # bytes sent before the connection drops
+    with _Server(blob, drop_first=True, watch=part) as srv:
+        assert dsrc.download_file(lambda: srv.url, target, len(blob), sha256(blob),
+                                  md5=hashlib.md5(blob).hexdigest(), chunk=drop // 8, backoff=0) == "downloaded"
+    kept = srv.watched_sizes[1]                 # size of the partial file when the second request arrives
+    assert len(srv.ranges) == 2 and srv.ranges[0] is None
+    assert 0 < kept <= drop and srv.ranges[1] == f"bytes={kept}-"
+    assert target.read_bytes() == blob and not part.exists()
 
 
 def test_download_rejects_wrong_checksum(tmp_path, blob):

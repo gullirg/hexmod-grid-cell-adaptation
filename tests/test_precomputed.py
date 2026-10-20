@@ -81,9 +81,11 @@ def test_fig7_statistics_from_participant_summaries():
             t = stats.ttest_rel(rates[:, 0::2].mean(axis=1), rates[:, 1::2].mean(axis=1)).statistic
             assert round(t, 4) == printed_t[(method, module)]
             panel = "fig7a" if method == "simple" else "fig7d"
-            assert values[f"{panel}.{module}.t"] == t
+            # recomputed values: the last bits can differ between CPU architectures and math libraries
+            assert values[f"{panel}.{module}.t"] == pytest.approx(t, rel=1e-9, abs=0)
             pct = rates / rates.mean(axis=1, keepdims=True) * 100 - 100
-            assert np.array_equal(pct, first[[f"dir_{d}" for d in DIRS]].to_numpy())
+            # the same for the percent changes, which can be zero
+            assert np.allclose(pct, first[[f"dir_{d}" for d in DIRS]].to_numpy(), rtol=1e-9, atol=1e-12)
             beta = first[[f"fold_{k}" for k in FOLDS]].to_numpy()
             p = stats.ttest_1samp(beta, 0, axis=0).pvalue
             assert [k for k in FOLDS if p[k - 1] < 0.05] == significant[(method, module)]

@@ -6,7 +6,9 @@ test runs steps 21 to 27 with their ``--smoke`` sizes in a temporary results fol
 
 from __future__ import annotations
 
+import gzip
 import importlib.util
+import math
 import sys
 from pathlib import Path
 
@@ -21,6 +23,9 @@ SCRIPTS = REPO / "scripts"
 PRE = REPO / "results_precomputed" / "sim"
 FOLDS = list(range(1, 8))
 DIRS = [30 * j for j in range(12)]
+#: Relative tolerance of comparisons of computed floating-point values with the shipped results
+#: (the last bits can differ between CPU architectures and math libraries).
+RTOL = 1e-9
 
 
 def load_script(name: str):
@@ -69,6 +74,34 @@ def _same_table(a: pd.DataFrame, b: pd.DataFrame) -> bool:
         elif x.dtype != y.dtype or not np.array_equal(x, y, equal_nan=True):
             return False
     return True
+
+
+def _same_value(got, ref) -> bool:
+    """Integers (counts, flags, sizes) exactly; floating-point values to the relative tolerance ``RTOL``."""
+    if isinstance(ref, float):
+        return isinstance(got, float) and math.isclose(got, ref, rel_tol=RTOL, abs_tol=0.0)
+    return type(got) is type(ref) and got == ref
+
+
+def _columns_that_differ(got: pd.DataFrame, ref: pd.DataFrame, atol: float = 0.0) -> list:
+    """Columns of two tables that differ: floating-point columns to ``RTOL`` (and ``atol``), others exactly."""
+    assert list(got.columns) == list(ref.columns) and len(got) == len(ref)
+    bad = []
+    for col in ref.columns:
+        x, y = got[col].to_numpy(), ref[col].to_numpy()
+        if y.dtype.kind == "f":
+            same = x.dtype.kind == "f" and np.allclose(x, y, rtol=RTOL, atol=atol, equal_nan=True)
+        else:
+            same = x.dtype == y.dtype and np.array_equal(x, y)
+        if not same:
+            bad.append(col)
+    return bad
+
+
+def _content(path: Path) -> bytes:
+    """Bytes of a file, decompressed for ``.gz`` (compressed bytes depend on the Python and zlib versions)."""
+    data = path.read_bytes()
+    return gzip.decompress(data) if path.suffix == ".gz" else data
 
 
 def test_participant_file_round_trip(records, tmp_path):
@@ -165,11 +198,16 @@ def test_collect_from_precomputed(results):
     assert step25.main(["--source", "precomputed"]) == 0
     out = results / "sim" / "fig7"
     values = hio.read_json(out / "fig7_values.json")
-    assert values == hio.read_json(PRE / "fig7" / "fig7_values.json")
+    shipped = hio.read_json(PRE / "fig7" / "fig7_values.json")
+    assert set(values) == set(shipped)
+    # the t and p values are recomputed here; the last bits can differ between CPU architectures and math libraries
+    assert [k for k in shipped if not _same_value(values[k], shipped[k])] == []
     for name in ("participants_small.csv.gz", "participants_large.csv.gz", "fig7ad_direction_bins.csv",
-                 "fig7be_beta.csv", "fig7c_orientation.csv", "fig7f_detection.csv", "fig7f_p_per_experiment.csv",
-                 "fig7_values.json"):
-        assert (out / name).read_bytes() == (PRE / "fig7" / name).read_bytes(), name   # the shipped files
+                 "fig7be_beta.csv", "fig7c_orientation.csv", "fig7f_detection.csv"):
+        assert _content(out / name) == _content(PRE / "fig7" / name), name   # the shipped files, byte for byte
+    # recomputed p values to RTOL (their last bits can differ in the same way); labels and experiments exactly
+    p_tables = [hio.read_csv(folder / "fig7f_p_per_experiment.csv") for folder in (out, PRE / "fig7")]
+    assert _columns_that_differ(*p_tables) == []
     printed = {"fig7a.small.t": -23.6257, "fig7a.large.t": -7.0936,
                "fig7d.small.t": -43.3605, "fig7d.large.t": -11.4143}
     assert {k: round(values[k], 4) for k in printed} == printed
@@ -229,9 +267,10 @@ def test_shipped_supp3e_cells():
     shipped = hio.load_npz(PRE / "fig6" / "maps.npz")
     assert cells.tolist() == [95331, 83646, 88, 72374, 36659, 2061]
     assert np.array_equal(cells, shipped["supp3e__large__cells"])
-    assert np.array_equal(gridness, shipped["supp3e__large__gridness"])
-    assert np.array_equal(peaks, shipped["supp3e__large__peak_rate_hz"])
-    assert np.array_equal(maps, shipped["supp3e__large__maps"])
+    # recomputed maps and their statistics: the last bits can differ between CPU architectures and math libraries
+    for got, key in ((gridness, "gridness"), (peaks, "peak_rate_hz"), (maps, "maps")):
+        ref = shipped[f"supp3e__large__{key}"]
+        assert got.shape == ref.shape and np.allclose(got, ref, rtol=RTOL, atol=0), key
     assert [step22.supp3e_title(g, p) for g, p in zip(gridness, peaks)] == [
         "0.6, 3 Hz", "0.5, 2 Hz", "0.7, 0.5 Hz", "0.8, 6 Hz", "1.2, 2 Hz", "1.2, 4 Hz"]
 
@@ -302,12 +341,28 @@ def test_smoke_chain(results):
     traj = hio.read_csv(sim / "fig6" / "trajectory_seed0.csv")
     shipped = hio.read_csv(PRE / "fig6" / "trajectory_seed0.csv")
     assert list(traj.columns) == list(shipped.columns) and len(traj) == len(shipped) == 23990
-    assert all(np.array_equal(traj[c].to_numpy(), shipped[c].to_numpy(), equal_nan=True) for c in traj.columns)
+    # trial and phase labels exactly; positions, speeds and directions (which can be zero) to RTOL, as the
+    # last bits can differ between CPU architectures and math libraries
+    assert _columns_that_differ(traj, shipped, atol=1e-12) == []
     maps = hio.load_npz(sim / "fig6" / "maps.npz")
     assert set(maps) == set(hio.load_npz(PRE / "fig6" / "maps.npz"))
     fig8a = hio.load_npz(sim / "fig8" / "fig8a_ideal_grids.npz")
     shipped8a = hio.load_npz(PRE / "fig8" / "fig8a_ideal_grids.npz")
-    assert set(fig8a) == set(shipped8a) and all(np.array_equal(fig8a[k], shipped8a[k]) for k in fig8a)
+    assert set(fig8a) == set(shipped8a)
+    for key, ref in shipped8a.items():
+        got = fig8a[key]
+        assert got.shape == ref.shape and got.dtype == ref.dtype, key
+        if ref.dtype.kind == "f" and not key.endswith("__field_locations"):
+            # field centres of the ideal lattices (which can be zero): the last bits can differ between CPU
+            # architectures and math libraries
+            assert np.allclose(got, ref, rtol=RTOL, atol=1e-12), key
+        else:
+            # grid scales and field locations (rate-map bin positions and radii) exactly. In these perfect grids
+            # some fields have two neighbouring bins of equal rate, and the field centre is the bin that
+            # skimage.feature.peak_local_max returns first: scikit-image 0.20 (environment.yml) gives the
+            # shipped positions, while versions that sort equal peaks stably, such as 0.23, move six fields of
+            # the small grid by one bin
+            assert np.array_equal(got, ref), key
     sweep = hio.read_csv(sim / "fig8" / "fig8d_sweep.csv")
     assert list(sweep.columns) == list(hio.read_csv(PRE / "fig8" / "fig8d_sweep.csv", nrows=1).columns)
     assert len(sweep) == 9 and sweep["scale"].tolist() == [30] * 3 + [50] * 3 + [70] * 3
