@@ -33,9 +33,8 @@ Every file that the analysis reads is listed, with its size and sha256 checksum,
 ``archive``
     for ``member`` rows, the ``path`` of the archive the member comes from.
 
-Some manifests have extra columns (``etag`` and ``used_in_cohort`` for ``vollan2025``,
-``used_in_cohort`` for ``brun2008`` and ``listdir_order`` for ``sargolini2006``; see
-docs/DATA.md).
+Some manifests have extra columns (``used_in_cohort`` for ``vollan2025`` and ``brun2008``,
+``listdir_order`` for ``sargolini2006``; see docs/DATA.md).
 
 Zip archives are read by a small reader in this module rather than by :mod:`zipfile`, because one
 archive (``sargolini2006``) is a split archive in three volumes, which :mod:`zipfile` cannot
@@ -73,7 +72,6 @@ SOURCES: Dict[str, dict] = {
         "host": "ebrains",
         "bucket": "d-4080b78d-edc5-4ae4-8144-7f6de79930ea",
         "landing_page": "https://doi.org/10.25493/R5FR-EDG",
-        "listing_prefixes": ["sharing_v4/navigation/of/", "sharing_v4/documentation/"],
     },
     "brun2008": {
         "host": "nird",
@@ -159,63 +157,6 @@ def resolve_url(key: str, source: str, session=None, timeout: float = 30.0) -> s
     except Exception:  # network or format problem: fall back to the direct address
         pass
     return object_url(key, source)
-
-
-def list_remote(key: str, session=None, timeout: float = 60.0) -> Dict[str, Tuple[int, str]]:
-    """List the objects of a dataset at its archive (small listing requests only).
-
-    Returns
-    -------
-    dict
-        ``{object key: (bytes, hash)}``; object keys are relative to the dataset's location
-        (as in the ``source`` column of the manifests). The hash is the object's etag at
-        EBRAINS and NIRD and its md5 checksum at Zenodo (``SOURCES[key]["host"]``).
-    """
-    import xml.etree.ElementTree as ET
-
-    session = session or _session()
-    src = SOURCES[key]
-    out: Dict[str, Tuple[int, str]] = {}
-    if src["host"] == "zenodo":
-        reply = session.get(f"{ZENODO}/api/records/{src['record']}", timeout=timeout)
-        reply.raise_for_status()
-        for item in reply.json().get("files", []):
-            checksum = str(item.get("checksum", ""))
-            out[item["key"]] = (int(item["size"]), checksum.split(":", 1)[1] if checksum.startswith("md5:") else "")
-        return out
-    if src["host"] == "ebrains":
-        for prefix in src["listing_prefixes"]:
-            marker = None
-            while True:
-                params = {"prefix": prefix, "limit": 1000}
-                if marker:
-                    params["marker"] = marker
-                reply = session.get(f"{EBRAINS_PROXY}/{src['bucket']}", params=params, timeout=timeout)
-                reply.raise_for_status()
-                objects = reply.json().get("objects", [])
-                for obj in objects:
-                    out[obj["name"]] = (int(obj["bytes"]), str(obj.get("hash", "")))
-                if len(objects) < 1000:
-                    break
-                marker = objects[-1]["name"]
-        return out
-    ns = "{http://s3.amazonaws.com/doc/2006-03-01/}"
-    prefix = src["identifier"] + "/"
-    token = None
-    while True:
-        params = {"list-type": "2", "prefix": prefix}
-        if token:
-            params["continuation-token"] = token
-        reply = session.get(f"{NIRD_S3}/{NIRD_BUCKET}", params=params, timeout=timeout)
-        reply.raise_for_status()
-        root = ET.fromstring(reply.content)
-        for item in root.iter(ns + "Contents"):
-            name = item.findtext(ns + "Key", "")[len(prefix):]
-            out[name] = (int(item.findtext(ns + "Size", "0")), item.findtext(ns + "ETag", "").strip('"'))
-        if root.findtext(ns + "IsTruncated", "false") != "true":
-            break
-        token = root.findtext(ns + "NextContinuationToken")
-    return out
 
 
 # ------------------------------------------------------------------------------------- manifests
@@ -766,16 +707,3 @@ def download_file(url: "str | Callable[[], str]", target: Path, size: int, sha25
         except (requests.RequestException, OSError, DownloadError) as exc:
             last_error = exc
     raise DownloadError(f"{target.name}: failed after {retries + 1} attempts: {last_error}")
-
-
-def head(url: str, timeout: float = 30.0) -> Tuple[int, Optional[int], str]:
-    """Send an HTTP HEAD request (no body is transferred).
-
-    Returns
-    -------
-    (int, int or None, str)
-        Status code, Content-Length and the final address after redirects.
-    """
-    reply = _session().head(url, allow_redirects=True, timeout=timeout)
-    length = reply.headers.get("Content-Length")
-    return reply.status_code, int(length) if length is not None else None, reply.url

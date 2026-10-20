@@ -18,7 +18,7 @@ Reads ``results/preprocessed/trajectories.pkl``, ``rat/cohort/cells.csv`` (step 
    new characterisation enter the fits unchanged.
 
 ``alpha_original`` in ``shift_cells.csv`` is ``alpha_tprevXloc_all`` of step 03 after one CSV text
-round trip (docs/PIPELINE.md, section 2.7), the values of the Supp Fig 2 comparison.
+round trip (docs/PIPELINE.md, Rounded per-cell inputs), the values of the Supp Fig 2 comparison.
 
 Writes ``rat/prospective/shift_ms.npy``, ``si_shift.npy``, ``peak_shift.csv``,
 ``shift_cells.csv``, ``fr_percent_change_shifted.npy`` and ``shift_field_locations.npz``.
@@ -70,7 +70,6 @@ def parse_args(argv: Optional[List[str]] = None):
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0],
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--workers", type=int, default=None, help="worker processes (default HEXMOD_WORKERS or 4)")
-    p.add_argument("--smoke", action="store_true", help="smoke run on synthetic data")
     return p.parse_args(argv)
 
 
@@ -87,7 +86,6 @@ def _check_keys(results, session_ids, cell_ids):
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
-    config.guard_smoke_results(args.smoke)
     workers = config.workers(args.workers)
     res = config.results_dir()
     out_dir = res / "rat" / "prospective"

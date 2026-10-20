@@ -1,15 +1,15 @@
 Creative Commons Attribution 4.0 International (CC BY 4.0)
 
-The simulation input files in this folder (the simulated grid cell pool
-and its checksums) are licensed under the Creative Commons
+The simulation data shipped with this repository are licensed under the Creative Commons
 Attribution 4.0 International licence: https://creativecommons.org/licenses/by/4.0/
+These are the simulated grid cell pool and its checksums in inputs/simulation/, and the simulation
+results in results_precomputed/ and its subfolders.
 
 Copyright (c) 2026 The authors of "Firing rate adaptation in grid cells produces macroscopic
 hexadirectional modulation".
 
-When you reuse them, please cite the paper (see CITATION.cff at the root of the repository).
-The code that produced them is licensed separately under the MIT licence (LICENSE at the root
-of the repository).
+When you reuse them, please cite the paper (see CITATION.cff). The code is licensed separately
+under the MIT licence (LICENSE).
 
 The text of the licence follows.
 

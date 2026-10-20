@@ -10,10 +10,16 @@ Modules:
 - ``hexmod_fit``: hexadirectional modulation controlling for location and speed.
 - ``prospective``: spatial information with time-shifted spikes.
 - ``poisson``: multiplicative Poisson model fits used by the modules above.
+- ``visit_sequences``: firing rate on successive field visits (Fig 3F).
+- ``timescales``: adaptation timescales (Supp Fig 4) and numbers quoted in the Methods.
+- ``conjunctive``: preferred movement direction relative to the grid axes (Fig 2B to 2E).
+- ``same_cell``: repeated recordings of the same unit.
+- ``examples``: arrays of the example cells.
+- ``paper_stats``, ``figure_tables``: printed statistics and figure tables of the rat figures.
 
 Per-cell functions take one dictionary (``inputs``) holding ``cell_data`` (see
 ``gridcell.make_cell_data``) and the settings, so that they can be run over many cells with
-``hexmod.parallel.map_ordered``. Defaults reproduce the published analyses; the documented
-options (``rate_map_spike_mode``, ``tprev_rule``, ``mask_valid``) select the variants named in
-docs/PIPELINE.md for Fig 3F and Supp Fig 4.
+``hexmod.parallel.map_ordered``. The options ``rate_map_spike_mode`` and ``tprev_rule`` select
+the visit extraction of Fig 3F (see ``visit_sequences``), and ``mask_valid`` the sample mask of
+Supp Fig 4 (see ``timescales``); their defaults are the settings of the other analyses.
 """

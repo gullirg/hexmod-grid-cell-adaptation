@@ -1,8 +1,5 @@
 """Statistical tests used for the printed statistics.
 
-Each function reproduces the arithmetic that produced the published numbers, in the same order
-of operations, so results agree to the last bit with the paper's values:
-
 - one-sample, paired and two-sample t-tests and Cohen's d (``one_sample_t``, ``paired_t``,
   ``two_sample_t``);
 - one-way ANOVA (``one_way_anova``) and a repeated-measures ANOVA written out by hand
@@ -11,9 +8,11 @@ of operations, so results agree to the last bit with the paper's values:
 - Rayleigh test with Zar's approximation of the p value and its critical resultant length
   (``rayleigh_zar``, ``zar_p``, ``rayleigh_r_crit``), the V test (``v_test``) and the
   Monte Carlo Rayleigh null used for chance bands (``rayleigh_chance``);
-- the Fisher and Lee (1983) circular-circular correlation and its cell-permutation test with a
-  seed derived from a text key (``fisher_lee``, ``fisher_lee_permutation``, ``seed_of``).
+- the Fisher and Lee (1983) circular-circular correlation and its seeded cell-permutation test
+  (``fisher_lee``, ``fisher_lee_permutation``).
 
+Each function keeps the order of operations of the reference values
+(``reference/expected_statistics.json``), because another order can change the last digit.
 Results are returned as plain dicts of Python floats and ints so they can be written to JSON.
 """
 
@@ -21,7 +20,6 @@ from __future__ import annotations
 
 import itertools
 import math
-import zlib
 from typing import Dict, Optional, Sequence
 
 import numpy as np
@@ -31,7 +29,7 @@ __all__ = [
     "one_sample_t", "paired_t", "two_sample_t", "cohens_d", "one_way_anova", "rm_anova",
     "rm_pairwise", "holm", "binomial_test", "zar_p", "rayleigh_zar", "rayleigh_r_crit", "v_test",
     "rayleigh_chance", "rayleigh_monte_carlo", "fisher_lee", "fisher_lee_permutation_null",
-    "permutation_pvalues", "fisher_lee_permutation", "seed_of",
+    "permutation_pvalues", "fisher_lee_permutation",
 ]
 
 
@@ -87,7 +85,7 @@ def paired_t(a, b) -> Dict[str, float]:
 def two_sample_t(a, b, equal_var: bool = True) -> Dict[str, float]:
     """Two-sided two-sample t-test (Student when ``equal_var``, Welch otherwise).
 
-    The arrays are used as given (no NaN removal), as for the published tests.
+    The arrays are used as given (no NaN removal).
 
     Returns
     -------
@@ -297,11 +295,6 @@ def rayleigh_monte_carlo(R: float, n: int, ndraw: int = 100000, seed: int = 5600
 
 
 # ---------------------------------------------------------------- circular-circular correlation
-def seed_of(key: str) -> int:
-    """Seed derived from a text key: ``zlib.crc32(key) mod 2**31``."""
-    return zlib.crc32(key.encode()) % (2 ** 31)
-
-
 def fisher_lee(a, b) -> float:
     """Fisher and Lee (1983) circular-circular correlation of angles ``a`` and ``b`` (radians).
 
@@ -355,7 +348,7 @@ def permutation_pvalues(null, obs: float) -> Dict[str, float]:
             "null_sd": float(np.std(null))}
 
 
-def fisher_lee_permutation(a, b, n_perm: int = 20000, key: Optional[str] = None,
+def fisher_lee_permutation(a, b, n_perm: int = 20000, seed: Optional[int] = None,
                            rng: Optional[np.random.Generator] = None) -> Dict[str, float]:
     """Fisher-Lee correlation and its cell-permutation test.
 
@@ -366,10 +359,10 @@ def fisher_lee_permutation(a, b, n_perm: int = 20000, key: Optional[str] = None,
         canonical cell order.
     n_perm : int
         Number of permutations (20,000 for Fig 2D).
-    key : str, optional
-        Text key; the generator is ``default_rng(seed_of(key))``.
+    seed : int, optional
+        Seed of the generator, ``numpy.random.default_rng(seed)``.
     rng : numpy Generator, optional
-        Generator to use instead of ``key``.
+        Generator to use instead of ``seed``.
 
     Returns
     -------
@@ -377,9 +370,9 @@ def fisher_lee_permutation(a, b, n_perm: int = 20000, key: Optional[str] = None,
         ``r``, ``n`` and the entries of ``permutation_pvalues``.
     """
     if rng is None:
-        if key is None:
-            raise ValueError("give either key or rng")
-        rng = np.random.default_rng(seed_of(key))
+        if seed is None:
+            raise ValueError("give either seed or rng")
+        rng = np.random.default_rng(seed)
     r = fisher_lee(a, b)
     null = fisher_lee_permutation_null(a, b, n_perm, rng)
     return {"r": r, "n": int(len(np.asarray(a))), **permutation_pvalues(null, r)}

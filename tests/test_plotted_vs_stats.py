@@ -4,29 +4,23 @@ Every figure writes the values it draws to ``figures/<Figure>/source_data/``. Th
 statistics of each figure from these tables, with the functions of ``hexmod.stats``,
 ``hexmod.rat.paper_stats``, ``hexmod.rat.figure_tables``, ``hexmod.rat.conjunctive`` and
 ``hexmod.rat.timescales``, and compare them with the keys of ``stats/*.json`` in the same results folder
-(docs/PIPELINE.md, section 4). They show that each figure draws the values its statistics were computed
+(docs/STATISTICS.md). They show that each figure draws the values its statistics were computed
 from. A few numbers are not recomputed but read from a statistics table of the figure: the Fig 7A and 7D
 tests (computed on firing rates in Hz, drawn as percent change) and the Fig 8 optimal speed (a closed form).
 
-Two variants:
-
-- ``smoke``: the results of the smoke run (``run_pipeline.py --smoke``, shared with
-  ``test_pipeline_smoke.py``);
-- ``frozen``: a results folder with figures and statistics from an earlier run, given in
-  ``HEXMOD_FROZEN_RESULTS`` or ``HEXMOD_FROZEN`` (the folder that holds ``figures/`` and ``stats/``), for
-  example ``HEXMOD_FROZEN_RESULTS=results pytest -m frozen tests/test_plotted_vs_stats.py``.
+The tests check the results folder of a complete run, given in ``HEXMOD_RESULTS`` (the folder that holds
+``figures/`` and ``stats/``), for example ``HEXMOD_RESULTS=results pytest -m results tests/test_plotted_vs_stats.py``.
+They are skipped when no such folder is given.
 
 Counts must be equal; other numbers agree within ``RTOL`` (relative) and ``ATOL`` (absolute): statistics
 recomputed in another cell order (Fig 3F) or from per-cell values rounded by a CSV round trip (docs/PIPELINE.md,
-2.7) differ in the last digits only.
+Rounded per-cell inputs) differ in the last digits only.
 """
 
 from __future__ import annotations
 
-import importlib.util
 import math
 import os
-import sys
 from pathlib import Path
 from typing import Callable, Dict, List, Tuple
 
@@ -66,9 +60,8 @@ def check(figure: str):
 class Source:
     """Reader of the source data tables of one figure."""
 
-    def __init__(self, folder: Path, smoke: bool):
+    def __init__(self, folder: Path):
         self.folder = folder
-        self.smoke = smoke
 
     def __call__(self, name: str):
         from hexmod import io
@@ -252,10 +245,9 @@ def supp2(src: Source) -> List[Entry]:
     e = src("SuppFig2E_adaptation_coefficient")
     out = entries(paper_stats.supp2_statistics(peak, e["alpha_original"], e["alpha_shifted"], X))
     out += entries(figure_tables.paired_posthoc("supp2", X))
-    if not src.smoke:  # the smoke run may draw a substitute example cell (step 11 --smoke)
-        si = src("SuppFig2B_spatial_information_example_cell")
-        best = si["shift_ms"].to_numpy()[np.argmax(si["spatial_information_bits_per_spike"].to_numpy(float))]
-        out.append(("supp2.example_best_shift_ms", int(best), 0))
+    si = src("SuppFig2B_spatial_information_example_cell")
+    best = si["shift_ms"].to_numpy()[np.argmax(si["spatial_information_bits_per_spike"].to_numpy(float))]
+    out.append(("supp2.example_best_shift_ms", int(best), 0))
     return out
 
 
@@ -345,12 +337,10 @@ def read_statistics(results: Path) -> Dict[str, float]:
     return values
 
 
-def compare(figure: str, results: Path, smoke: bool) -> Tuple[List[str], int]:
+def compare(figure: str, results: Path) -> Tuple[List[str], int]:
     """Recompute the statistics of ``figure`` and compare them with the statistics files.
 
-    In the smoke variant every recomputed statistic must be in the statistics files, except those that are
-    not finite (the smoke run leaves them out). Reference results may hold only the published statistics, so
-    in the full variant statistics missing from the files are passed over.
+    Statistics missing from the files are passed over.
 
     Returns
     -------
@@ -363,11 +353,9 @@ def compare(figure: str, results: Path, smoke: bool) -> Tuple[List[str], int]:
     assert folder.is_dir(), f"{figure} was not drawn in {results}"
     stats_values = read_statistics(results)
     problems, n_compared = [], 0
-    for key, value, rtol in CHECKS[figure](Source(folder, smoke)):
+    for key, value, rtol in CHECKS[figure](Source(folder)):
         value = float(value)
         if key not in stats_values:
-            if smoke and math.isfinite(value):
-                problems.append(f"{key}: recomputed {value!r}, not in the statistics files")
             continue
         ref = stats_values[key]
         n_compared += 1
@@ -384,49 +372,19 @@ def test_every_figure_has_a_check():
     assert sorted(CHECKS) == sorted(FIGURES)
 
 
-# ------------------------------------------------------------------------------------- smoke variant
-def _helper():
-    name = "hexmod_tests_smoke_run"
-    if name not in sys.modules:
-        path = Path(__file__).resolve().parent / "fixtures" / "smoke_run.py"
-        spec = importlib.util.spec_from_file_location(name, path)
-        module = importlib.util.module_from_spec(spec)
-        sys.modules[name] = module
-        spec.loader.exec_module(module)
-    return sys.modules[name]
-
-
-@pytest.fixture(scope="session")
-def smoke_results(tmp_path_factory) -> Path:
-    run = _helper().smoke_run(tmp_path_factory)
-    if run["returncode"] != 0:
-        pytest.fail(f"the smoke run failed (exit status {run['returncode']}):\n{_helper().log_tail(run)}")
-    return run["results"]
-
-
-@pytest.mark.smoke
-@pytest.mark.parametrize("figure", FIGURES)
-def test_plotted_values_give_the_statistics_smoke(smoke_results, figure):
-    problems, n_compared = compare(figure, smoke_results, smoke=True)
-    assert not problems, "\n".join(problems)
-    assert n_compared > 0
-
-
-# ------------------------------------------------------------------------------------ frozen variant
-def _full_results() -> Path:
-    for name in ("HEXMOD_FROZEN_RESULTS", "HEXMOD_FROZEN"):
-        value = os.environ.get(name)
-        if not value:
-            continue
+# ----------------------------------------------------------------------------- results of a run
+def _results_folder() -> Path:
+    value = os.environ.get("HEXMOD_RESULTS")
+    if value:
         folder = Path(value).expanduser()
         if (folder / "figures").is_dir() and (folder / "stats").is_dir():
             return folder
-    pytest.skip("no results folder with figures and statistics (set HEXMOD_FROZEN_RESULTS)")
+    pytest.skip("no results folder with figures and statistics (set HEXMOD_RESULTS)")
 
 
-@pytest.mark.frozen
+@pytest.mark.results
 @pytest.mark.parametrize("figure", FIGURES)
-def test_plotted_values_give_the_statistics_full(figure):
-    problems, n_compared = compare(figure, _full_results(), smoke=False)
+def test_plotted_values_give_the_statistics(figure):
+    problems, n_compared = compare(figure, _results_folder())
     assert not problems, "\n".join(problems)
     assert n_compared > 0, f"no statistic of {figure} in the statistics files"

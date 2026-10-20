@@ -1,9 +1,4 @@
-"""Tests of hexmod.rat.paper_stats: grouping rules, statistic keys and the alpha fit limits.
-
-The synthetic tests need no data. Tests marked ``frozen`` recompute the printed statistics from
-the reference per-cell results in ``HEXMOD_FROZEN`` and compare them with the reference
-statistics files.
-"""
+"""Tests of hexmod.rat.paper_stats: grouping rules, statistic keys and the alpha fit limits."""
 
 import numpy as np
 import pandas as pd
@@ -186,36 +181,3 @@ def test_alpha_bounds_equal_the_limits_of_the_fit():
                       "diagnostic.alpha_at_bound.tprevXloc_all.n_lower": 1,
                       "diagnostic.alpha_at_bound.tprevXloc_all.n_upper": 0,
                       "diagnostic.alpha_at_bound.tprevXloc_all.n_total": 1}
-
-
-# ------------------------------------------------------------------- frozen reference results
-CORE_PREFIXES = ("fig3c.", "fig3d.", "fig4c.", "fig4d.", "fig5.", "fig5a.", "fig5b.", "fig5c.", "supp1.", "supp2.")
-
-
-@pytest.mark.frozen
-def test_frozen_cohort_statistics(frozen_path):
-    from hexmod.io import read_csv, read_json
-
-    cells = read_csv(frozen_path("rat/cohort/cells.csv"))
-    ref = read_json(frozen_path("stats/step02_cohort.json"))
-    s = ps.cohort_statistics(cells)
-    assert s == ref  # counts and scale ranges, exactly
-
-
-@pytest.mark.frozen
-def test_frozen_core_statistics(frozen_dir, frozen_path):
-    from hexmod.io import read_json
-
-    for rel in ("rat/cohort/cells.csv", "rat/adaptation/param_cells.csv", "rat/prospective/shift_cells.csv"):
-        frozen_path(rel)  # skips when a reference file is missing
-    s = ps.core_statistics_from_results(frozen_dir)
-    ref = {k: v for k, v in read_json(frozen_path("stats/step12_rat_statistics.json")).items()
-           if k.startswith(CORE_PREFIXES)}
-    assert set(ref) <= set(s), sorted(set(ref) - set(s))     # s may hold keys added since the reference
-    for k, v in ref.items():
-        assert abs(s[k] - v) <= 1e-9 and abs(s[k] - v) <= 1e-9 * abs(v) + 1e-300, (k, s[k], v)
-    # the printed values
-    assert round(s["fig3c.rm_anova.F"], 1) == 375.8 and round(s["fig3d.t"], 2) == -41.09
-    assert round(s["fig4c.t"], 2) == 11.07 and round(s["fig4d.anova.F"], 2) == 7.06
-    assert (s["fig5b.strong.n"], s["fig5b.weak.n"], s["fig5b.no.n"]) == (435, 430, 448)
-    assert round(s["fig5b.strong.t"], 3) == -2.845 and round(s["supp2.rm_anova.F"], 1) == 294.7

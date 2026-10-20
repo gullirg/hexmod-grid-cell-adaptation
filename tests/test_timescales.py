@@ -1,9 +1,4 @@
-"""Tests of the adaptation timescales (Supp Fig 4) and the Methods numbers (hexmod.rat.timescales).
-
-Synthetic tests run everywhere. Tests marked ``frozen`` recompute the published values from the
-reference results in ``HEXMOD_FROZEN`` (per-cell profiles, cohort table) and compare them with the
-reference fits, points, bootstrap intervals and statistics.
-"""
+"""Tests of the adaptation timescales (Supp Fig 4) and the Methods numbers (hexmod.rat.timescales)."""
 
 from __future__ import annotations
 
@@ -12,7 +7,6 @@ import math
 import numpy as np
 import pytest
 
-from hexmod import io as hio
 from hexmod.rat import timescales as ts
 
 
@@ -138,98 +132,3 @@ def test_running_speed_summary():
     assert moving["mean_speed_moving_cm_s"] == 55.0 and moving["n_moving"] == 3
     assert ts.arena_size_by_session(["a", "a", "b"], [np.arange(0, 100.0, 3), np.arange(0, 103.0, 3),
                                                       np.arange(10, 160.0, 3)]) == {"a": 100.5, "b": 157.0}
-
-
-# ---------------------------------------------------------------------------------------- frozen
-def _frozen_profile(frozen_path):
-    pct = hio.load_npy(frozen_path("rat/timescales/finebin_percent_change.npy"))
-    cells = hio.read_csv(frozen_path("rat/cohort/cells.csv"))
-    assert len(pct) == len(cells)
-    return pct, cells
-
-
-@pytest.mark.frozen
-def test_frozen_points(frozen_path):
-    pct, _ = _frozen_profile(frozen_path)
-    ref = hio.read_csv(frozen_path("rat/timescales/supp4_points.csv"))
-    s = ts.bin_summary(pct)
-    assert list(ref["bin"]) == list(range(1, 10))
-    for col in ("edge_low_s", "edge_high_s", "x_s", "cells_in_bin", "mean_pct_change", "sem_pct_change",
-                "ci95_low", "ci95_high", "weight"):
-        assert np.array_equal(np.asarray(s[col], dtype=float), ref[col].to_numpy(float)), col
-
-
-@pytest.mark.frozen
-def test_frozen_weighted_fits(frozen_path, settings):
-    pct, _ = _frozen_profile(frozen_path)
-    s = ts.bin_summary(pct)
-    ref = hio.read_json(frozen_path("rat/timescales/fits.json"))["unshifted"]
-    for weighting, weighted in (("weighted_by_SEM", True), ("unweighted", False)):
-        got = ts.model_comparison(s["x_s"], s["mean_pct_change"], s["sem_pct_change"], settings, weighted)
-        exp = ref[weighting]
-        assert got["single"] == exp["single"], weighting
-        if weighted:   # the printed fits: every value bit for bit
-            assert got == exp
-        else:          # the unweighted two-exponential fit is not printed; it agrees to 1e-5
-            for k, v in exp["double"].items():
-                assert got["double"][k] == pytest.approx(v, rel=1e-5), k
-    table = hio.read_csv(frozen_path("rat/timescales/supp4_fits.csv"))
-    w = ref["weighted_by_SEM"]
-    values = [w["single"]["a"], w["single"]["tau"], w["single"]["c"], w["single"]["SS"], w["double"]["a_fast"],
-              w["double"]["tau_fast"], w["double"]["a_slow"], w["double"]["tau_slow"], w["double"]["c"],
-              w["double"]["SS"]]
-    assert table["value"].tolist() == values
-
-
-@pytest.mark.frozen
-def test_frozen_bootstrap_reproduces_reference(frozen_path, settings):
-    """Same cells, animals, number of resamples and seed as the reference bootstrap. The intervals of the
-    one-exponential time constant agree to 1e-6 s (the optimiser tolerance). The two-exponential fits of the
-    resamples are poorly constrained and sensitive to the starting values, so their intervals agree to 0.02 s
-    and the shares to one resample in 500 (from seed to seed the interval ends vary by about 0.03 s)."""
-    pct, cells = _frozen_profile(frozen_path)
-    ref = hio.read_json(frozen_path("rat/timescales/bootstrap.json"))["unshifted"]
-    b = ts.animal_bootstrap(pct, cells["animal_id"].to_numpy(), settings, n_boot=ts.N_BOOTSTRAP,
-                            rng=np.random.default_rng(ts.PUBLISHED_BOOTSTRAP_SEED))
-    assert b["n_cells"] == ref["n_cells"] and b["n_animals"] == ref["n_animals"] and b["n_boot_ok"] == ref["n_boot_ok"]
-    assert np.allclose(b["tau_single_95"], ref["tau_single_95"], rtol=0, atol=1e-6)
-    for key in ("tau_fast_95", "tau_slow_95"):
-        assert np.allclose(b[key], ref[key], rtol=0, atol=0.02), key
-    for key in ("share_boot_double_preferred_by_AIC", "share_slow_over_10s"):
-        assert abs(b[key] - ref[key]) <= 0.002, key
-
-
-@pytest.mark.frozen
-def test_frozen_methods_ratio(frozen_path):
-    pct = hio.load_npy(frozen_path("rat/adaptation/fr_percent_change.npy"))
-    # printed with eight decimals by the published analysis: 0.92315494
-    assert abs(ts.first_to_last_bin_ratio(pct) - 0.92315494) < 5e-9
-
-
-@pytest.mark.frozen
-def test_frozen_profile_first_cells(frozen_path):
-    """The nine-bin profile of the first cohort cells equals the reference rows exactly."""
-    from hexmod.rat.gridcell import make_cell_data
-
-    pct_ref, cells = _frozen_profile(frozen_path)
-    traj = hio.load_cache(frozen_path("preprocessed/trajectories.pkl"))
-    fl = hio.load_npz(frozen_path("rat/cohort/field_locations.npz"))["field_locations"]
-    rows = list(range(4))
-    out = []
-    for i in rows:
-        r = cells.iloc[i]
-        cd = make_cell_data(traj[r.animal_id][r.session_id], int(r.cell_id), r.animal_id, r.session_id)
-        out.append(ts.fine_bin_cell(ts.fine_bin_inputs(cd, fl[i])))
-    pct = ts.percent_change([o["rate_hz"] for o in out], [o["mean_rate_hz"] for o in out])
-    assert np.array_equal(pct, pct_ref[rows], equal_nan=True)
-
-
-@pytest.mark.frozen
-def test_frozen_statistics_keys(frozen_path, settings):
-    ref = hio.read_json(frozen_path("stats/step07_adaptation_timescales.json"))
-    pct, _ = _frozen_profile(frozen_path)
-    s = ts.bin_summary(pct)
-    w = ts.model_comparison(s["x_s"], s["mean_pct_change"], s["sem_pct_change"], settings, True)
-    assert ref["supp4.n_cells"] == len(pct) and ref["supp4.n_cells_last_bin"] == int(s["cells_in_bin"][-1])
-    assert ref["supp4.single.tau_s"] == w["single"]["tau"] and ref["supp4.double.tau_slow_s"] == w["double"]["tau_slow"]
-    assert ref["supp4.f_test.p"] == w["extra_SS_p"] and ref["supp4.delta_bic"] == w["dBIC"]

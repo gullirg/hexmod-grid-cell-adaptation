@@ -14,7 +14,7 @@ at least 0.3. Cells are in canonical order (the order of the preprocessed data).
 
 Writes under ``results/``: ``rat/cohort/cells.csv``, ``dir_maps.npy``,
 ``field_locations.npz``, ``cells_full.npz``, ``sessions.csv``, ``table1.csv`` and
-``stats/step02_cohort.json`` (contents in docs/PIPELINE.md, step 02).
+``stats/step02_cohort.json`` (its printed keys are listed in docs/STATISTICS.md).
 """
 
 from __future__ import annotations
@@ -64,7 +64,6 @@ def parse_args(argv: Optional[List[str]] = None):
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0],
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--workers", type=int, default=None, help="worker processes (default HEXMOD_WORKERS or 4)")
-    p.add_argument("--smoke", action="store_true", help="smoke run on synthetic preprocessed data (no manifest check)")
     return p.parse_args(argv)
 
 
@@ -89,7 +88,6 @@ def cohort_sessions(data, dataset_keys):
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
-    config.guard_smoke_results(args.smoke)
     workers = config.workers(args.workers)
     res = config.results_dir()
     keys = list(ds.CANONICAL_ORDER)
@@ -127,7 +125,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                          "meanFR_infield", "meanFR_outfield"]},
             "n_fields": np.array([r["fieldLoc"].shape[0] for r in grid], dtype=np.int64),
         }, columns=CELL_COLUMNS)
-        if not args.smoke and len(cells) and not labels.is_canonical(cells):
+        if len(cells) and not labels.is_canonical(cells):
             raise labels.ManifestError("the cohort cells are not in the canonical order of the unit manifest")
 
         rows = cells["row"].to_numpy()

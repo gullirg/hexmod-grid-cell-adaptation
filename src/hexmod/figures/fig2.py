@@ -31,8 +31,6 @@ label of E, which the letter E clears by 1.25 mm, with the angle labels of B and
 
 from __future__ import annotations
 
-import itertools
-
 import numpy as np
 import pandas as pd
 import matplotlib as mpl
@@ -92,18 +90,13 @@ CARTESIAN_RC = {
     "xtick.color": "#000000", "ytick.color": "#000000", "text.color": "#000000", "figure.facecolor": "white",
     "axes.facecolor": "white", "savefig.facecolor": "white", "legend.frameon": False, "axes.unicode_minus": True}
 
-# Colours of the animals in D: the six animals with most cells, assigned so that animals whose dots lie closest together
-# get the colours farthest apart for normal vision and for simulated red-green colour vision deficiency.
-ANIMAL_COLOURS = ["#0F4BF7", "#C61E58", "#0FA626", "#581378", "#B775FE", "#354E03"]
+# Colours of the six animals with most cells in D; the other animals are grey.
+ANIMAL_COLOURS = {"V18": "#C61E58", "V15": "#0FA626", "V10": "#581378", "V12": "#0F4BF7", "V11": "#B775FE",
+                  "V14": "#354E03"}
 OTHER_ANIMALS = "#969696"
 # The coloured dots of D are drawn in one random order, so that no animal covers another systematically; this seed
 # gives the order of the published panel.
 PUBLISHED_DRAW_ORDER_SEED = 20261013
-# Machado, Oliveira and Fernandes (2009), severity 1.0
-_MACHADO = {"protan": [[0.152286, 1.052583, -0.204868], [0.114503, 0.786281, 0.099216],
-                       [-0.003882, -0.048116, 1.051998]],
-            "deutan": [[0.367322, 0.860646, -0.227968], [0.280085, 0.672501, 0.047413],
-                       [-0.011820, 0.042940, 0.968881]]}
 
 
 # ------------------------------------------------------------------------------------------------------------- style
@@ -126,7 +119,6 @@ class _Canvas:
         self.w, self.h = w, h
         self.fig = Figure(figsize=(w * MM, h * MM), dpi=600)
         FigureCanvasAgg(self.fig)
-        self.axes = {}
         self.even = []
 
     def X(self, x):
@@ -139,18 +131,15 @@ class _Canvas:
         return self.fig.text(self.X(x), self.Y(y), s, **kw)
 
     def letter(self, name, x, top):
-        t = self.text(x, top + CAP12, name, fontsize=12, fontweight="bold", ha="left", va="baseline")
-        return common.tag(t, panel=name, name="panel letter")
+        return self.text(x, top + CAP12, name, fontsize=12, fontweight="bold", ha="left", va="baseline")
 
-    def polar(self, panel, name, cx, cy):
+    def polar(self, cx, cy):
         ax = self.fig.add_axes([self.X(cx - AXW / 2), self.Y(cy + DIAM / 2), AXW / self.w, DIAM / self.h],
                                projection="polar")
-        self.axes[name] = common.tag(ax, panel=panel, name=name)
         return ax
 
-    def cart(self, panel, name, left, top, w, h):
+    def cart(self, left, top, w, h):
         ax = self.fig.add_axes([self.X(left), self.Y(top + h), w / self.w, h / self.h])
-        self.axes[name] = common.tag(ax, panel=panel, name=name)
         return ax
 
 
@@ -257,7 +246,7 @@ def colour_key(cv, right, top):
     r = cv.fig.canvas.get_renderer()
     x = right
     for lab, col in ((KEY_WORDS[1], COLOUR_MISALIGN), (KEY_WORDS[0], COLOUR_ALIGN)):
-        t = common.tag(cv.text(x, base, lab, fontsize=10, ha="right", va="baseline"), panel="A", name="colour key")
+        t = cv.text(x, base, lab, fontsize=10, ha="right", va="baseline")
         wtxt = t.get_window_extent(r).width * 25.4 / cv.fig.dpi
         x0 = x - wtxt - gap_txt - sw_w
         p = Rectangle((cv.X(x0), cv.Y(base)), sw_w / cv.w, sw_h / cv.h, transform=cv.fig.transFigure, facecolor=col,
@@ -303,72 +292,16 @@ def even_side_labels(cv):
 
 
 # ---------------------------------------------------------------------------------------------------------- panel D
-def _linear_rgb(h):
-    c = np.array([int(h[i:i + 2], 16) / 255.0 for i in (1, 3, 5)])
-    return np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
-
-
-def _oklab(rgb):
-    r, g, b = np.clip(rgb, 0, 1)
-    l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b
-    m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b
-    s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b
-    l, m, s = np.cbrt(l), np.cbrt(m), np.cbrt(s)
-    return np.array([0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s,
-                     1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s,
-                     0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s])
-
-
-def colour_difference(h1, h2, kind=None):
-    """Distance between two colours in OKLab times 100, for normal vision (None) or a simulated deficiency."""
-    a, b = _linear_rgb(h1), _linear_rgb(h2)
-    if kind:
-        a, b = np.array(_MACHADO[kind]) @ a, np.array(_MACHADO[kind]) @ b
-    return float(100 * np.linalg.norm(_oklab(a) - _oklab(b)))
-
-
-def colour_separation(a, b):
-    """The smaller of the two red-green simulated distances and 0.4 times the distance for normal vision."""
-    return min(colour_difference(a, b, "protan"), colour_difference(a, b, "deutan"), 0.4 * colour_difference(a, b))
-
-
-def neighbour_weight(cells, animals):
-    """Number of pairs of dots of two animals closer than 1.5 deg on both (circular) axes, for every pair of animals."""
-    w = {}
-    cd = lambda u, v: np.abs((u[:, None] - v[None, :] + 30) % 60 - 30)
-    for a, b in itertools.combinations(animals, 2):
-        A, B = cells[cells.animal_id == a], cells[cells.animal_id == b]
-        w[(a, b)] = int(((cd(A.orientation_deg.values, B.orientation_deg.values) < 1.5)
-                         & (cd(A.dir_mod60.values, B.dir_mod60.values) < 1.5)).sum())
-    return w
-
-
-def assign_colours(cells, animals, colours):
-    """Give the colours to the animals so that animals whose dots mingle most get the most different colours."""
-    w = neighbour_weight(cells, animals)
-    best = None
-    sep = {(c1, c2): colour_separation(c1, c2) for c1 in colours for c2 in colours if c1 != c2}
-    for perm in itertools.permutations(colours):
-        m = dict(zip(animals, perm))
-        cost = sum(v / sep[(m[a], m[b])] ** 2 for (a, b), v in w.items() if v)
-        if best is None or cost < best[0] - 1e-12:
-            best = (cost, m)
-    return best[1]
-
-
 def draw_direction_vs_orientation(ax, cells):
-    """Preferred direction (mod 60 deg) against grid orientation, dots coloured by animal; returns the colour map."""
-    counts = cells.animal_id.value_counts()
-    animals = list(counts.index)[:len(ANIMAL_COLOURS)]
-    colour = assign_colours(cells, animals, ANIMAL_COLOURS)
+    """Preferred direction (mod 60 deg) against grid orientation, dots coloured by animal (``ANIMAL_COLOURS``)."""
     ax.plot([0, 60], [0, 60], color=COLOUR_ALIGN, linewidth=1.2, zorder=2, solid_capstyle="butt")
-    own = cells.animal_id.isin(animals).values
+    own = cells.animal_id.isin(list(ANIMAL_COLOURS)).values
     grey = cells[~own]
     ax.scatter(grey.orientation_deg, grey.dir_mod60, s=DOT_AREA, color=OTHER_ANIMALS, alpha=DOT_ALPHA, linewidths=0,
                zorder=3)
     col = cells[own].sample(frac=1, random_state=PUBLISHED_DRAW_ORDER_SEED)
-    ax.scatter(col.orientation_deg, col.dir_mod60, s=DOT_AREA, c=[colour[a] for a in col.animal_id], alpha=DOT_ALPHA,
-               linewidths=0, zorder=4)
+    ax.scatter(col.orientation_deg, col.dir_mod60, s=DOT_AREA, c=[ANIMAL_COLOURS[a] for a in col.animal_id],
+               alpha=DOT_ALPHA, linewidths=0, zorder=4)
     ax.set_xlim(-PAD_D, 60 + PAD_D)
     ax.set_ylim(-PAD_D, 60 + PAD_D)
     ax.set_xticks([0, 30, 60])
@@ -379,7 +312,6 @@ def draw_direction_vs_orientation(ax, cells):
     _box(ax)
     ax.set_xlabel("Grid orientation")
     ax.set_ylabel("Preferred direction\n(mod 60°)", linespacing=1.1)
-    return colour
 
 
 # ---------------------------------------------------------------------------------------------------------- panel E
@@ -464,7 +396,7 @@ def build(results_dir, out_dir):
         cv.letter("A", G["xl"]["A"], G["yl"]["A"])
         for j in range(len(curves)):
             row = ex_cells.iloc[j]
-            ax = cv.polar("A", f"example {j + 1}", G["cxA"][j], G["cyA"])
+            ax = cv.polar(G["cxA"][j], G["cyA"])
             draw_example(ax, angles_padded, curves[j], row["orientation_deg"], row["Rayleigh_angle"], first=(j == 0))
             if j == 0:
                 cv.even.append(ax)
@@ -472,24 +404,22 @@ def build(results_dir, out_dir):
         # row 2: panels B and C
         for P in "BC":
             cv.letter(P, G["xl"][P], G["yl"][P])
-        axB = cv.polar("B", "deviation histogram", G["cxB"], G["cyB"])
+        axB = cv.polar(G["cxB"], G["cyB"])
         n, n_al, n_mis = draw_deviation_histogram(axB, edges, counts)
         cv.even.append(axB)
         a, b = count_texts(cv.fig, G["cxB"] * MM, (cv.h - G["cyB"]) * MM, DIAM / 2 * MM, n, n_al, n_mis)
         a.set_position((cv.X(G["cnt"]["x_al"]), cv.Y(G["cnt"]["y"])))
         b.set_position((cv.X(G["cnt"]["x_mis"]), cv.Y(G["cnt"]["y"])))
-        common.tag(a, panel="B", name="count")
-        common.tag(b, panel="B", name="count")
-        axC = cv.polar("C", "mean tuning curve", G["cxC"], G["cyC"])
+        axC = cv.polar(G["cxC"], G["cyC"])
         up_c, lo_c = draw_mean_curve(axC, ang_c, mean_c, sem_c)
         cv.even.append(axC)
         # row 2: panels D and E
         with mpl.rc_context(CARTESIAN_RC):
             for P in "DE":
                 cv.letter(P, G["xl"][P], G["yl"][P])
-            axD = cv.cart("D", "direction against orientation", G["Dl"], G["Dt"], G["D_W"], G["DE_H"])
-            colours = draw_direction_vs_orientation(axD, d)
-            axE = cv.cart("E", "clustering by animal", G["El"], G["Et"], G["E_W"], G["DE_H"])
+            axD = cv.cart(G["Dl"], G["Dt"], G["D_W"], G["DE_H"])
+            draw_direction_vs_orientation(axD, d)
+            axE = cv.cart(G["El"], G["Et"], G["E_W"], G["DE_H"])
             vol = draw_clustering(axE, e_animals, band)
         for ax in (axD, axE):
             _despine(ax)
@@ -524,7 +454,7 @@ def build(results_dir, out_dir):
     common.write_source_data(out_dir, FIGURE, "C", "per_animal_curves_and_mean", cols)
     dd = d[["row", "animal_id", "session_id", "cell_id", "orientation_deg", "direction_deg", "dir_mod60"]].copy()
     dd = dd.rename(columns={"direction_deg": "preferred_direction_deg", "dir_mod60": "preferred_direction_mod60_deg"})
-    dd["colour"] = dd.animal_id.map(colours).fillna(OTHER_ANIMALS)
+    dd["colour"] = dd.animal_id.map(ANIMAL_COLOURS).fillna(OTHER_ANIMALS)
     common.write_source_data(out_dir, FIGURE, "D", "cells", dd)
     common.write_source_data(out_dir, FIGURE, "E", "animals", vol[["animal_id", "n", "R6"]].rename(
         columns={"n": "n_conjunctive_cells", "R6": "rayleigh_vector_length_6x"}))

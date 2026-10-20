@@ -21,10 +21,27 @@ Reads the pools of step 21 (``sim/pools/``; the large pool falls back to the shi
 - ``sim/fig8/fig8a_ideal_grids.npz`` (Fig 8A): field centres and delineated fields of perfect grids
   of 30, 50 and 70 vm (``set_gridcells_pool`` with ``gridtype="perfectGrid"``, 2 vm bins, cell 0).
 
+Columns and keys of these files:
+
+- ``trajectory_seed0.csv``: ``time`` (s; the blocks start at 0, 1,600, 3,200 and 4,800 s), ``x``
+  and ``y`` (vm), ``moveSpeed`` (vm/s), ``moveDir`` (deg), ``trialId`` (trial within the block) and
+  ``expPhase`` (-1 cue or inter-trial interval, 0 turning, 1 moving); position, speed and direction
+  are empty when ``expPhase`` is -1;
+- ``trajectory_seed0_objects.json``: ``objLocs`` (the five objects of the first block, drawn in
+  Fig 6A), ``objLocs_by_block``, ``block_duration_s``, ``n_blocks`` and ``env_size_vm``;
+- ``maps.npz``: ``extent``; ``<module>__example_maps`` (6 x 34 x 34, Hz) with their pool rows
+  ``<module>__example_cells``; ``seed0__<module>`` and ``seed1__<module>`` (34 x 34, percent of the
+  mean); ``supp3e__<module>__maps`` (6 x 34 x 34, Hz) with ``supp3e__<module>__cells``,
+  ``__gridness`` and ``__peak_rate_hz``; ``supp3e__gridness_class`` (low, low, medium, medium, high,
+  high);
+- ``fig8a_ideal_grids.npz``: for ``small``, ``medium`` and ``large`` (30, 50 and 70 vm),
+  ``<name>__field_locations`` (x, y and radius of each field, vm), ``<name>__centers`` (lattice
+  points, vm) and ``<name>__grid_scale_vm``.
+
 Rate maps are indexed [x, y] (first axis x), 34 x 34 bins of 3 vm over the 100 x 100 vm
-environment (``extent`` = [0, 100, 0, 100]). The titles of the Supp Fig 3E maps (gridness with one
-decimal and the peak rate, ``supp3e_title``) are listed in the run record. Nothing here is random
-beyond the seeds above. ``--smoke`` uses the smoke pools of step 21 as they are.
+environment (``extent`` = [0, 100, 0, 100]). The labels above the Supp Fig 3E maps (gridness with one
+decimal and the peak rate, ``supp3e_label``) are listed in the run record. Nothing here is random
+beyond the seeds above.
 """
 
 from __future__ import annotations
@@ -64,18 +81,18 @@ FIG8A_SCALES = {"small": 30, "medium": 50, "large": 70}
 TRAJECTORY_COLUMNS = ["time", "x", "y", "moveSpeed", "moveDir", "trialId", "expPhase"]
 
 
-def load_pool(module: str, rec: Optional[RunRecord] = None, smoke: bool = False):
+def load_pool(module: str, rec: Optional[RunRecord] = None):
     """Pool of a module written by step 21 (``hexmod.sim.io_pool.load_module_pool``)."""
     from hexmod.sim import io_pool
 
-    table, path = io_pool.load_module_pool(config.results_dir(), module, smoke=smoke)
+    table, path = io_pool.load_module_pool(config.results_dir(), module)
     if rec is not None:
         rec.add_input(path)
     return table
 
 
-def supp3e_title(gridness: float, peak_rate_hz: float) -> str:
-    """Title of a Supp Fig 3E map: gridness with one decimal and the peak rate in Hz.
+def supp3e_label(gridness: float, peak_rate_hz: float) -> str:
+    """Label above a Supp Fig 3E map: gridness with one decimal and the peak rate in Hz.
 
     The peak rate is a whole number, or one decimal when it is below 1 Hz (so that no map reads
     "0 Hz"); for example ``"0.6, 3 Hz"`` and ``"0.7, 0.5 Hz"``.
@@ -144,19 +161,17 @@ def ideal_grids():
 def parse_args(argv: Optional[List[str]] = None):
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0],
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--smoke", action="store_true", help="use the smoke pools of step 21")
     return p.parse_args(argv)
 
 
 def main(argv: Optional[List[str]] = None) -> int:
-    args = parse_args(argv)
-    config.guard_smoke_results(args.smoke)
+    parse_args(argv)
     from hexmod.sim import pool, trajectory_v2
 
     res = config.results_dir()
     out6, out8 = res / "sim" / "fig6", res / "sim" / "fig8"
     with RunRecord(STEP, argv=argv) as rec:
-        pools = {m: load_pool(m, rec, smoke=args.smoke) for m in MODULES}
+        pools = {m: load_pool(m, rec) for m in MODULES}
         par = {m: pool.module_param(m) for m in MODULES}
         n_pool = len(pools["small"])
         n_draw = min(N_PARTICIPANT_CELLS, n_pool)
@@ -183,20 +198,20 @@ def main(argv: Optional[List[str]] = None) -> int:
             cells = np.random.default_rng(seed).choice(n_pool, n_draw, replace=False)
             for m in MODULES:
                 maps[f"seed{seed}__{m}"] = summed_map_pct(pools[m], par[m], cells)
-        titles = {}
+        labels = {}
         for m in MODULES:
             cells, gridness, peaks, smaps = supp3e_cells(pools[m], par[m])
             maps[f"supp3e__{m}__maps"] = smaps
             maps[f"supp3e__{m}__cells"] = cells
             maps[f"supp3e__{m}__gridness"] = gridness
             maps[f"supp3e__{m}__peak_rate_hz"] = peaks
-            titles[m] = [supp3e_title(g, r) for g, r in zip(gridness, peaks)]
+            labels[m] = [supp3e_label(g, r) for g, r in zip(gridness, peaks)]
         maps["supp3e__gridness_class"] = np.array(SUPP3E_CLASSES, dtype=str)
         hio.save_npz(out6 / "maps.npz", arrays=maps)
         rec.add_output(out6 / "maps.npz")
         rec.note("example_cells", examples.tolist())
         rec.note("supp3e_cells", {m: maps[f"supp3e__{m}__cells"].tolist() for m in MODULES})
-        rec.note("supp3e_titles", titles)
+        rec.note("supp3e_labels", labels)
         nm = maps["seed0__large"]
         rec.note("fig6c_large_participant0_pct", {"max": float(nm.max() - 100), "min": float(nm.min() - 100),
                                                   "sd": float(nm.std())})
@@ -204,8 +219,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         # Fig 8A: perfect grids
         hio.save_npz(out8 / "fig8a_ideal_grids.npz", arrays=ideal_grids())
         rec.add_output(out8 / "fig8a_ideal_grids.npz")
-        rec.note("smoke", bool(args.smoke))
-    print(f"maps written to {out6} and {out8}; Supp Fig 3E titles: {titles}")
+    print(f"maps written to {out6} and {out8}; Supp Fig 3E labels: {labels}")
     return 0
 
 

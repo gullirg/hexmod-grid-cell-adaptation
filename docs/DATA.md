@@ -4,8 +4,8 @@ The analyses use grid cell recordings from six published rat datasets. All six a
 available and are downloaded by `scripts/data_download.py`: four from the data archives of the
 original studies (EBRAINS and the NIRD Research Data Archive), and two from a Zenodo record that
 holds the sessions of Barry et al. (2012) and Ólafsdóttir et al. (2016) analysed in the paper. No
-recorded data or per-cell results are distributed with this repository; it holds only label
-manifests, analysis settings and summary statistics.
+recorded data or per-cell results of the recordings are distributed with this repository; of the
+recordings it holds only label manifests, analysis settings and summary statistics.
 
 ## The six datasets
 
@@ -18,7 +18,9 @@ manifests, analysis settings and summary statistics.
 | `barry2012` | W | Barry et al. (2012), PNAS 109, 17687-17692 | Zenodo, doi:[10.5281/zenodo.23477461](https://doi.org/10.5281/zenodo.23477461) | CC BY 4.0 | `barry2012_familiar_box_sessions.h5` (see below) | 47.2 MB |
 | `olafsdottir2016` | F | Ólafsdóttir et al. (2016), Nature Neuroscience 19, 792-794 | Zenodo, doi:[10.5281/zenodo.23477461](https://doi.org/10.5281/zenodo.23477461) | CC BY 4.0 | `olafsdottir2016_open_field_sessions.h5` (see below) | 27.8 MB |
 
-The download totals 13.64 GB (13,639,845,431 bytes). No login is needed.
+The download totals 13.64 GB (13,639,845,431 bytes). No login is needed. `data_download.py` and
+`data_check.py` list the datasets in the order of `hexmod.datasets.CANONICAL_ORDER`, which is
+also the order of the cells in the results ([PIPELINE.md](PIPELINE.md), Cell identity and order).
 
 Recordings read by step 01, and grid cells in the cohort (step 02):
 
@@ -49,20 +51,16 @@ python scripts/data_download.py                         # all six datasets
 python scripts/data_download.py --datasets hafting2005,brun2008
 ```
 
-- Files are written to the data folder: `--dest DIR`, or the environment variable
+- Files are written to the data folder: `--data DIR`, or the environment variable
   `HEXMOD_DATA`, or `data/` in the repository.
 - Every file is checked against its size and sha256 checksum before it is accepted, and also
   against the md5 checksum where the archive publishes one. A file that fails the check is
   downloaded again.
 - Interrupted downloads resume where they stopped (`<file>.part` files are continued with HTTP
-  range requests). Running the command again skips everything that is already present and valid;
-  `--trust-existing` skips the checksum of files that are present with the right size.
+  range requests). Running the command again skips everything that is already present and valid.
 - `--jobs N` sets the number of parallel downloads (default 2), `--retries N` the number of
   further attempts per file (default 5). `--only PATTERN` downloads only the files whose name
   matches a shell pattern, for example `--datasets vollan2025 --only 28063_4.mat`.
-- `--check-remote` compares the file listings of the archives (sizes and hashes) with the
-  manifests and sends one HTTP HEAD request per dataset, without downloading data. It detects a
-  changed release.
 - Archives are kept after extraction; `--delete-archives` removes them (1.7 GB) once their
   members are extracted and verified.
 
@@ -73,19 +71,17 @@ than one session).
 
 ### Download addresses
 
-- `vollan2025`: each file is requested through the EBRAINS data proxy,
-  `https://data-proxy.ebrains.eu/api/v1/buckets/d-4080b78d-edc5-4ae4-8144-7f6de79930ea/<key>?redirect=false`,
-  which returns the address of the object in the EBRAINS object store
-  (`https://rgw.cscs.ch/ebrains:d-4080b78d-edc5-4ae4-8144-7f6de79930ea/<key>`). The bucket can be
-  listed with `https://data-proxy.ebrains.eu/api/v1/buckets/d-4080b78d-edc5-4ae4-8144-7f6de79930ea?prefix=sharing_v4/navigation/of/`.
-- `brun2008`, `hafting2005`, `sargolini2006`: the public S3 endpoint of the NIRD Research Data
-  Archive, `https://s3.nird.sigma2.no/archive-ro/<identifier>/<file>`, with the identifiers
+`python scripts/data_download.py --list` prints the address of every file. The landing page of
+each dataset is its DOI in the table above.
+
+- `vollan2025`: the EBRAINS object store,
+  `https://rgw.cscs.ch/ebrains:d-4080b78d-edc5-4ae4-8144-7f6de79930ea/<key>`.
+- `brun2008`, `hafting2005`, `sargolini2006`: the NIRD Research Data Archive,
+  `https://s3.nird.sigma2.no/archive-ro/<identifier>/<file>`, with the identifiers
   `54d73ada-d6ad-40d7-9dcb-85310168228e` (Brun et al.), `60452682-5815-41eb-bd0a-fb11b914623d`
-  (Hafting et al.) and `dbb6250a-9793-4d9b-9265-a90f886451d4` (Sargolini et al.). The same files
-  can be downloaded from the landing pages of the DOIs.
+  (Hafting et al.) and `dbb6250a-9793-4d9b-9265-a90f886451d4` (Sargolini et al.).
 - `barry2012`, `olafsdottir2016`: Zenodo record 23477461,
-  `https://zenodo.org/records/23477461/files/<file>?download=1`. The record's file listing, with
-  the size and md5 checksum of every file, is `https://zenodo.org/api/records/23477461`.
+  `https://zenodo.org/records/23477461/files/<file>?download=1`.
 
 ### The Sargolini et al. (2006) archive
 
@@ -145,9 +141,9 @@ attribute and the units of a session in the order of their `original_index` attr
 that the file has the documented layout. In `inputs/manifests/sessions.csv` the `raw_path` of these
 sessions is the HDF5 file (the session is the group named by `session_id`), and in `units.csv` the
 `raw_unit_key` of a unit is the name of its group (`unit_<index>`). Position and spike times share
-one clock; as in the published analysis, step 01 subtracts the first position time (0.02 s) from
-the position times of the Barry et al. (2012) sessions and leaves their spike times unchanged
-(docs/PROVENANCE.md, section 1).
+one clock. Step 01 subtracts the first position time (0.02 s) from the position times of the
+Barry et al. (2012) sessions and leaves their spike times unchanged
+([PROVENANCE.md](PROVENANCE.md), section 1).
 
 ## Folder layout
 
@@ -210,10 +206,8 @@ message when a raw file is missing or has the wrong size.
 
 Extra columns:
 
-- `files_vollan2025.csv`: `etag`, the object hash in the EBRAINS listing (an md5 checksum for
-  files stored in one part, otherwise a hash of the parts followed by the number of parts), used
-  by `--check-remote`; `used_in_cohort`, True for the 24 recordings that contribute grid cells to
-  the cohort. Of the other seven, three give a session without cohort grid cells and four give no
+- `files_vollan2025.csv`: `used_in_cohort`, True for the 24 recordings that contribute grid cells
+  to the cohort. Of the other seven, three give a session without cohort grid cells and four give no
   session (no entorhinal units, or no samples inside the valid time ranges of the file).
 - `files_brun2008.csv`: `used_in_cohort`, True for the two recordings of rat 11468.
 - `files_sargolini2006.csv`: `listdir_order`, the reading order of the 150 files, which fixes the

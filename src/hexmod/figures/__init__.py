@@ -1,16 +1,15 @@
 """Figures of the paper.
 
 Each figure has one module that draws it from the result files only (never from raw data):
-``fig2`` to ``fig8`` for Figures 2 to 8 and ``supp1`` to ``supp5`` for Supplementary Figures 1 to 5. Figure 1 is
-a schematic and is not drawn by the code. A figure module exposes::
+``fig2`` to ``fig8`` for Figures 2 to 8 and ``supp1`` to ``supp5`` for Supplementary Figures 1 to 5. Figure 1 and
+panel E of Figure 3 are schematics and are not drawn by the code. A figure module exposes::
 
     build(results_dir, out_dir)
 
 ``results_dir`` is the results folder that the analysis steps wrote, ``out_dir`` the folder the figure writes to
 (``figures/<Figure>/`` in the results folder).
 ``scripts/step30_figures.py`` calls ``build`` for each figure. The shared style is in ``hexmod.figures.style`` and
-the shared helpers (inputs, output files, positions, source data, lattice and polar drawing) in
-``hexmod.figures.common``.
+the shared helpers (inputs, output files, source data, grid lattice drawing) in ``hexmod.figures.common``.
 
 This package is the only part of ``hexmod`` that imports matplotlib; importing ``hexmod.figures`` itself does not.
 """

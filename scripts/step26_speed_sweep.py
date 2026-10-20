@@ -22,7 +22,7 @@ adaptation 0.1 (time constant 2 s) along straight wall-to-wall runs (``hexmod.si
 
 Writes ``sim/fig8/fig8d_sweep.csv`` (111 rows, scales in the order 30, 50, 70 vm, speeds ascending).
 About 35 worker minutes; runs are independent, so the result does not depend on the number of
-workers. ``--smoke`` uses 64 cells per module and 3 speeds.
+workers.
 """
 
 from __future__ import annotations
@@ -55,22 +55,19 @@ N_CELLS = 1024
 SPEEDS = np.arange(5, 150, 4)
 ALPHA = 0.1
 SPEED_THRESHOLD = 1.0
-SMOKE_CELLS = 64
-SMOKE_SPEED_LEVELS = (0, 18, 36)
 
 
-def sweep_inputs(n_cells: int = N_CELLS, speed_levels=None) -> list:
+def sweep_inputs() -> list:
     """One work item per run: (run description, cells of the module, parameters of the module)."""
     from hexmod.sim.pool import set_gridcells_pool, set_param
 
-    levels = range(len(SPEEDS)) if speed_levels is None else speed_levels
     items = []
     for scale_level, (name, scale) in enumerate(SCALES.items()):
         par = set_param(dict(gridScale=scale, gridtype="perfectGrid"))
-        cells = set_gridcells_pool(par, n_cells=n_cells, base_seed=0)
+        cells = set_gridcells_pool(par, n_cells=N_CELLS, base_seed=0)
         par["speedThres"] = SPEED_THRESHOLD
         par["adaptEff_mean"] = ALPHA
-        for speed_level in levels:
+        for speed_level in range(len(SPEEDS)):
             run = dict(scale=scale, scaleLevel=scale_level, speedLevel=int(speed_level),
                        moveSpeed=float(SPEEDS[speed_level]))
             items.append((run, cells, par))
@@ -94,25 +91,22 @@ def parse_args(argv: Optional[List[str]] = None):
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0],
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--workers", type=int, default=None, help="worker processes (default HEXMOD_WORKERS or 4)")
-    p.add_argument("--smoke", action="store_true", help=f"{SMOKE_CELLS} cells per module, 3 speeds")
     return p.parse_args(argv)
 
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
-    config.guard_smoke_results(args.smoke)
     workers = config.workers(args.workers)
     from hexmod.parallel import map_ordered
 
     out = config.results_dir() / "sim" / "fig8" / "fig8d_sweep.csv"
     with RunRecord(STEP, workers=workers, argv=argv) as rec:
-        items = (sweep_inputs(SMOKE_CELLS, SMOKE_SPEED_LEVELS) if args.smoke else sweep_inputs())
+        items = sweep_inputs()
         results = map_ordered(sweep_run, items, workers=workers, desc="runs")
         table = sweep_table(results)
         hio.write_csv(table, out)
         rec.add_output(out)
         rec.note("n_runs", int(len(table)))
-        rec.note("smoke", bool(args.smoke))
     print(f"speed sweep written to {out} ({len(table)} runs)")
     return 0
 

@@ -1,30 +1,19 @@
 """Tests of the conjunctive-cell analyses (Fig 2B to 2E) and of the same-cell links.
 
-Unit tests use synthetic inputs with known answers. Smoke tests run steps 09 and 10 on small
-synthetic cohorts in a temporary results folder. Tests marked ``frozen`` compare with reference
-results laid out like ``results/`` (``HEXMOD_FROZEN``); the test marked ``data`` also needs
-the raw datasets.
+The tests use synthetic inputs with known answers.
 """
 
 from __future__ import annotations
 
-import importlib.util
 import math
 
 import numpy as np
 import pandas as pd
 import pytest
 
-from hexmod import io, stats
+from hexmod import stats
 from hexmod.rat import conjunctive as cj
 from hexmod.rat import same_cell as sc
-
-
-def _load_script(repo_root, name):
-    spec = importlib.util.spec_from_file_location(name, repo_root / "scripts" / f"{name}.py")
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
 
 
 # ============================================================================== conjunctive cells
@@ -107,10 +96,10 @@ def test_direction_orientation_correlation_is_seeded_and_detects_coupling():
     indep = rng.uniform(0, 360, 80)
     a = cj.direction_orientation_correlation(ori, indep, n_perm=500)
     b = cj.direction_orientation_correlation(ori, indep, n_perm=500)
-    assert a == b  # same key, same permutations
+    assert a == b  # same seed, same permutations
     a6, b6 = np.radians(6 * ori), np.radians(6 * (indep % 60))
     assert a["r"] == stats.fisher_lee(a6, b6)
-    expected = stats.fisher_lee_permutation(a6, b6, 500, key=cj.FIG2D_KEY)["p_one_sided_positive"]
+    expected = stats.fisher_lee_permutation(a6, b6, 500, seed=cj.FIG2D_PERMUTATION_SEED)["p_one_sided_positive"]
     assert a["p_one_sided_positive"] == expected
 
 
@@ -309,223 +298,3 @@ def test_link_vollan_rate_map_and_waveform_rule():
         (3, 3),
         (4, 4),
     ]
-
-
-# ======================================================================= smoke runs of steps 09, 10
-def _synthetic_session(rng, phases, duration_s=600.0, box=100.0):
-    n = int(duration_s * 50)
-    t = np.arange(n) / 50.0
-    heading = np.cumsum(rng.normal(0, 0.15, n))
-    xy = np.zeros((n, 2))
-    pos = np.array([box / 2, box / 2])
-    for k in range(n):
-        step = 0.5 * np.array([np.cos(heading[k]), np.sin(heading[k])])
-        nxt = pos + step
-        if not (0 < nxt[0] < box and 0 < nxt[1] < box):
-            heading[k:] += np.pi
-            nxt = pos - step
-        pos = nxt
-        xy[k] = pos
-    speed = np.r_[np.hypot(*np.diff(xy, axis=0).T) * 50, 25.0]
-    move_dir = np.r_[np.arctan2(*np.diff(xy, axis=0).T[::-1]) % (2 * np.pi), 0.0]
-    spikes, uids = {}, {}
-    for c, ph in enumerate(phases, start=1):
-        g = sum(
-            np.cos(
-                2
-                * np.pi
-                / 40
-                * (np.cos(0.2 + j * np.pi / 3) * (xy[:, 0] - ph[0]) + np.sin(0.2 + j * np.pi / 3) * (xy[:, 1] - ph[1]))
-            )
-            for j in range(3)
-        )
-        rate = 15 * np.exp(1.2 * (g - 3))
-        spikes[c] = t[rng.random(n) < rate / 50]
-        uids[c] = f"cell{c}"
-    return {
-        "position": {"xy": xy, "xy_smoothed": xy, "time": t, "sample_rate": 50, "speed": speed, "move_dir": move_dir},
-        "spike_times": spikes,
-        "unique_cell_ids": uids,
-    }
-
-
-@pytest.mark.smoke
-def test_step09_links_synthetic_tetrode_sessions(tmp_path, monkeypatch, repo_root):
-    monkeypatch.setenv("HEXMOD_RESULTS", str(tmp_path))
-    rng = np.random.default_rng(4)
-    phases = [(0, 0), (20, 7), (9, 25)]
-    traj = {"B1": {"B1_1": _synthetic_session(rng, phases), "B1_2": _synthetic_session(rng, phases)}}
-    res = tmp_path
-    io.save_cache(traj, res / "preprocessed" / "trajectories.pkl")
-    cells = pd.DataFrame(
-        {
-            "row": np.arange(6),
-            "animal_id": "B1",
-            "session_id": ["B1_1"] * 3 + ["B1_2"] * 3,
-            "cell_id": [1, 2, 3] * 2,
-            "unique_cell_id": [f"B1_B1_{s}_cell{c}" for s in (1, 2) for c in (1, 2, 3)],
-            "dataset": "brun2008",
-            "gridness": 1.0,
-            "scale_cm": 40.0,
-            "orientation_deg": 11.46,
-            "Rayleigh_mag": 0.1,
-            "Rayleigh_angle": 10.0,
-        }
-    )
-    io.write_csv(cells, res / "rat" / "cohort" / "cells.csv")
-    step = _load_script(repo_root, "step09_same_cell_links")
-    assert step.main(["--workers", "1", "--smoke"]) == 0
-    ent = io.read_csv(res / "rat" / "same_cell" / "entries.csv")
-    assert list(ent.unit) == [0, 1, 2, 0, 1, 2]
-    assert list(ent.kept_earliest) == [True] * 3 + [False] * 3 and list(ent.n_entries) == [2] * 6
-    links = io.read_csv(res / "rat" / "same_cell" / "links.csv")
-    assert set(links.rule) == {"tetrode_map"} and len(links) == 3
-    units = io.read_csv(res / "rat" / "same_cell" / "units.csv")
-    assert list(units.rows) == ["0;3", "1;4", "2;5"] and list(units.kept_row) == [0, 1, 2]
-    rec = io.read_json(res / "logs" / "step09_same_cell_links.json")
-    assert rec["status"] == "ok" and rec["notes"]["counts"]["n_units"] == 3
-
-
-@pytest.mark.smoke
-def test_step10_runs_on_a_synthetic_cohort(tmp_path, monkeypatch, repo_root):
-    monkeypatch.setenv("HEXMOD_RESULTS", str(tmp_path))
-    rng = np.random.default_rng(8)
-    animals = ["V10"] * 30 + ["V11"] * 12 + ["V12"] * 3 + ["B1"] * 5
-    n = len(animals)
-    pref = rng.uniform(0, 360, n)
-    maps = _von_mises_curves(pref, kappa=1.5) * rng.uniform(0.5, 2, (n, 1))
-    th = np.radians(cj.BIN_CENTRES_DEG)
-    z = (maps * np.exp(1j * th)).sum(1) / maps.sum(1)
-    cells = pd.DataFrame(
-        {
-            "row": np.arange(n),
-            "animal_id": animals,
-            "session_id": [a + "_1" for a in animals],
-            "cell_id": np.arange(n),
-            "unique_cell_id": [f"u{k}" for k in range(n)],
-            "dataset": ["vollan2025" if a.startswith("V") else "brun2008" for a in animals],
-            "gridness": 0.8,
-            "scale_cm": rng.uniform(30, 90, n),
-            "orientation_deg": rng.uniform(0, 60, n),
-            "Rayleigh_mag": np.abs(z),
-            "Rayleigh_angle": np.degrees(np.angle(z)) % 360,
-        }
-    )
-    res = tmp_path
-    io.write_csv(cells, res / "rat" / "cohort" / "cells.csv")
-    io.save_npy(res / "rat" / "cohort" / "dir_maps.npy", maps)
-    ent = cells[["row", "animal_id", "session_id", "cell_id"]].assign(
-        unit=np.arange(n), n_entries=1, kept_earliest=True
-    )
-    ent.loc[3, "kept_earliest"] = False
-    io.write_csv(ent, res / "rat" / "same_cell" / "entries.csv")
-    step = _load_script(repo_root, "step10_conjunctive_cells")
-    assert step.main([]) == 0
-    S = io.read_json(res / "stats" / "step10_conjunctive_cells.json")
-    conj = cells.Rayleigh_mag > 0.3
-    assert S["fig2b.n_cells"] == int(conj.sum())
-    assert S["fig2b.n_aligned"] + S["fig2b.n_misaligned"] == S["fig2b.n_cells"]
-    tested = cells[conj & ent.kept_earliest & (cells.dataset == "vollan2025")].animal_id.value_counts()
-    assert S["fig2e.n_animals"] == int((tested >= 5).sum()) and S["fig2e.n_cells"] == int(tested[tested >= 5].sum())
-    for name in (
-        "fig2b_cells",
-        "fig2b_bins",
-        "fig2c_per_animal_curves",
-        "fig2c_mean",
-        "fig2d_cells",
-        "fig2e_per_animal",
-        "fig2e_cells",
-        "fig2e_band",
-    ):
-        assert (res / "rat" / "conjunctive" / f"{name}.csv").is_file()
-    assert all(isinstance(v, (int, float)) and math.isfinite(v) for v in S.values())
-
-
-# ============================================================================== reference results
-@pytest.mark.frozen
-def test_fig2_results_reproduce_the_reference_tables(frozen_path):
-    cells = io.read_csv(frozen_path("rat/cohort/cells.csv"))
-    maps = io.load_npy(frozen_path("rat/cohort/dir_maps.npy"))
-    ent = io.read_csv(frozen_path("rat/same_cell/entries.csv"))
-    tables, S, _ = cj.fig2_results(cells, maps, ent["kept_earliest"].to_numpy(bool))
-    for name in (
-        "fig2b_cells",
-        "fig2b_bins",
-        "fig2c_per_animal_curves",
-        "fig2c_mean",
-        "fig2d_cells",
-        "fig2e_per_animal",
-        "fig2e_cells",
-    ):
-        ref = io.read_csv(frozen_path(f"rat/conjunctive/{name}.csv"))
-        got = tables[f"{name}.csv"].reset_index(drop=True)
-        assert list(got.columns) == list(ref.columns), name
-        assert len(got) == len(ref), name
-        for col in ref.columns:
-            a, b = got[col].to_numpy(), ref[col].to_numpy()
-            if name == "fig2d_cells" and col == "kl":
-                # the reference values come from another BLAS build (the smoothing sums differ in the last bit)
-                np.testing.assert_allclose(a, b, rtol=0, atol=1e-15)
-            elif name == "fig2e_per_animal" and col == "R6_chance95":
-                # the reference table holds the chance values after one more CSV read
-                np.testing.assert_array_equal(io.csv_float_roundtrip(a, 1), b)
-            else:
-                np.testing.assert_array_equal(a, b, err_msg=f"{name}.{col}")
-    ref = io.read_json(frozen_path("stats/step10_conjunctive_cells.json"))
-    assert sorted(S) == sorted(ref)
-    for k, v in ref.items():
-        if k == "fig2d.fisher_lee.r":
-            assert S[k] == pytest.approx(v, rel=1e-14)  # dot products of another BLAS build
-        else:
-            assert S[k] == v, k
-    assert (S["fig2b.n_aligned"], S["fig2b.n_cells"]) == (564, 1171)
-    assert (S["fig2d.n_cells"], S["fig2d.n_animals"], S["fig2d.n_sessions"], S["fig2d.n_conjunctive"]) == (
-        890,
-        21,
-        47,
-        888,
-    )
-    assert (S["fig2e.n_animals"], S["fig2e.n_cells"]) == (12, 1082)
-    # the band drawn in Fig 2E passes through the chance values of the 12 animals
-    band = tables["fig2e_band.csv"].set_index("n")
-    pa = tables["fig2e_per_animal.csv"]
-    np.testing.assert_array_equal(band.loc[pa["n"], "R_chance95"].to_numpy(), pa["R6_chance95"].to_numpy())
-
-
-@pytest.mark.frozen
-def test_fig2d_modules_do_not_depend_on_the_scale_round_trip(frozen_path):
-    from hexmod.preprocessing import labels
-
-    cells = io.read_csv(frozen_path("rat/cohort/cells.csv"))
-    exact = labels.assign_modules(cells.animal_id.to_numpy(), cells.scale_cm.to_numpy())
-    rt = labels.assign_modules(cells.animal_id.to_numpy(), io.csv_float_roundtrip(cells.scale_cm.to_numpy(), 2))
-    np.testing.assert_array_equal(exact, rt)
-
-
-@pytest.mark.frozen
-@pytest.mark.data
-@pytest.mark.slow
-def test_step09_reproduces_the_reference_units(tmp_path, monkeypatch, frozen_path, repo_root):
-    from hexmod import config, datasets
-
-    if not (config.data_dir() / datasets.DATASETS["vollan2025"]["raw_subpaths"][0]).is_dir():
-        pytest.skip("needs the files of Vollan et al. (2025)")
-    monkeypatch.setenv("HEXMOD_RESULTS", str(tmp_path))
-    res = tmp_path
-    (res / "rat").mkdir(parents=True)
-    (res / "preprocessed").symlink_to(frozen_path("preprocessed/trajectories.pkl").parent, target_is_directory=True)
-    (res / "rat" / "cohort").symlink_to(frozen_path("rat/cohort/cells.csv").parent, target_is_directory=True)
-    step = _load_script(repo_root, "step09_same_cell_links")
-    assert step.main(["--workers", "2", "--no-cache"]) == 0
-    for name in ("entries", "units"):
-        got = io.read_csv(res / "rat" / "same_cell" / f"{name}.csv")
-        ref = io.read_csv(frozen_path(f"rat/same_cell/{name}.csv"))
-        pd.testing.assert_frame_equal(got, ref, check_exact=True)
-    links = io.read_csv(res / "rat" / "same_cell" / "links.csv")
-    assert links.rule.value_counts().to_dict() == {
-        "same_recording": 143,
-        "waveform_and_map": 126,
-        "map_only": 40,
-        "tetrode_map": 12,
-        "tetrode_label": 10,
-    }

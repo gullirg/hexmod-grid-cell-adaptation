@@ -8,7 +8,7 @@ Panels
     C  Change of firing rate from each cell's mean by t_prev bin (box plots, all cells); brackets: first bin against
        each other bin, paired t-tests with Holm correction within the panel.
     D  Adaptation coefficient of the parametric model (all cells); asterisks: one-sample t-test against 0.
-    E  Schematic of three successive field visits and of the firing rate ratio.
+    E  A schematic that the code does not draw; its space is left empty.
     F  Firing rate ratio of the third visit when the interval between visits 2 and 3 is shorter (T23 < T12) or
        longer (T23 > T12) than the interval between visits 1 and 2; asterisks: one-sample t-tests against 0;
        bracket: paired t-test.
@@ -24,7 +24,6 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 import matplotlib as mpl
-from matplotlib.patches import Circle, Polygon
 from scipy import stats
 
 from .. import io as hio
@@ -38,9 +37,9 @@ W, H = hs.WIDTH["full"], 125.5
 # style.LETTER_ABOVE under it. Row 2's line lies 2.79 mm under the lowest text of row 1.
 LINE1 = hs.LETTER_TOP                  # 1.5 mm: letters A, C, D
 TOP1 = hs.panels_top(LINE1)            # 3.0 mm: top of the map, its colour bar and the boxes of C and D
-LINE2 = 49.5                           # letters B, E, F
-TOP2 = hs.panels_top(LINE2)            # 51.0 mm: top of the field numbers of B, the FR2 label of E, the box of F
-XL, XC, XD = 0.0, 76.0, 136.0          # column lefts: A and B; C and E; D and F
+LINE2 = 49.5                           # letters B, F
+TOP2 = hs.panels_top(LINE2)            # 51.0 mm: top of the field numbers of B and the box of F
+XL, XC, XD = 0.0, 76.0, 136.0          # column lefts: A and B; C (and the empty space of E); D and F
 T_PREV_BINS = ("0_to_1_s", "1_to_2_s", "2_to_3_s", "above_3_s")
 
 
@@ -75,7 +74,6 @@ def build(results_dir, out_dir):
 
 def _draw(out_dir, Z, ev_df, FR, param, cells, quad):
     P = hs.PALETTE
-    PT = hs.PT
 
     x, y, t, spikes = Z["x"], Z["y"], Z["t"], Z["spikes"]
     t_prev, loc_in, adapt = Z["t_prev"], Z["location_input"], Z["adaptation_variable"]
@@ -219,89 +217,6 @@ def _draw(out_dir, Z, ev_df, FR, param, cells, quad):
     axD.yaxis.set_major_formatter(hs.NUM)
     axD.set_ylabel("Adaptation\ncoefficient " + hs.VAR["alpha"])
     hs.sig_mark(axD, 0, endsD[0][0], rD.pvalue, side="below")
-
-    # ---- E: schematic of three successive field visits (its highest ink, the FR2 label, starts at the row top)
-    axE = hs.axes_mm(fig, XC, TOP2, 58.0, H - TOP2)
-    axE.set_xlim(XC, XC + 58.0)
-    axE.set_ylim(H, TOP2)
-    axE.axis("off")
-    S_, RF = 15.0, 3.0                                              # grid spacing and field radius (mm)
-    Y_T = TOP2 + 11.08
-    Y_B = Y_T + S_ * np.sqrt(3) / 2
-    X0 = XC + 29.0 - 1.25 * S_
-    fields_top = [(X0 + (k + 0.5) * S_, Y_T) for k in range(3)]
-    fields_bot = [(X0 + k * S_, Y_B) for k in range(3)]
-    F1, F2, F3 = fields_bot[0], fields_top[1], fields_top[2]
-    OUTLINE = "#4D4D4D"
-
-    def txt(xm, ym, s, size=hs.FS_TITLE, **kw):
-        kw.setdefault("ha", "center")
-        kw.setdefault("va", "baseline")
-        return axE.text(xm, ym, s, fontsize=size, **kw)
-
-    for p in fields_top + fields_bot:
-        if p in (F1, F2, F3):
-            continue
-        axE.add_patch(Circle(p, RF, fc=P["neutral_fill"], ec=OUTLINE, lw=hs.LW_FRAME, zorder=2))
-    for p, k in ((F1, "1"), (F2, "2"), (F3, "3")):
-        axE.add_patch(Circle(p, RF, fc="white", ec=OUTLINE, lw=hs.LW_FRAME, zorder=3))
-        txt(p[0], p[1] + 0.5 * 0.716 * hs.FS_SMALL * PT, k, size=hs.FS_SMALL, zorder=4)
-
-    def arrow(p0, p1, shaft=hs.LW_REF * PT, head_l=1.9, head_w=1.7):
-        p0, p1 = np.asarray(p0, float), np.asarray(p1, float)
-        u = (p1 - p0) / np.hypot(*(p1 - p0))
-        n = np.array([-u[1], u[0]])
-        b = p1 - head_l * u
-        poly = [p0 + n * shaft / 2, b + n * shaft / 2, b + n * head_w / 2, p1, b - n * head_w / 2, b - n * shaft / 2,
-                p0 - n * shaft / 2]
-        axE.add_patch(Polygon(poly, closed=True, fc=P["ink"], ec="none", zorder=5))
-
-    GAP_A = 0.7
-    for a_, b_ in ((F1, F2), (F2, F3)):
-        a_, b_ = np.asarray(a_), np.asarray(b_)
-        u = (b_ - a_) / np.hypot(*(b_ - a_))
-        arrow(a_ + u * (RF + GAP_A), b_ - u * (RF + GAP_A))
-    # spikes in fields 2 and 3 (more spikes in field 2 than in field 3) and the two rates
-    TICK_L, TICK_GAP = 3.2, 1.0
-    for p, n_sp, lab in ((F2, 4, hs.VAR["FR2"]), (F3, 2, hs.VAR["FR3"])):
-        xs = p[0] + (np.arange(n_sp) - (n_sp - 1) / 2) * 0.75
-        for xx in xs:
-            axE.plot([xx, xx], [p[1] - RF - TICK_GAP, p[1] - RF - TICK_GAP - TICK_L], color=P["ink"], lw=hs.LW_FRAME,
-                     solid_capstyle="butt", zorder=4)
-        txt(p[0], p[1] - RF - TICK_GAP - TICK_L - 1.3, lab)
-    # the two intervals: T23 under its arrow; T12 where its box keeps the largest distance from the fields and arrows
-    CAP10 = 0.716 * hs.FS_TITLE * PT
-    txt((F2[0] + F3[0]) / 2, F2[1] + 1.4 + CAP10, hs.VAR["T23"])
-    fig.canvas.draw()
-    rr_ = fig.canvas.get_renderer()
-    probe = txt(0, 0, hs.VAR["T12"])
-    bbp = probe.get_window_extent(rr_)
-    probe.remove()
-    lw_mm, lh_mm = bbp.width / fig.dpi * 25.4, bbp.height / fig.dpi * 25.4
-    seg = np.array([F1, F2], float)
-    best = None
-    for f_ in np.linspace(0.2, 0.8, 25):
-        for sgn in (1, -1):
-            for d_ in np.linspace(1.5, 6.0, 19):
-                u = (seg[1] - seg[0]) / np.hypot(*(seg[1] - seg[0]))
-                n = np.array([-u[1], u[0]]) * sgn
-                c = seg[0] + f_ * (seg[1] - seg[0]) + n * d_
-                box = np.array([[c[0] + sx * lw_mm / 2, c[1] + sy * lh_mm / 2]
-                                for sx in (-1, 0, 1) for sy in (-1, 0, 1)])
-                dfield = min(np.min(np.hypot(box[:, 0] - q[0], box[:, 1] - q[1])) - RF for q in fields_top + fields_bot)
-                t_ = np.clip(((box - seg[0]) @ u) / np.hypot(*(seg[1] - seg[0])), 0, 1)
-                darrow = np.min(np.hypot(*(box - (seg[0] + np.outer(t_, seg[1] - seg[0]))).T))
-                sc = min(dfield, darrow)
-                # a later spot must be better by more than 1e-9 mm: two mirror spots score the same, and the first
-                # (below the arrow, near field 1) is kept whatever the rounding of the coordinates
-                if best is None or sc > best[0] + 1e-9:
-                    best = (sc, c, f_, sgn, d_)
-    c = best[1]
-    txt(c[0], c[1] + lh_mm / 2 - 0.25 * lh_mm, hs.VAR["T12"], va="baseline")
-    txt(XC + 29.0, Y_B + 15.0, "Firing rate ratio =")
-    txt(XC + 29.0, Y_B + 15.0 + hs.TITLE_PITCH + 0.6,
-        r"$(\mathrm{FR}_{2}-\mathrm{FR}_{3})\,/\,(\mathrm{FR}_{2}+\mathrm{FR}_{3})$")
-    head(fig, "E", XC, LINE2, 2, [])
 
     # ---- F: firing rate ratio by interval order; from the row top to the bottom of the last box of B
     f_top = TOP2

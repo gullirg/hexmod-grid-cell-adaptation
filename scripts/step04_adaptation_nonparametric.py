@@ -54,7 +54,6 @@ def parse_args(argv: Optional[List[str]] = None):
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0],
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--workers", type=int, default=None, help="worker processes (default HEXMOD_WORKERS or 4)")
-    p.add_argument("--smoke", action="store_true", help="smoke run on synthetic data")
     return p.parse_args(argv)
 
 
@@ -68,7 +67,6 @@ def percent_change(results, mask):
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
-    config.guard_smoke_results(args.smoke)
     workers = config.workers(args.workers)
     res = config.results_dir()
     coh = res / "rat" / "cohort"

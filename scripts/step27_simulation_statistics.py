@@ -5,10 +5,9 @@ Example::
     python scripts/step27_simulation_statistics.py
 
 Reads the outputs of steps 22 (``sim/fig6/maps.npz``), 23 (``sim/fig6/fig6d_*.csv``), 25
-(``sim/fig7/fig7_values.json``) and 26 (``sim/fig8/fig8d_sweep.csv``). A missing file stops the
-step, unless ``--allow-precomputed`` is given: it is then taken from the shipped
-``results_precomputed/sim`` (the run record lists the source of every input, and step 40 reports
-it). Computes:
+(``sim/fig7/fig7_values.json``) and 26 (``sim/fig8/fig8d_sweep.csv``). A file that no step has
+written is taken from the shipped ``results_precomputed/sim`` (the run record lists the source of
+every input, and step 40 reports it). Computes:
 
 - Fig 1 legend (closed form, ``hexmod.sim.analytic``): the six-fold component 2 I6(kappa) /
   I0(kappa) of a von Mises tuning curve of circular SD 15 deg (``fig1.narrow.*``), and the circular
@@ -23,8 +22,8 @@ it). Computes:
 - Fig 8: v_opt / (scale / tau) = (sqrt(3) - 1) / ln(sqrt(3)) (Fig 8B, 8C) and the number of runs of
   the speed sweep (Fig 8D).
 
-Writes ``stats/step27_simulation_statistics.json`` (flat ``{key: number}``, keys in docs/PIPELINE.md,
-section 4).
+Writes ``stats/step27_simulation_statistics.json`` (flat ``{key: number}``; the printed keys are listed
+in docs/STATISTICS.md).
 """
 
 from __future__ import annotations
@@ -55,14 +54,11 @@ NARROW_SD_DEG = 15.0
 COSINE_RESULTANT = 0.5
 
 
-def sim_file(relpath: str, rec: RunRecord, sources: Dict[str, str], allow_precomputed: bool = False) -> Path:
-    """``results/sim/<relpath>``, or (with ``allow_precomputed``) the shipped file when no step wrote it."""
+def sim_file(relpath: str, rec: RunRecord, sources: Dict[str, str]) -> Path:
+    """``results/sim/<relpath>``, or the shipped file when no step wrote it."""
     path = config.results_dir() / "sim" / relpath
     if path.is_file():
         sources[relpath] = "results"
-    elif not allow_precomputed:
-        raise SystemExit(f"error: {path} not found; run the simulation steps (22, 23, 25, 26) first, or pass "
-                         "--allow-precomputed to use the shipped results_precomputed/sim")
     else:
         shipped = config.precomputed_dir() / "sim" / relpath
         if not shipped.is_file() and relpath.endswith(".csv"):
@@ -105,15 +101,11 @@ def fig6d_values(table, module: str) -> Dict[str, float]:
 def parse_args(argv: Optional[List[str]] = None):
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0],
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--allow-precomputed", action="store_true",
-                   help="take inputs that no simulation step has written from the shipped results_precomputed/sim")
-    p.add_argument("--smoke", action="store_true", help="accepted for the smoke run (same computation)")
     return p.parse_args(argv)
 
 
 def main(argv: Optional[List[str]] = None) -> int:
-    args = parse_args(argv)
-    config.guard_smoke_results(args.smoke)
+    parse_args(argv)
     from hexmod.sim import analytic
 
     out = config.results_dir() / "stats" / f"{STEP}.json"
@@ -121,17 +113,16 @@ def main(argv: Optional[List[str]] = None) -> int:
     with RunRecord(STEP, argv=argv) as rec:
         values: Dict[str, float] = {}
         values.update(fig1_values())
-        allow = args.allow_precomputed
-        values.update(fig6c_values(hio.load_npz(sim_file("fig6/maps.npz", rec, sources, allow))))
+        values.update(fig6c_values(hio.load_npz(sim_file("fig6/maps.npz", rec, sources))))
         for m in MODULES:
-            values.update(fig6d_values(hio.read_csv(sim_file(f"fig6/fig6d_{m}.csv", rec, sources, allow)), m))
-        fig7 = hio.read_json(sim_file("fig7/fig7_values.json", rec, sources, allow))
+            values.update(fig6d_values(hio.read_csv(sim_file(f"fig6/fig6d_{m}.csv", rec, sources)), m))
+        fig7 = hio.read_json(sim_file("fig7/fig7_values.json", rec, sources))
         clash = set(fig7) & set(values)
         if clash:
             raise ValueError(f"keys written twice: {sorted(clash)}")
         values.update(fig7)
         values["fig8.v_opt_scale_per_tau"] = float(analytic.SPEED_OPT_FACTOR)
-        values["fig8d.n_runs"] = int(len(hio.read_csv(sim_file("fig8/fig8d_sweep.csv", rec, sources, allow))))
+        values["fig8d.n_runs"] = int(len(hio.read_csv(sim_file("fig8/fig8d_sweep.csv", rec, sources))))
         bad = [k for k, v in values.items() if not isinstance(v, (int, float)) or isinstance(v, bool)
                or (isinstance(v, float) and not np.isfinite(v))]
         if bad:

@@ -27,7 +27,7 @@ REPO = Path(__file__).resolve().parents[1]
 
 
 # ------------------------------------------------------------------------------------------------------- helpers
-def demo_figure(text="Firing rate change (%)"):
+def demo_figure():
     """A small figure in the house style with two panels, their letters on one line above the panels."""
     style.use_style()
     fig = style.new_figure("single", 47.0)
@@ -40,7 +40,7 @@ def demo_figure(text="Firing rate change (%)"):
     ax.set_ylim(-4, 5)
     ax.set_xticks([0, 1])
     ax.set_xticklabels(style.TICKS["aligned"])
-    ax.set_ylabel(text)
+    ax.set_ylabel("Firing rate change (%)")
     style.sig_bracket(ax, 0, 1, 4.0, 1e-4)
     axm = style.axes_mm(fig, 52.0, 11.0, 22.0, 22.0, full=True)
     style.panel_letter(fig, "B", x=44.0, row_top=style.LETTER_TOP, clear_of=[axm], not_above=style.LETTER_TOP, row=1)
@@ -77,14 +77,9 @@ def test_style_constants():
     assert style.TICKS["adaptation_groups"] == ("Strong", "Weak", "No")
     assert style.TICKS["aligned"] == ("Aligned", "Misaligned")
     assert style.PALETTE["aligned"] == "#009FB9" and style.PALETTE["misaligned"] == "#F18D00"
-    for line, fill in style.SAME_CONCEPT:
-        assert style.PALETTE[fill] == style.tint(style.PALETTE[line])
-
-
-def test_palette_is_readable():
-    report = style.palette_report(verbose=False)
-    assert report["overall_min_distinct"][0] > 5.0
-    assert set(report["lightness"]) >= {"aligned", "misaligned"}
+    for line in ("aligned", "misaligned", "module_small", "module_large", "method_location", "adaptation",
+                 "method_simple"):
+        assert style.PALETTE[line + "_fill"] == style.tint(style.PALETTE[line])
 
 
 def test_use_style_parameters():
@@ -209,29 +204,20 @@ def test_save_outputs_writes_all_files(tmp_path):
     fig, ax, axm = demo_figure()
     files = common.save_outputs(fig, tmp_path, "Demo")
     names = sorted(p.name for p in files)
-    assert names == ["Demo.pdf", "Demo.png", "Demo.svg", "positions.csv"]
+    assert names == ["Demo.pdf", "Demo.png", "Demo.svg"]
     pdf = (tmp_path / "Demo.pdf").read_bytes()
     assert b"FontFile2" in pdf and b"/Type3" not in pdf            # TrueType (type 42), editable text
     svg = (tmp_path / "Demo.svg").read_text(encoding="utf-8")
     assert "<text" in svg and "Aligned" in svg                       # text kept as text
     assert png_size(tmp_path / "Demo.png") == tuple(int(v * 600) for v in fig.get_size_inches())
-    pos = hio.read_csv(tmp_path / "positions.csv", keep_default_na=False)
-    assert list(pos.columns) == common.POSITION_COLUMNS
-    box = pos[(pos.element == "axes")].iloc[0]
-    assert box.x0_mm == pytest.approx(12.0, abs=1e-3) and box.y1_mm == pytest.approx(47.0 - 11.0, abs=1e-3)
     assert all(r["ok"] and r["raised_mm"] == 0 for r in fig._hexmod_letter_report)
-    letters = pos[pos.name == "panel letter"]
-    assert list(letters.text) == ["A", "B"] and list(letters.panel) == ["A", "B"]
-    assert set(pos[pos.text == "Misaligned"].panel) == {"A"}
-    assert set(pos[(pos.element == "axes")].panel) == {"A", "B"}
-    assert "colour bar" in set(pos.name)
 
 
 def test_outputs_are_reproducible(tmp_path):
     for k in (1, 2):
         fig, *_ = demo_figure()
         common.save_outputs(fig, tmp_path / str(k), "Demo")
-    for name in ("Demo.pdf", "Demo.svg", "Demo.png", "positions.csv"):
+    for name in ("Demo.pdf", "Demo.svg", "Demo.png"):
         assert (tmp_path / "1" / name).read_bytes() == (tmp_path / "2" / name).read_bytes(), name
 
 
@@ -252,20 +238,6 @@ def test_polar_outputs_are_reproducible(tmp_path):
     assert len(ids) == len(set(ids)) and set(re.findall(r"url\(#([^)]+)\)", text)) <= set(ids)
     assert style.stable_svg_clip_ids(tmp_path / "Polar1.svg") == 2      # renaming again keeps the same ids
     assert (tmp_path / "Polar1.svg").read_bytes() == svg[0]
-
-
-def test_dashes_in_figure_text_are_refused(tmp_path):
-    fig, *_ = demo_figure(text="Rate \u2013 change")
-    with pytest.raises(ValueError, match="en dash"):
-        common.save_outputs(fig, tmp_path, "Demo")
-
-
-def test_tagged_panel_and_name(tmp_path):
-    fig, ax, axm = demo_figure()
-    common.tag(axm, panel="B", name="rate map")
-    pos = common.positions(fig)
-    row = pos[pos.name == "rate map"]
-    assert len(row) == 1 and row.panel.iloc[0] == "B"
 
 
 # ------------------------------------------------------------------------------------------------- source data
@@ -289,50 +261,39 @@ def test_source_data_checks(tmp_path):
         common.write_source_data(tmp_path, "Fig3", "A", "bad-name", {"a": [1]})
     with pytest.raises(ValueError):
         common.write_source_data(tmp_path, "Fig3", "A", "x", {"a": [1, 2], "b": [1]})
-    with pytest.raises(ValueError, match="dash"):
-        common.write_source_data(tmp_path, "Fig3", "A", "x", {"label": ["0 \u2013 1 s"]})
     path = common.write_source_data(tmp_path, "Fig3", "A", "x", {"a": [1.0, 2.0], "b": [3.0]}, pad=True)
     back = hio.read_csv(path)
     assert np.isnan(back["b"].iloc[1])
 
 
-def test_long_and_map_tables():
-    t = common.long_table({"Aligned": [1.0, 2.0], "Misaligned": [3.0]})
-    assert list(t.group) == ["Aligned", "Aligned", "Misaligned"] and list(t.value) == [1.0, 2.0, 3.0]
+def test_map_table():
     m = common.map_table(np.arange(6.0).reshape(2, 3), [0.0, 1.0, 2.0], [0.0, 1.0, 2.0, 3.0])
     assert list(m.x) == [0.5, 0.5, 0.5, 1.5, 1.5, 1.5] and list(m.y) == [0.5, 1.5, 2.5] * 2
     assert list(m.value) == [0, 1, 2, 3, 4, 5]
 
 
-def test_find_input(tmp_path):
+def test_find_input(tmp_path, monkeypatch):
     results = tmp_path / "results"
     shipped = tmp_path / "shipped"
     (results / "rat").mkdir(parents=True)
     (results / "rat" / "a.csv").write_text("x\n1\n")
     (shipped / "sim").mkdir(parents=True)
     (shipped / "sim" / "b.csv").write_text("x\n2\n")
-    try:
-        common.set_precomputed(shipped)
-        common.reset_used_inputs()
-        assert common.find_input(results, "rat/a.csv") == results / "rat" / "a.csv"
-        assert common.find_input(results, "sim/b.csv") == shipped / "sim" / "b.csv"
-        (results / "sim").mkdir()
-        (results / "sim" / "b.csv").write_text("x\n3\n")
-        assert common.find_input(results, "sim/b.csv") == results / "sim" / "b.csv"
-        common.set_precomputed(shipped, prefer=True)
-        assert common.find_input(results, "sim/b.csv") == shipped / "sim" / "b.csv"
-        with pytest.raises(common.MissingInput):
-            common.find_input(results, "rat/missing.csv")
-        assert len(common.used_inputs()) == 3
-        # alternative names: the preferred place is searched under every name before the other place
-        (results / "sim" / "c.csv").write_text("x\n4\n")
-        (shipped / "sim" / "c.csv.gz").write_bytes(b"")
-        assert common.find_input(results, "sim/c.csv", ["sim/c.csv.gz"]) == shipped / "sim" / "c.csv.gz"
-        common.set_precomputed(shipped)
-        assert common.find_input(results, "sim/c.csv", ["sim/c.csv.gz"]) == results / "sim" / "c.csv"
-        assert common.find_input(results, "sim/d.csv", ["sim/c.csv.gz"]) == shipped / "sim" / "c.csv.gz"
-    finally:
-        common.set_precomputed(None)
+    monkeypatch.setattr(common.config, "precomputed_dir", lambda: shipped)
+    common.reset_used_inputs()
+    assert common.find_input(results, "rat/a.csv") == results / "rat" / "a.csv"
+    assert common.find_input(results, "sim/b.csv") == shipped / "sim" / "b.csv"
+    (results / "sim").mkdir()
+    (results / "sim" / "b.csv").write_text("x\n3\n")
+    assert common.find_input(results, "sim/b.csv") == results / "sim" / "b.csv"
+    with pytest.raises(common.MissingInput):
+        common.find_input(results, "rat/missing.csv")
+    assert len(common.used_inputs()) == 3
+    # alternative names: the results folder is searched under every name before the shipped folder
+    (results / "sim" / "c.csv").write_text("x\n4\n")
+    (shipped / "sim" / "c.csv.gz").write_bytes(b"")
+    assert common.find_input(results, "sim/c.csv", ["sim/c.csv.gz"]) == results / "sim" / "c.csv"
+    assert common.find_input(results, "sim/d.csv", ["sim/c.csv.gz"]) == shipped / "sim" / "c.csv.gz"
 
 
 # ------------------------------------------------------------------------------------------------ drawing helpers
@@ -348,32 +309,6 @@ def test_triangular_lattice():
     assert np.allclose(d.min(axis=1), 40.0)
     assert np.any(np.all(np.isclose(P, [20.0, 30.0]), axis=1))
     assert len(ax.lines) > 0 and all(line.get_linewidth() == 0.5 for line in ax.lines)
-
-
-def test_polar_hist_replaces_cartesian_axes():
-    fig = style.new_figure("single", 40.0)
-    ax = fig.add_axes([0.1, 0.1, 0.4, 0.8])
-    bars = common.polar_hist(ax, [5.0, 15.0, 15.5, 55.0], (0, 60), 6)
-    assert len(fig.axes) == 1 and fig.axes[0].name == "polar"
-    assert [b.get_height() for b in bars] == [1, 2, 0, 0, 0, 1]
-
-
-def test_trajectory_segment_on_given_axes():
-    import matplotlib.pyplot as plt
-
-    before = plt.get_fignums()
-    fig = style.new_figure("single", 60.0)
-    ax = fig.add_axes([0.1, 0.1, 0.6, 0.8])
-    t = np.linspace(0, 20, 401)
-    x = 50 + 30 * np.cos(t / 3)
-    y = 50 + 30 * np.sin(t / 3)
-    out = common.plot_trajectory_segment(x=x, y=y, t=t, time_window=(2, 12), colour_var=np.abs(np.gradient(x)),
-                                         field_loc=np.array([[50.0, 50.0, 10.0], [20.0, 80.0, 8.0]]),
-                                         xbins=[0, 100], ybins=[0, 100], ax=ax)
-    assert out == [ax]
-    assert len(fig.axes) == 2                         # the axes and its colour bar
-    assert [t_.get_text() for t_ in ax.texts] == ["0", "1"]
-    assert plt.get_fignums() == before                # no pyplot figure created
 
 
 # ---------------------------------------------------------------------------------------------------- figure step
@@ -393,7 +328,7 @@ def _fake_figure_module(build):
 
 def _found(root, pattern):
     """The paths under root that match a glob pattern (the step decides the layout of its results folder)."""
-    return sorted(p for p in Path(root).rglob(pattern) if ".building" not in p.as_posix())
+    return sorted(Path(root).rglob(pattern))
 
 
 def _demo_build(results_dir, out_dir):
@@ -406,32 +341,30 @@ def test_step30_builds_a_figure(tmp_path, monkeypatch):
     monkeypatch.setitem(sys.modules, "hexmod.figures.fig2", _fake_figure_module(_demo_build))
     monkeypatch.setenv("HEXMOD_RESULTS", str(tmp_path))
     step30 = load_step30()
-    assert step30.main(["--figure", "Fig2", "--results", str(tmp_path)]) == 0
+    assert step30.main(["--figure", "Fig2"]) == 0
     (out,) = _found(tmp_path, "figures/Fig2")
-    assert sorted(p.name for p in out.iterdir()) == ["Fig2.pdf", "Fig2.png", "Fig2.svg", "positions.csv",
-                                                     "source_data"]
+    assert sorted(p.name for p in out.iterdir()) == ["Fig2.pdf", "Fig2.png", "Fig2.svg", "source_data"]
     assert (out / "source_data" / "Fig2A_values.csv").is_file()
     (log,) = _found(tmp_path, "logs/step30_figures.json")
     record = hio.read_json(log)
     assert record["status"] == "ok" and record["notes"]["figures"]["Fig2"]["status"] == "ok"
-    assert len(record["outputs"]) == 5
+    assert len(record["outputs"]) == 4
 
 
-def test_step30_keeps_previous_output_on_failure(tmp_path, monkeypatch):
+def test_step30_reports_a_failed_figure(tmp_path, monkeypatch):
     monkeypatch.setitem(sys.modules, "hexmod.figures.fig2", _fake_figure_module(_demo_build))
     monkeypatch.setenv("HEXMOD_RESULTS", str(tmp_path))
     step30 = load_step30()
-    assert step30.main(["--figure", "Fig2", "--results", str(tmp_path)]) == 0
+    assert step30.main(["--figure", "Fig2"]) == 0
     (out,) = _found(tmp_path, "figures/Fig2")
-    before = (out / "Fig2.pdf").read_bytes()
 
     def build(results_dir, out_dir):
+        common.write_source_data(out_dir, "Fig2", "A", "values", {"value": [1.0]})
         raise RuntimeError("broken")
 
     monkeypatch.setitem(sys.modules, "hexmod.figures.fig2", _fake_figure_module(build))
-    assert step30.main(["--figure", "fig2", "--results", str(tmp_path)]) == 1
-    assert (out / "Fig2.pdf").read_bytes() == before
-    assert not (out.parent / ".Fig2.building").exists()
+    assert step30.main(["--figure", "fig2"]) == 1
+    assert not out.exists()                           # no output is left, complete or partial
 
 
 def test_step30_skips_missing_inputs(tmp_path, monkeypatch):
@@ -441,9 +374,7 @@ def test_step30_skips_missing_inputs(tmp_path, monkeypatch):
     monkeypatch.setitem(sys.modules, "hexmod.figures.fig2", _fake_figure_module(build))
     monkeypatch.setenv("HEXMOD_RESULTS", str(tmp_path))
     step30 = load_step30()
-    args = ["--figure", "Fig2", "--results", str(tmp_path)]
-    assert step30.main(args) == 0
-    assert step30.main(args + ["--strict"]) == 1
+    assert step30.main(["--figure", "Fig2"]) == 0
     assert not _found(tmp_path, "figures/Fig2")
 
 

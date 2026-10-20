@@ -57,8 +57,8 @@ DRAWN_PAIRS = [(0, 1), (0, 2), (0, 3)]      # the first bin against each other b
 def _shift_prefixes(names):
     """Return [(prefix, shift in ms, map slot)] for the shifts mapped in the example-cell file.
 
-    The file holds the shifts -s, 0 and +s (s: the best shift of the cell), drawn in slots 0, 1 and 2. When the cell is
-    not a grid cell at its best shift (possible with synthetic smoke-test data), only shift 0 is mapped (slot 1).
+    The file holds the shifts -s, 0 and +s (s: the best shift of the cell), drawn in slots 0, 1 and 2. When the file
+    holds shift 0 alone (a best shift of 0 ms), it is drawn in slot 1.
     """
     found = {}
     for name in names:
@@ -124,7 +124,6 @@ def _draw(out_dir, ex, peak, FRC, kept):
     map_axes = []
     for k, (key, sh, i) in enumerate(shifts):
         ax = hs.axes_mm(fig, MAP_L + i * (MAP_W + MAP_GAP), MAP_TOP, MAP_W, MAP_H, full=True)   # maps keep the full box
-        common.tag(ax, panel="A", name=f"A map {_shift_label(sh)}")
         x, y, fl = ex[key + "__spike_x"], ex[key + "__spike_y"], ex[key + "__field_locations"]
         if not (np.array_equal(ex[key + "__x_edges"], xe) and np.array_equal(ex[key + "__y_edges"], ye)):
             raise ValueError(f"the maps of {key} and {key0} have different bins")
@@ -151,7 +150,7 @@ def _draw(out_dir, ex, peak, FRC, kept):
 
     # ================================================================ B: spatial information against the shift
     # letter B stands on the end of the rotated y label, at least 1.25 mm above it
-    axb = common.tag(hs.axes_mm(fig, B_LEFT, MAP_TOP, RIGHT - B_LEFT, MAP_H), panel="B", name="B curve")
+    axb = hs.axes_mm(fig, B_LEFT, MAP_TOP, RIGHT - B_LEFT, MAP_H)
     hs.panel_letter(fig, "B", x=B_LETTER, row_top=ROW1, clear_of=[axb], not_above=ROW1, row=1)
     for key, sh, _ in shifts:
         axb.axvline(sh, color=P["guide"], linewidth=hs.LW_GUIDE, zorder=1)
@@ -170,7 +169,7 @@ def _draw(out_dir, ex, peak, FRC, kept):
                      fontsize=hs.FS_SMALL)
 
     # ================================================================ C: best time shift of each cell
-    axc = common.tag(hs.axes_mm(fig, C_L, BOX2_TOP, C_W, BOX2_H), panel="C", name="C histogram")
+    axc = hs.axes_mm(fig, C_L, BOX2_TOP, C_W, BOX2_H)
     hs.panel_letter(fig, "C", row_top=ROW2, clear_of=[axc], not_above=ROW2, row=2)
     n_c, edges_c, _ = axc.hist(best_shift, bins=shift_ms, histtype="stepfilled", facecolor=P["neutral_fill"],
                                edgecolor="none", linewidth=0, zorder=2)     # fill only, as in Supp Fig 3B to D
@@ -188,7 +187,7 @@ def _draw(out_dir, ex, peak, FRC, kept):
     axc.set_ylabel(hs.LABEL["cells"])
 
     # ================================================================ D: firing rate change after the shift
-    axD = common.tag(hs.axes_mm(fig, D_L, BOX2_TOP, D_W, BOX2_H), panel="D", name="D box plots")
+    axD = hs.axes_mm(fig, D_L, BOX2_TOP, D_W, BOX2_H)
     hs.panel_letter(fig, "D", x=D_LETTER, row_top=ROW2, clear_of=[axD], not_above=ROW2, row=2)
     axD.set_xlim(-0.6, 3.6)
     axD.set_ylim(-30, 62)
@@ -207,7 +206,7 @@ def _draw(out_dir, ex, peak, FRC, kept):
                                   y0=top_whisker + hs.pt_to_data(axD, 5.0), order="span")
 
     # ================================================================ E: adaptation coefficient, original and shifted
-    axE = common.tag(hs.axes_mm(fig, E_L, BOX2_TOP, E_W, BOX2_H), panel="E", name="E box plots")
+    axE = hs.axes_mm(fig, E_L, BOX2_TOP, E_W, BOX2_H)
     hs.panel_letter(fig, "E", x=E_LETTER, row_top=ROW2, clear_of=[axE], not_above=ROW2, row=2)
     axE.set_xlim(-0.6, 1.6)
     axE.set_ylim(-0.22, 0.2)

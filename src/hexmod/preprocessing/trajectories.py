@@ -23,8 +23,8 @@ What the code does, per session (:func:`smooth_session`):
   radians on [0, 2 pi); the last sample repeats the previous value. It is float32 where the positions
   are float32 (Vollan et al.).
 - **Smoothed positions under both names.** The smoothing writes into the position array itself, so the
-  merged data hold the smoothed positions under both ``xy`` and ``xy_smoothed`` (equal arrays), as in
-  the published analysis. The unsmoothed positions remain in the per-dataset files
+  merged data hold the smoothed positions under both ``xy`` and ``xy_smoothed`` (equal arrays). The
+  unsmoothed positions remain in the per-dataset files
   (``preprocessed/<dataset>.pkl``). All analyses read ``xy_smoothed``.
 
 The ``position`` dict of a merged session holds the entries of the dataset module (``xy``, ``xy2`` for

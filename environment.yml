@@ -3,6 +3,7 @@
 #   conda activate hexmod
 #   pip install -e .
 # The analysis pins are the versions with which the published numbers were computed.
+# matplotlib and pyparsing are the versions with which the figures were drawn.
 name: hexmod
 channels:
   - conda-forge
@@ -13,7 +14,8 @@ dependencies:
   - pandas=1.5.3
   - scikit-image=0.20.0
   - matplotlib=3.8.0
-  - h5py
+  - pyparsing=3.0.9
+  - h5py=3.7.0
   - requests
   - tqdm
   - pytest

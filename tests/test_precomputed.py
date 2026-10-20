@@ -32,7 +32,7 @@ def test_large_pool_matches_checksums(large_pool):
     assert hio.sha256_file(SIM_IN / "large_module_pool_70cm.npz") == sums["file_sha256"]
     assert large_pool.shape == (100000, 12)
     assert list(large_pool.columns) == sums["column_order"]
-    got = io_pool.column_checksums(large_pool)
+    got = io_pool.column_checksums(large_pool, sums["significant_digits"])
     assert {c: sums["columns"][c]["sha256"] for c in got} == got
 
 
@@ -81,7 +81,7 @@ def test_fig7_statistics_from_participant_summaries():
             t = stats.ttest_rel(rates[:, 0::2].mean(axis=1), rates[:, 1::2].mean(axis=1)).statistic
             assert round(t, 4) == printed_t[(method, module)]
             panel = "fig7a" if method == "simple" else "fig7d"
-            # recomputed values: the last bits can differ between CPU architectures and math libraries
+            # recomputed values: the last bits can differ between CPU architectures and numerical libraries
             assert values[f"{panel}.{module}.t"] == pytest.approx(t, rel=1e-9, abs=0)
             pct = rates / rates.mean(axis=1, keepdims=True) * 100 - 100
             # the same for the percent changes, which can be zero

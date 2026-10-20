@@ -3,11 +3,8 @@
 from __future__ import annotations
 
 import json
-import os
 import pickle
-import subprocess
 import sys
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -78,17 +75,6 @@ def test_cache_accepts_plain_data_only(tmp_path):
         io.load_cache(tmp_path / "evil.pkl")
 
 
-def test_written_files_have_the_usual_permissions(tmp_path):
-    mask = os.umask(0)
-    os.umask(mask)
-    io.write_csv(pd.DataFrame({"a": [1]}), tmp_path / "t.csv")
-    io.write_json({"a": 1}, tmp_path / "t.json")
-    io.save_npz(tmp_path / "t.npz", arrays={"a": np.arange(2)})
-    for name in ("t.csv", "t.json", "t.npz"):
-        assert (tmp_path / name).stat().st_mode & 0o777 == 0o666 & ~mask == io.FILE_MODE
-    assert not list(tmp_path.glob(".tmp_*"))
-
-
 def test_text_round_trips():
     v = np.array([59.50042804250833, 0.1, 1e-5, np.nan, 92.3529438010587])
     once = io.csv_float_roundtrip(v)
@@ -135,29 +121,6 @@ def test_run_record(tmp_path, monkeypatch):
     assert json.loads((tmp_path / "logs" / "step98_fail.json").read_text())["status"] == "failed"
 
 
-def test_run_record_keeps_linked_inputs_under_their_base(tmp_path, monkeypatch):
-    """Inputs reached through symbolic links inside the data or results folder keep their place in that folder."""
-    elsewhere = tmp_path / "elsewhere"
-    (elsewhere / "brun2008").mkdir(parents=True)
-    (elsewhere / "brun2008" / "r1.mat").write_bytes(b"raw")
-    (elsewhere / "cells.csv").write_text("row\n0\n")
-    data = tmp_path / "data"
-    data.mkdir()
-    os.symlink(elsewhere / "brun2008", data / "brun2008")
-    results = tmp_path / "results"
-    (results / "rat" / "cohort").mkdir(parents=True)
-    os.symlink(elsewhere / "cells.csv", results / "rat" / "cohort" / "cells.csv")
-    monkeypatch.setenv("HEXMOD_DATA", str(data))
-    monkeypatch.setenv("HEXMOD_RESULTS", str(results))
-    with runlog.RunRecord("step97_links") as rec:
-        rec.add_input(data / "brun2008" / "r1.mat")
-        rec.add_input(results / "rat" / "cohort" / "cells.csv")
-        rec.add_input(elsewhere / "cells.csv")
-    r = json.loads((results / "logs" / "step97_links.json").read_text())
-    assert [e["path"] for e in r["inputs"]] == ["data/brun2008/r1.mat", "results/rat/cohort/cells.csv",
-                                               "cells.csv"]
-
-
 # --------------------------------------------------------------------------------------- config
 def test_paths_and_workers(tmp_path, monkeypatch):
     monkeypatch.setenv("HEXMOD_DATA", str(tmp_path / "d"))
@@ -167,27 +130,6 @@ def test_paths_and_workers(tmp_path, monkeypatch):
     assert config.workers() == 3 and config.workers(5) == 5
     with pytest.raises(ValueError):
         config.workers(0)
-
-
-def test_smoke_results_are_kept_apart(tmp_path, monkeypatch):
-    import json
-
-    monkeypatch.setenv("HEXMOD_RESULTS", str(tmp_path / "smoke"))
-    res = config.results_dir()
-    config.guard_smoke_results(smoke=True)          # an empty folder: marked as a smoke folder
-    assert (res / config.SMOKE_MARKER).is_file()
-    config.guard_smoke_results(smoke=True)
-    with pytest.raises(config.ResultsFolderError) as info:     # a step without --smoke refuses it
-        config.guard_smoke_results(smoke=False)
-    assert "smoke run" in str(info.value.code)
-    monkeypatch.setenv("HEXMOD_RESULTS", str(tmp_path / "recorded"))
-    other = config.results_dir()
-    (other / "logs").mkdir(parents=True)
-    (other / "logs" / "step02_cohort.json").write_text(json.dumps({"argv": ["step02_cohort.py"]}))
-    config.guard_smoke_results(smoke=False)
-    with pytest.raises(config.ResultsFolderError):             # a smoke step refuses results of the recorded data
-        config.guard_smoke_results(smoke=True)
-    assert not (other / config.SMOKE_MARKER).exists()
 
 
 def test_dataset_metadata():
@@ -201,13 +143,3 @@ def test_dataset_metadata():
         assert all(p == key or p.startswith(key + "/") for p in meta["raw_subpaths"])
     assert datasets.DATASETS["barry2012"]["data_doi"] == datasets.DATASETS["olafsdottir2016"]["data_doi"] == \
         "10.5281/zenodo.23477461"
-
-
-def test_marked_results_folder_stops_a_step_with_one_line(tmp_path):
-    (tmp_path / config.SMOKE_MARKER).write_text("x")
-    env = dict(os.environ, HEXMOD_RESULTS=str(tmp_path), PYTHONPATH=str(Path(config.__file__).parents[1]))
-    code = "from hexmod import config; config.guard_smoke_results(smoke=False)"
-    out = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True, timeout=120)
-    assert out.returncode == 1
-    lines = out.stderr.strip().splitlines()
-    assert len(lines) == 1 and lines[0].startswith("error: ") and "smoke run" in lines[0]

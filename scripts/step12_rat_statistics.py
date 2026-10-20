@@ -5,14 +5,14 @@
 Reads the per-cell outputs of steps 02 to 05 (``cells.csv``, ``cells_full.npz``, ``param_cells.csv``,
 ``fr_percent_change.npy``, ``peak_shift.csv``, ``shift_cells.csv``,
 ``fr_percent_change_shifted.npy``). Writes ``results/rat/figure_tables/`` and
-``results/stats/step12_rat_statistics.json`` (see docs/PIPELINE.md, step 12 and section 4):
+``results/stats/step12_rat_statistics.json`` (see docs/PIPELINE.md, step 12):
 
 - ``cells_thirds.csv`` and ``thirds_edges.csv``: thirds of the adaptation coefficient, of the
   proximity difference and of grid scale (Fig 4D, Fig 5);
 - ``supp3bcd_arrays.npz`` and ``supp3bcd_fits.csv``: field deviations and field rates of small-
   and large-scale cells with their gamma fits (location 0);
 - ``supp5_widths.csv``: circular SD of the direction tuning of the conjunctive cells;
-- the statistics file: every key listed for this step in docs/PIPELINE.md section 4 (Fig 3C to
+- the statistics file: the printed statistics of this step listed in docs/STATISTICS.md (Fig 3C to
   Supp Fig 2 from ``hexmod.rat.paper_stats``; Supp Fig 3 and 5 from
   ``hexmod.rat.figure_tables``), plus the pairwise comparisons between the groups of Fig 3C, 4D,
   5B and Supp Fig 2, Holm-corrected within each panel.
@@ -48,8 +48,6 @@ STEP = "step12_rat_statistics"
 def parse_args(argv: Optional[List[str]] = None):
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0],
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--smoke", action="store_true", help="synthetic smoke run (statistics that cannot be computed "
-                   "on the small synthetic cohort are left out)")
     return p.parse_args(argv)
 
 
@@ -69,8 +67,7 @@ def finite_only(values: dict):
 
 
 def main(argv: Optional[List[str]] = None) -> int:
-    args = parse_args(argv)
-    config.guard_smoke_results(args.smoke)
+    parse_args(argv)
     res = config.results_dir()
     out = res / "rat" / "figure_tables"
     stats_path = res / "stats" / f"{STEP}.json"
@@ -126,7 +123,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         values.update(ft.supp3_statistics(supp3, fits))
         values.update(ft.supp5_statistics(widths))
         kept, dropped = finite_only(values)
-        if dropped and not args.smoke:
+        if dropped:
             raise ValueError(f"statistics without a finite value: {dropped}")
         hio.write_json(kept, stats_path)
         rec.add_output(stats_path)

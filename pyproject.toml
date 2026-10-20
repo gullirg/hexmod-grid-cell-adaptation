@@ -30,12 +30,5 @@ where = ["src"]
 testpaths = ["tests"]
 addopts = "-ra --strict-markers"
 markers = [
-    "smoke: quick end-to-end run on synthetic data (runs in CI, no data needed)",
-    "data: needs the raw datasets in HEXMOD_DATA (skipped when they are absent)",
-    "frozen: compares with reference results in HEXMOD_FROZEN (skipped when it is not set)",
-    "slow: takes more than a few minutes (run with --runslow or HEXMOD_RUN_SLOW=1)",
+    "results: checks the results folder of a complete run in HEXMOD_RESULTS (skipped when it is not given)",
 ]
-
-[tool.ruff]
-line-length = 120
-target-version = "py310"

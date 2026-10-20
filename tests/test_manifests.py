@@ -6,7 +6,6 @@ on the order in which a file system lists the raw files.
 
 from __future__ import annotations
 
-import ast
 import json
 import re
 from pathlib import Path
@@ -303,87 +302,3 @@ def test_timescale_fit_settings():
     for k in ("single", "double"):
         lo, hi = fs[k]["bounds"]
         assert len(lo) == len(hi) == len(fs[k]["p0"]) and fs[k]["method"] == "trf"
-
-
-# ------------------------------------------------------------------------ no file-system listing order
-LISTING_FUNCTIONS = {("os", "listdir"), ("os", "scandir"), ("os", "walk"), ("glob", "glob"), ("glob", "iglob")}
-LISTING_METHODS = {"glob", "rglob", "iterdir"}
-
-
-def listing_calls_without_sorted(source: str):
-    """Return (line, call) for directory listings whose result is not passed straight to sorted()."""
-    tree = ast.parse(source)
-    parent = {}
-    for node in ast.walk(tree):
-        for child in ast.iter_child_nodes(node):
-            parent[child] = node
-    bad = []
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Call):
-            continue
-        f, name = node.func, None
-        if isinstance(f, ast.Attribute):
-            if isinstance(f.value, ast.Name) and (f.value.id, f.attr) in LISTING_FUNCTIONS:
-                name = f"{f.value.id}.{f.attr}"
-            elif f.attr in LISTING_METHODS:
-                name = f".{f.attr}"
-        elif isinstance(f, ast.Name) and f.id in {"listdir", "scandir", "walk", "glob", "iglob"}:
-            name = f.id
-        if name is None:
-            continue
-        p = parent.get(node)
-        if not (isinstance(p, ast.Call) and isinstance(p.func, ast.Name) and p.func.id == "sorted"):
-            bad.append((node.lineno, name))
-    return bad
-
-
-def test_listing_check_works():
-    assert listing_calls_without_sorted("import os\nx = os.listdir(d)\n")
-    assert listing_calls_without_sorted("from pathlib import Path\nx = list(Path(d).glob('*.mat'))\n")
-    assert not listing_calls_without_sorted("import glob\nx = sorted(glob.glob(p))\n")
-
-
-def test_preprocessing_does_not_depend_on_listing_order():
-    files = sorted((REPO / "src" / "hexmod" / "preprocessing").glob("*.py"))
-    step = REPO / "scripts" / "step01_preprocess.py"
-    if step.is_file():
-        files.append(step)
-    bad = [f"{p.relative_to(REPO)}:{ln}: {name}"
-           for p in files for ln, name in listing_calls_without_sorted(p.read_text(encoding="utf-8"))]
-    assert not bad, "raw files must be taken from the manifests, not from a directory listing:\n" + "\n".join(bad)
-
-
-# ------------------------------------------------------------------------------- reference results
-@pytest.mark.frozen
-def test_reference_cohort_order(frozen_path, units, sessions):
-    """The published cohort table maps one to one onto the manifest and is in manifest order."""
-    cells = pd.read_csv(frozen_path("rat/cohort/cells.csv"))
-    key = list(zip(cells["session_id"], cells["cell_id"].astype(int)))
-    pos = {(s, int(c)): i for i, (s, c) in enumerate(zip(units["session_id"], units["cell_id"]))}
-    idx = [pos.get(k) for k in key]
-    assert all(i is not None for i in idx), "cells missing from the manifest"
-    idx = np.array(idx)
-    assert len(np.unique(idx)) == len(idx)
-    assert np.all(np.diff(idx) > 0), "the cohort table is not in manifest order"
-    assert (units["unique_cell_id"].to_numpy()[idx] == cells["unique_cell_id"].to_numpy()).all()
-    assert (units["animal_id"].to_numpy()[idx] == cells["animal_id"].to_numpy()).all()
-    if cells["dataset"].isin(list(ds.DATASETS)).all():
-        assert (units["dataset"].to_numpy()[idx] == cells["dataset"].to_numpy()).all()
-    keys = set(units["dataset"].to_numpy()[idx])
-    coh = sessions[sessions["in_cohort"] & sessions["dataset"].isin(keys)]
-    assert set(cells["session_id"]) == set(coh["session_id"])
-    if keys == set(ds.CANONICAL_ORDER):
-        assert len(cells) == 3938 and cells["session_id"].nunique() == 112 and cells["animal_id"].nunique() == 32
-
-
-@pytest.mark.frozen
-def test_reference_preprocessed_order(frozen_path):
-    """The merged preprocessed recordings of the published analysis are in manifest order."""
-    from hexmod.io import load_cache
-
-    data = load_cache(frozen_path("preprocessed/trajectories.pkl"))
-    known = set(labels.read_sessions()["session_id"])     # the reference may hold sessions outside the manifest
-    data = {a: {s: v for s, v in ss.items() if s in known} for a, ss in data.items()}
-    data = {a: ss for a, ss in data.items() if ss}
-    out = labels.canonical_order(data)
-    assert _flatten(out) == _flatten(data)

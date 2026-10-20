@@ -320,8 +320,11 @@ def trajectory_outputs(session_data, cells, row: int, field_locations, cells_ful
     return arrays, visits_table(ev_df), visits_in_window(ev_df, window)
 
 
-def supp2a_outputs(session_data, cells, row: int, shift_ms, spatial_information, shifts_ms=None):
+def supp2a_outputs(session_data, cells, row: int, shift_ms, spatial_information):
     """Supp Fig 2A: the contents of ``supp2a_shifted_maps.npz``.
+
+    The cell is mapped at its best shift (largest spatial information), at 0 and at minus the
+    best shift.
 
     Parameters
     ----------
@@ -335,9 +338,6 @@ def supp2a_outputs(session_data, cells, row: int, shift_ms, spatial_information,
         The time shifts of step 05 (``rat/prospective/shift_ms.npy``).
     spatial_information : (n_shifts,) array_like
         The cell's spatial information at each shift (its row of ``si_shift.npy``).
-    shifts_ms : sequence of int, optional
-        Shifts to map; default the best shift (largest spatial information), 0 and minus the
-        best shift.
 
     Returns
     -------
@@ -349,8 +349,7 @@ def supp2a_outputs(session_data, cells, row: int, shift_ms, spatial_information,
     row = int(row)
     si = np.asarray(spatial_information, float)
     best = int(np.asarray(shift_ms)[int(np.argmax(si))])
-    if shifts_ms is None:
-        shifts_ms = list(dict.fromkeys([best, 0, -best]))
+    shifts_ms = list(dict.fromkeys([best, 0, -best]))
     animal_id, session_id, cell_id = _labels(cells, row)
     maps = shifted_maps(session_data, cell_id, animal_id, session_id, shifts_ms)
     arrays = {"shift_ms": np.asarray(shift_ms, dtype=np.int64), "spatial_information": si}

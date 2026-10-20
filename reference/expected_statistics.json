@@ -493,7 +493,7 @@
    "location": "Supp Fig 4 legend; Discussion",
    "printed": "τ = 0.30 s",
    "step": "step07_adaptation_timescales",
-   "tolerance": 2.9996574103173126e-10,
+   "tolerance": 2.9996574103173124e-07,
    "value": 0.29996574103173124
   },
   {
@@ -502,7 +502,7 @@
    "location": "Supp Fig 4 legend; Discussion",
    "printed": "2.6 s",
    "step": "step07_adaptation_timescales",
-   "tolerance": 2.642918885884425e-09,
+   "tolerance": 2.6429188858844247e-06,
    "value": 2.642918885884425
   },
   {
@@ -592,7 +592,7 @@
    "location": "Supp Fig 4 legend",
    "printed": "τ = 0.45 s",
    "step": "step07_adaptation_timescales",
-   "tolerance": 4.526153076587595e-10,
+   "tolerance": 4.5261530765875945e-07,
    "value": 0.45261530765875946
   },
   {

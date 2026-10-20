@@ -15,7 +15,7 @@ What the code does, per session:
 - **Spikes.** Spike times are not shifted, so relative to the positions every spike lies 0.02 s later
   than recorded. The analysis assigns each spike to the first position sample at or after its time
   (:meth:`hexmod.rat.gridcell.GridCellAnalysis.compute_spike_array`), so a spike is paired with the
-  position recorded 0.02 to 0.04 s after it. This is kept as in the published analysis.
+  position recorded 0.02 to 0.04 s after it. All results of the paper use this pairing.
 - **Units.** The data hold no cluster-quality, tetrode or cell-number fields, so every unit is kept; the
   unit with ``original_index`` ``i`` (counted from 0) is unit ``i``, labelled ``W<a>_W<a>_<s>_T0_C<i>``.
 

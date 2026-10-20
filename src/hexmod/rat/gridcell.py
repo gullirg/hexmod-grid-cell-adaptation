@@ -11,8 +11,8 @@ times) into the samples used by every rat analysis:
 
 The rate map uses 3 cm bins and a Gaussian filter with a standard deviation of one bin. By
 default a position sample that holds several spikes counts once (``rate_map_spike_mode=
-"binary"``), which is the map used for all published analyses except the field-visit sequences
-of Fig 3F, which use spike counts (``"counts"``).
+"binary"``), which is the map used for all analyses of the paper except the field-visit
+sequences of Fig 3F, which use spike counts (``"counts"``).
 """
 
 from __future__ import annotations

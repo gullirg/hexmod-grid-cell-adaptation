@@ -18,7 +18,7 @@ What the code does:
   at time 0, while the position time is not shifted. Every unit's spikes therefore move earlier
   relative to the positions by that unit's first-spike latency (0.0035 to 8.34 s across the 26 units of
   the two sessions that enter the cohort, S2_1 and S2_5, and 0.01 to 0.74 s for the 7 of them in the
-  cohort). This is kept as in the published analysis.
+  cohort). All results of the paper use this alignment.
 - **Unit keys.** ``cell_id`` numbers the spike files of the whole dataset from 1, in file order (for
   example unit ``11265-16030601+02_T1C4.mat`` of S2_1 is cell 78); the manifest holds the same
   numbers and they are checked against it. ``unique_cell_ids`` are ``S<a>_S<a>_<s>_T<t>C<c>``.

@@ -33,21 +33,16 @@ STEP = "step10_conjunctive_cells"
 
 def parse_args(argv: Optional[List[str]] = None):
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    p.add_argument(
-        "--workers", type=int, default=None, help="accepted for the pipeline runner; the step runs in one process"
-    )
-    p.add_argument("--smoke", action="store_true", help="smoke run on synthetic results")
     return p.parse_args(argv)
 
 
 def main(argv: Optional[List[str]] = None) -> int:
-    args = parse_args(argv)
+    parse_args(argv)
     from hexmod import io
     from hexmod.preprocessing import labels
     from hexmod.rat import conjunctive
     from hexmod.runlog import RunRecord
 
-    config.guard_smoke_results(args.smoke)
     res = config.results_dir()
     out = res / "rat" / "conjunctive"
     cells_path = res / "rat" / "cohort" / "cells.csv"
@@ -69,7 +64,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         )
         dropped = fl.pop("statistics_not_finite", [])
         rec.note("statistics_not_finite", dropped)
-        if dropped and not args.smoke:
+        if dropped:
             raise ValueError(f"statistics without a finite value: {dropped}")
         for name, df in tables.items():
             io.write_csv(df, out / name)

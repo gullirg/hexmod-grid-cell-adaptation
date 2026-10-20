@@ -42,7 +42,6 @@ def parse_args(argv: Optional[List[str]] = None):
                                 formatter_class=argparse.RawDescriptionHelpFormatter, epilog=__doc__)
     p.add_argument("--data", default=None, help="data folder (default HEXMOD_DATA or <repo>/data)")
     p.add_argument("--quick", action="store_true", help="compare sizes only")
-    p.add_argument("--sha256", action="store_true", help="compare sha256 checksums (the default)")
     p.add_argument("--workers", type=int, default=2, help="files checked in parallel (default 2)")
     return p.parse_args(argv)
 
@@ -50,7 +49,7 @@ def parse_args(argv: Optional[List[str]] = None):
 def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
     base = Path(args.data).expanduser() if args.data else config.data_dir()
-    checksum = "size" if args.quick and not args.sha256 else "sha256"
+    checksum = "size" if args.quick else "sha256"
     keys = list(ds.CANONICAL_ORDER)
     out_path = config.results_dir() / "data_check.json"
     with RunRecord("data_check", hash_inputs=True, argv=argv if argv is not None else sys.argv[1:]) as rec:

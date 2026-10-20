@@ -16,7 +16,7 @@ Figure tables (written by step 12 under ``rat/figure_tables/``):
 Statistics: ``posthoc_statistics`` gives the pairwise comparisons between the groups of Fig 3C,
 4D, 5B and Supp Fig 2 (paired t-tests between t_prev bins, Student t-tests between thirds),
 Holm-corrected within each panel; ``supp3_statistics`` and ``supp5_statistics`` give the Supp Fig 3
-and Supp Fig 5 keys. Keys follow docs/PIPELINE.md section 4.
+and Supp Fig 5 keys. The printed keys are listed in docs/STATISTICS.md.
 """
 
 from __future__ import annotations

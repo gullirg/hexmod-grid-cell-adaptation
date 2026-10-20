@@ -26,8 +26,8 @@ What the code does, per file:
 - **Not kept.** Head direction, theta phase and the speed series of the source.
 - **Repeated recording.** Files ``28063_4`` and ``28063_5`` (sessions V2_4 and V2_5) hold the same
   recording session with two spike sortings: identical time stamps, positions that differ by at most
-  3.1e-5 cm, and 183 and 171 kept units (64 unit keys in common). Both are kept as sessions, as in the
-  published analysis; the analyses that need independent recordings (Fig 2D and 2E) handle it.
+  3.1e-5 cm, and 183 and 171 kept units (64 unit keys in common). Both are kept as sessions; the
+  analyses that need independent recordings (Fig 2D and 2E) handle it.
 
 A session dict holds, in this order: ``position`` (``xy``, ``time``, ``sample_rate``),
 ``spike_times``, ``mod_id``, ``unique_cell_ids`` (``V<a>_V<a>_<s>_cell<i>``), ``animal_id``,

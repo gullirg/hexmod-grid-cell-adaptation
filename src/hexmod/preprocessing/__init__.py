@@ -13,7 +13,8 @@ Preprocessing has two stages.
 2. :mod:`~hexmod.preprocessing.trajectories` merges the datasets, interpolates missing positions,
    smooths them with a 20-sample boxcar and computes running speed and movement direction.
 
-The layout of a session dict and of the output files is given in docs/PIPELINE.md (step 01).
+The output files are listed in docs/PIPELINE.md (step 01); the docstrings of the dataset modules and
+of :mod:`~hexmod.preprocessing.trajectories` give the layout of a session dict.
 
 Which raw files are read, and in which order, comes from the file manifests
 (``inputs/manifests/files_<key>.csv``, read with :func:`hexmod.data_sources.read_manifest`); animal,

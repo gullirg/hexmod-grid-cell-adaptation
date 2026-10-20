@@ -61,7 +61,7 @@ def _draw(out_dir, widths):
     SD = analytic.SIXFOLD_SDS
     Y = analytic.sixfold_curve(SD) * 100                 # percent of the mean
     W = widths["circular_sd_deg"].to_numpy(float)        # circular SD of each conjunctive cell
-    has_cells = W.size > 0                               # synthetic test data may have no conjunctive cell
+    has_cells = W.size > 0                               # guard against an empty table
     med = float(np.median(W)) if has_cells else np.nan
     wmin = float(W.min()) if has_cells else np.nan
     marks = {s: _sixfold_pct(s) for s in ((NARROW_SD, wmin, med) if has_cells else (NARROW_SD,))}
@@ -71,7 +71,7 @@ def _draw(out_dir, widths):
     fig = hs.new_figure("onehalf", H)
     # ---- A: linear scale
     let_a = hs.panel_letter(fig, "A", row_top=LINE, not_above=LINE, row=1)
-    axA = common.tag(hs.axes_mm(fig, 13.0, TOP, 40.0, A_BOTTOM - TOP), panel="A", name="A linear scale")
+    axA = hs.axes_mm(fig, 13.0, TOP, 40.0, A_BOTTOM - TOP)
     axA.plot(SD, Y, color=P["ink"], lw=hs.LW_DATA)
     axA.set_xlim(0, 90)
     axA.set_ylim(0, 200)
@@ -91,7 +91,7 @@ def _draw(out_dir, widths):
 
     # ---- B: log scale, with the observed widths
     let_b = hs.panel_letter(fig, "B", x=62.0, row_top=LINE, not_above=LINE, row=1)
-    axB = common.tag(hs.axes_mm(fig, 75.0, TOP, 36.0, B_BOTTOM - TOP), panel="B", name="B log scale")
+    axB = hs.axes_mm(fig, 75.0, TOP, 36.0, B_BOTTOM - TOP)
     axB.semilogy(SD, Y, color=P["ink"], lw=hs.LW_DATA)
     axB.set_xlim(0, 90)
     axB.set_ylim(1e-4, 300)
@@ -112,8 +112,7 @@ def _draw(out_dir, widths):
                      arrowprops=dict(arrowstyle="-", lw=hs.LW_GUIDE, color=P["guide"]))
         axB.annotate(f"Median {med:.0f}°:\n{marks[med]:.3f}%", (med, marks[med]), xytext=(6, 1.2e-3),
                      fontsize=hs.FS_SMALL, arrowprops=dict(arrowstyle="-", lw=hs.LW_GUIDE, color=P["guide"]))
-    axH = common.tag(hs.axes_mm(fig, 75.0, 41.0, 36.0, 8.0, sides=("bottom",)), panel="B",
-                     name="B histogram of cell widths")                    # the strip has no y scale: bottom spine only
+    axH = hs.axes_mm(fig, 75.0, 41.0, 36.0, 8.0, sides=("bottom",))      # the strip has no y scale: bottom spine only
     counts, edges, _ = axH.hist(W, bins=np.arange(0, 91, 2.5), color=P["neutral_fill"], edgecolor="white",
                                 linewidth=0.3)
     if has_cells:

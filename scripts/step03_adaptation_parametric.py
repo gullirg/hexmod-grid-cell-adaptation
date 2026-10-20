@@ -10,7 +10,7 @@ Reads ``results/preprocessed/trajectories.pkl`` and, from step 02, ``rat/cohort/
 ``tprevXloc``, time constant 2 s, 5 cm location bins; masks
 ``all``, ``oddMinute``, ``evenMinute``, ``infield``) and
 :func:`hexmod.rat.hexmod_fit.measure_hexmod` (mask ``all``). The grid orientation and the field
-rates enter the fits after the text round trips of docs/PIPELINE.md, section 2.7.
+rates enter the fits after the text round trips of docs/PIPELINE.md (Rounded per-cell inputs).
 
 It also computes, for each cell, the limits within which the fit keeps alpha
 (:func:`hexmod.rat.paper_stats.alpha_bounds`) and counts the cells whose alpha equals a limit;
@@ -63,7 +63,6 @@ def parse_args(argv: Optional[List[str]] = None):
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--workers", type=int, default=None, help="worker processes (default HEXMOD_WORKERS or 4)")
     p.add_argument("--no-alpha-bounds", action="store_true", help="skip the count of alpha values on a fit limit")
-    p.add_argument("--smoke", action="store_true", help="smoke run on synthetic data")
     return p.parse_args(argv)
 
 
@@ -71,8 +70,8 @@ def fit_inputs(cells, field_locations, field_rates, data):
     """Per-cell inputs shared by the parametric and the HexMod fits.
 
     The orientation is passed after one CSV text round trip read with pandas' default parser and
-    the field rates after their 8-decimal text form (docs/PIPELINE.md, section 2.7); with these
-    inputs the fits give the reference results bit for bit.
+    the field rates after their 8-decimal text form (docs/PIPELINE.md, Rounded per-cell inputs); with
+    these inputs the fits give the reference results exactly.
     """
     ori = csv_float_roundtrip(cells["orientation_deg"].to_numpy(float), 1)
     out = []
@@ -101,7 +100,6 @@ def _columns(results, names):
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
-    config.guard_smoke_results(args.smoke)
     workers = config.workers(args.workers)
     res = config.results_dir()
     coh = res / "rat" / "cohort"

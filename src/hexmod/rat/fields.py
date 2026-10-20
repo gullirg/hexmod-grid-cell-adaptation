@@ -11,7 +11,7 @@
 
 t_prev rules (``extract_field_entry``, argument ``tprev_rule``):
 
-``"standard"`` (default; used for every published analysis except Fig 3F)
+``"standard"`` (default; used for every analysis of the paper except Fig 3F)
     During a visit t_prev is the interval from the exit of the previous visit to the entry of
     this one (plus one sample); between visits it grows from one sample after the exit. It is 0
     until the end of the first visit and after the end of the last visit. The first visit is not

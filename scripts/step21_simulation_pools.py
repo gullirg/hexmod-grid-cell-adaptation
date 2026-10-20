@@ -8,12 +8,15 @@ Examples::
 Small module (grid scale 40 vm): 100,000 cells built with ``hexmod.sim.pool.set_gridcells_pool``
 (``module_param("small")``, base seed 0; about 6 minutes on one core). Its column checksums
 (``hexmod.sim.io_pool.column_checksums``) are compared with ``inputs/simulation/pool_checksums.json``;
-they are equal when the pool is the one of the paper.
+they are equal when the pool is the one of the paper. These checksums are taken over values rounded
+to six significant digits (``significant_digits`` in that file), because builds of the numerical
+libraries can differ in the last digit of a few values (an OpenBLAS and an MKL build of numpy give
+gridness values that differ by up to 7e-16 in 38 of the 100,000 cells).
 
 Large module (grid scale 70 vm): copied from ``inputs/simulation/large_module_pool_70cm.npz`` and
 checked against the same file of checksums. With ``--regenerate-large`` it is rebuilt with
 ``hexmod.sim.pool_large`` instead; the rebuilt pool agrees with the shipped one to within
-rounding, not bit for bit (measured: field centres 3e-14 vm, peak rates 2e-16 Hz, gridness 1e-11; peaks,
+rounding (measured: field centres 3e-14 vm, peak rates 2e-16 Hz, gridness 1e-11; peaks,
 radii and redraw counts exactly), so it is compared with tolerances that leave room for other machines
 (field centres 1e-12 vm, peak rates 1e-14 Hz, gridness 1e-9; other columns exactly). The orientation estimate
 ``gridori_est``, which no step uses, can differ by a few degrees and is only reported. Steps 22 to 24
@@ -22,11 +25,11 @@ from the published ones in the last digits.
 
 Writes ``sim/pools/small_pool_40cm.npz``, ``sim/pools/large_pool_70cm.npz`` (layout of
 ``hexmod.sim.io_pool``) and ``sim/pools/pool_checksums.json`` (one entry per pool, as written by
-``io_pool.pool_summary``). A pool that does not match the reference checksums or tolerances is
-written as ``<name>.failed.npz`` instead (any earlier file of the standard name is removed, so that
-steps 22 to 24 cannot use it), and the step ends with exit status 1.
-
-``--smoke`` builds a 500-cell small pool (no checksum comparison) and copies the large pool.
+``io_pool.pool_summary``, with checksums of the exact values; step 25 uses them to check that the
+participant files were computed from these pools). A pool that does not match the reference
+checksums or tolerances is written as ``<name>.failed.npz`` instead (any earlier file of the
+standard name is removed, so that steps 22 to 24 cannot use it), and the step ends with exit
+status 1.
 """
 
 from __future__ import annotations
@@ -53,7 +56,6 @@ from hexmod.runlog import RunRecord  # noqa: E402
 
 STEP = "step21_simulation_pools"
 N_CELLS = 100000
-SMOKE_CELLS = 500
 BASE_SEED = 0
 SMALL_FILE = "small_pool_40cm.npz"
 LARGE_FILE = "large_pool_70cm.npz"
@@ -96,10 +98,13 @@ def write_pool(table, out: Path, name: str, problems: List[str], rec: RunRecord)
 
 
 def compare_checksums(table, reference: dict) -> List[str]:
-    """Columns whose checksum differs from ``reference`` (an entry of pool_checksums.json)."""
+    """Columns whose checksum differs from ``reference`` (an entry of pool_checksums.json).
+
+    The values are rounded as for the reference checksums (its ``significant_digits``, if any).
+    """
     from hexmod.sim import io_pool
 
-    got = io_pool.column_checksums(table)
+    got = io_pool.column_checksums(table, reference.get("significant_digits"))
     problems = []
     if list(got) != list(reference["column_order"]):
         problems.append(f"column order {list(got)} differs from {reference['column_order']}")
@@ -151,14 +156,11 @@ def parse_args(argv: Optional[List[str]] = None):
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--regenerate-large", action="store_true",
                    help="rebuild the large-module pool instead of copying the shipped one (about 5 min)")
-    p.add_argument("--progress", action="store_true", help="show progress bars (tqdm)")
-    p.add_argument("--smoke", action="store_true", help=f"{SMOKE_CELLS}-cell small pool, no checksum comparison")
     return p.parse_args(argv)
 
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
-    config.guard_smoke_results(args.smoke)
     from hexmod.sim import io_pool, pool, pool_large
 
     out = pools_dir()
@@ -168,17 +170,12 @@ def main(argv: Optional[List[str]] = None) -> int:
     failures: List[str] = []
     with RunRecord(STEP, argv=argv) as rec:
         rec.add_input(config.inputs_dir() / "simulation" / "pool_checksums.json")
-        n_small = SMOKE_CELLS if args.smoke else N_CELLS
 
         # small module: rebuilt
-        small = pool.set_gridcells_pool(pool.module_param("small"), n_small, BASE_SEED, progress=args.progress)
-        if args.smoke:
-            problems = []
-            rec.note("small_pool_checksums", "not compared (smoke run)")
-        else:
-            problems = compare_checksums(small, reference[SMALL_KEY])
-            rec.note("small_pool_checksums", equal_note if not problems else problems)
-            failures += [f"small pool: {p}" for p in problems]
+        small = pool.set_gridcells_pool(pool.module_param("small"), N_CELLS, BASE_SEED)
+        problems = compare_checksums(small, reference[SMALL_KEY])
+        rec.note("small_pool_checksums", equal_note if not problems else problems)
+        failures += [f"small pool: {p}" for p in problems]
         small_path = write_pool(small, out, SMALL_FILE, problems, rec)
 
         # large module: shipped, or rebuilt with the large-module builder
@@ -191,7 +188,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         if args.regenerate_large:
             large = pool_large.set_gridcells_pool_large(
                 pool_large.large_pool_param(), pool_large.LARGE_POOL_N_CELLS,
-                pool_large.LARGE_POOL_BASE_SEED, progress=args.progress)
+                pool_large.LARGE_POOL_BASE_SEED)
             diffs = compare_with_tolerance(large, shipped)
             rec.note("large_pool", "rebuilt with hexmod.sim.pool_large")
             rec.note("large_pool_differences_from_shipped", diffs)
@@ -213,7 +210,6 @@ def main(argv: Optional[List[str]] = None) -> int:
         hio.write_json(summary, out / "pool_checksums.json")
         rec.add_output(out / "pool_checksums.json")
         rec.note("n_cells", {"small": int(len(small)), "large": int(len(large))})
-        rec.note("smoke", bool(args.smoke))
         rec.note("problems", failures)
     for f in failures:
         print(f"error: {f}", file=sys.stderr)

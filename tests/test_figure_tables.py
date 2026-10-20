@@ -1,14 +1,8 @@
 """Tests of the example-cell arrays (hexmod.rat.examples), the rat figure tables and the statistics
-they add (hexmod.rat.figure_tables), and of steps 11 and 12.
+they add (hexmod.rat.figure_tables).
 
-The synthetic tests need no data. The ``smoke`` test runs steps 11 and 12 on a small synthetic
-results folder. Tests marked ``frozen`` recompute the tables from the reference per-cell results in
-``HEXMOD_FROZEN`` and compare them with the reference files; the one that also loads the
-preprocessed trajectories is marked ``slow``.
+The tests use synthetic data and need no recordings.
 """
-
-import importlib.util
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -16,12 +10,9 @@ import pytest
 from scipy import stats as sps
 
 from hexmod import circular, stats
-from hexmod import io as hio
 from hexmod.rat import examples as ex
 from hexmod.rat import figure_tables as ft
 from hexmod.rat.characterise import characterise_gridcell
-
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 
 
 # ------------------------------------------------------------------------------- synthetic data
@@ -230,164 +221,3 @@ def test_trajectory_and_shifted_outputs(synthetic_session):
         assert a2[f"{prefix}__spike_x"].shape == a2[f"{prefix}__spike_count"].shape
         assert a2[f"{prefix}__field_locations"].shape[1] == 3 and float(a2[f"{prefix}__gridness"]) > 0.3
     assert a2["shift_0ms__spike_count"].sum() == arrays["spikes"].sum()
-
-
-# ----------------------------------------------------------------------- steps 11 and 12 (smoke)
-def _load_script(name):
-    spec = importlib.util.spec_from_file_location(name, SCRIPTS / f"{name}.py")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
-@pytest.mark.smoke
-def test_steps_11_and_12_on_synthetic_results(synthetic_session, tmp_path, monkeypatch):
-    session, chars = synthetic_session
-    monkeypatch.setenv("HEXMOD_RESULTS", str(tmp_path))
-    res = tmp_path
-    rng = np.random.default_rng(5)
-    n = 30
-    cells, param = _toy_cohort(n, seed=2)
-    src = [(k - 1) % 3 + 1 for k in range(1, n + 1)]          # arrays of the three synthetic cells, reused
-    for k in (1, 2, 3):                                        # rows 0 to 2: the cells of the session
-        i = k - 1
-        cells.loc[i, ["session_id", "cell_id"]] = ["V1_1", k]
-        for col in ("scale_cm", "orientation_deg", "Rayleigh_mag", "Rayleigh_angle"):
-            cells.loc[i, col] = chars[k][col]
-        cells.loc[i, "gridness"] = 6.0 - k                    # first, in this order, in the smoke substitution
-    cells["unique_cell_id"] = [f"cell{i}" for i in range(n)]
-    cells["dataset"] = "vollan2025"
-    hio.save_cache({"V1": {"V1_1": session}}, res / "preprocessed" / "trajectories.pkl")
-    hio.write_csv(cells, res / "rat" / "cohort" / "cells.csv")
-    hio.save_npz(res / "rat" / "cohort" / "cells_full.npz", arrays={"row": np.arange(n)},
-                 ragged={"rate_map": [chars[s]["rate_map"] for s in src], "x_edges": [chars[s]["x_edges"] for s in src],
-                         "y_edges": [chars[s]["y_edges"] for s in src],
-                         "field_rate_hz": [chars[s]["FR_inhomogeneity_regionFR"] for s in src],
-                         "field_deviation": [chars[s]["distFromPerfectGrid"] for s in src]})
-    hio.save_npz(res / "rat" / "cohort" / "field_locations.npz", arrays={"row": np.arange(n)},
-                 ragged={"field_locations": [chars[s]["fieldLoc"] for s in src]})
-    hio.save_npy(res / "rat" / "cohort" / "dir_maps.npy", np.array([chars[s]["dir_map"] for s in src]))
-    hio.write_csv(param, res / "rat" / "adaptation" / "param_cells.csv")
-    hio.save_npy(res / "rat" / "adaptation" / "fr_percent_change.npy", rng.normal([-6, 0, 2, 3], 4, (n, 4)))
-    shift_ms = np.arange(-400, 400, 20)
-    si = rng.uniform(0.1, 0.5, (n, 40))
-    si[0, 26] = 1.0
-    hio.save_npy(res / "rat" / "prospective" / "shift_ms.npy", shift_ms)
-    hio.save_npy(res / "rat" / "prospective" / "si_shift.npy", si)
-    hio.write_csv(pd.DataFrame({"row": np.arange(n), "animal_id": cells["animal_id"], "session_id": cells["session_id"],
-                                "cell_id": cells["cell_id"], "peak_shift_ms": shift_ms[np.argmax(si, axis=1)]}),
-                  res / "rat" / "prospective" / "peak_shift.csv")
-    kept = np.arange(25)
-    shift_cells = pd.DataFrame({"row": kept, "alpha_original": param["alpha_tprevXloc_all"][kept],
-                                "alpha_tprevXloc_all": rng.normal(-0.03, 0.05, 25)})
-    hio.write_csv(shift_cells, res / "rat" / "prospective" / "shift_cells.csv")
-    hio.save_npy(res / "rat" / "prospective" / "fr_percent_change_shifted.npy", rng.normal([-5, 0, 2, 3], 4, (25, 4)))
-
-    assert _load_script("step11_example_cells").main(["--smoke"]) == 0
-    assert _load_script("step12_rat_statistics").main(["--smoke"]) == 0
-    out = res / "rat" / "examples"
-    f3 = hio.load_npz(out / "fig3ab.npz")
-    assert int(f3["row"]) == 0 and f3["time_window"][1] - f3["time_window"][0] == 12.0
-    assert hio.load_npz(out / "fig4ab_small.npz")["grid_alignment"].shape == f3["t"].shape
-    assert "shift_p120ms__spike_x" in hio.load_npz(out / "supp2a_shifted_maps.npz")
-    s3 = hio.read_csv(out / "supp3a_cells.csv")
-    assert s3["panel"].tolist() == list(range(1, 13))
-    assert list(s3.columns) == ["panel", "row", "session_id", "cell_id", "gridness", "scale_cm", "orientation_deg",
-                                "rate_map_max_hz", "env_size_cm", "origin_x_cm", "origin_y_cm", "conjunctive"]
-    assert len(hio.read_csv(out / "fig2a_cells.csv")) == 5
-    st = hio.read_json(res / "stats" / "step12_rat_statistics.json")
-    for key in ("fig3c.rm_anova.F", "fig3c.posthoc.0_1s_vs_1_2s.p_holm", "fig3d.t", "fig4d.anova.F",
-                "fig5.alpha_edges.3", "supp1.pearson_r", "supp2.rm_anova.F", "supp3.small.n_cells", "supp5.n_cells"):
-        assert key in st, key
-    assert all(np.isfinite(v) for v in st.values())
-    tables = res / "rat" / "figure_tables"
-    for name in ("cells_thirds.csv", "thirds_edges.csv", "supp3bcd_arrays.npz", "supp3bcd_fits.csv",
-                 "supp5_widths.csv"):
-        assert (tables / name).is_file(), name
-    log = hio.read_json(res / "logs" / "step12_rat_statistics.json")
-    assert log["status"] == "ok" and "mode" not in log
-
-
-# ------------------------------------------------------------------------------- frozen results
-def _frozen_inputs(frozen_dir):
-    r = Path(frozen_dir)
-    return (hio.read_csv(r / "rat/cohort/cells.csv"), hio.read_csv(r / "rat/adaptation/param_cells.csv"),
-            hio.load_npz(r / "rat/cohort/cells_full.npz"))
-
-
-def _same(a, b):
-    a, b = np.asarray(a), np.asarray(b)
-    return a.shape == b.shape and bool(np.array_equal(a, b, equal_nan=a.dtype.kind == "f"))
-
-
-@pytest.mark.frozen
-def test_frozen_figure_tables(frozen_dir, frozen_path):
-    cells, param, full = _frozen_inputs(frozen_dir)
-    for rel in ("rat/figure_tables/cells_thirds.csv", "rat/figure_tables/supp3bcd_arrays.npz"):
-        frozen_path(rel)
-    table, edges = ft.cells_thirds(cells, param, full["x_edges"], full["rate_map"])
-    ref = hio.read_csv(frozen_path("rat/figure_tables/cells_thirds.csv"))
-    for col in ("row", "adaptation_third", "proximity_third", "scale_third", "env_size_cm", "rate_map_max_hz"):
-        assert _same(table[col], ref[col]), col
-    for col in ("alpha", "beta", "proximity_diff"):          # reference copies after a CSV round trip
-        assert np.max(np.abs(table[col] - ref[col])) <= 1e-15, col
-    ref_edges = hio.read_csv(frozen_path("rat/figure_tables/thirds_edges.csv"))
-    assert np.max(np.abs(edges.iloc[:, 1:].to_numpy() - ref_edges.iloc[:, 1:].to_numpy())) <= 1e-15
-    arr = ft.supp3bcd_arrays(cells, full["x_edges"], full["field_deviation"], full["field_rate_hz"])
-    ref_arr = hio.load_npz(frozen_path("rat/figure_tables/supp3bcd_arrays.npz"))
-    assert set(arr) == set(ref_arr) and all(_same(arr[k], ref_arr[k]) for k in arr)
-    fits = ft.gamma_fits(arr)
-    assert fits.equals(hio.read_csv(frozen_path("rat/figure_tables/supp3bcd_fits.csv")))
-    widths = ft.supp5_widths(cells)
-    assert widths.equals(hio.read_csv(frozen_path("rat/figure_tables/supp5_widths.csv")))
-    st = hio.read_json(frozen_path("stats/step12_rat_statistics.json"))
-    mine = {**ft.supp3_statistics(arr, fits), **ft.supp5_statistics(widths)}
-    assert mine == {k: st[k] for k in mine}
-
-
-@pytest.mark.frozen
-def test_frozen_example_tables(frozen_dir, frozen_path):
-    from hexmod.preprocessing import labels
-
-    cells, _, full = _frozen_inputs(frozen_dir)
-    fl = hio.load_npz(frozen_path("rat/cohort/field_locations.npz"))["field_locations"]
-    examples = labels.read_example_cells()
-    rows = ex.example_rows(cells, examples[examples["panel"] == "Fig2A"].sort_values("position"))
-    table, arrays = ex.fig2a_outputs(cells, hio.load_npy(frozen_path("rat/cohort/dir_maps.npy")), rows)
-    assert table.equals(hio.read_csv(frozen_path("rat/examples/fig2a_cells.csv")))
-    ref = hio.load_npz(frozen_path("rat/examples/fig2a_cells.npz"))
-    assert all(_same(arrays[k], ref[k]) for k in ref)
-    s3 = examples[examples["panel"] == "SuppFig3A"].sort_values("position")
-    table, arrays = ex.supp3a_outputs(cells, fl, full, ex.example_rows(cells, s3), s3["position"])
-    ref_table = hio.read_csv(frozen_path("rat/examples/supp3a_cells.csv"))
-    # columns of the reference table that this pipeline does not write are not compared (as in step 40)
-    assert table.equals(ref_table[list(table.columns)])
-    ref = hio.load_npz(frozen_path("rat/examples/supp3a_cells.npz"))
-    assert set(arrays) == set(ref) and all(_same(arrays[k], ref[k]) for k in ref)
-
-
-@pytest.mark.frozen
-@pytest.mark.slow
-def test_frozen_example_trajectories(frozen_dir, frozen_path):
-    from hexmod.preprocessing import labels
-
-    cells, _, full = _frozen_inputs(frozen_dir)
-    fl = hio.load_npz(frozen_path("rat/cohort/field_locations.npz"))["field_locations"]
-    traj = hio.load_cache(frozen_path("preprocessed/trajectories.pkl"))
-    examples = labels.read_example_cells()
-    for name, panel, pos, align in (("fig3ab", "Fig3A", 1, False), ("fig4ab_small", "Fig4A", 1, True)):
-        e = examples[(examples["panel"] == panel) & (examples["position"] == pos)]
-        row = ex.example_rows(cells, e)[0]
-        session = traj[cells.loc[row, "animal_id"]][cells.loc[row, "session_id"]]
-        window = [e["t_start_s"].iloc[0], e["t_end_s"].iloc[0]]
-        arrays, visits, _ = ex.trajectory_outputs(session, cells, row, fl, full, window, align)
-        ref = hio.load_npz(frozen_path(f"rat/examples/{name}.npz"))
-        assert all(_same(arrays[k], ref[k]) and np.asarray(arrays[k]).dtype == ref[k].dtype for k in ref), name
-        assert visits.equals(hio.read_csv(frozen_path(f"rat/examples/{name}_field_visits.csv")))
-    e = examples[examples["panel"] == "SuppFig2A"]
-    row = ex.example_rows(cells, e)[0]
-    session = traj[cells.loc[row, "animal_id"]][cells.loc[row, "session_id"]]
-    arrays, best = ex.supp2a_outputs(session, cells, row, hio.load_npy(frozen_path("rat/prospective/shift_ms.npy")),
-                                     hio.load_npy(frozen_path("rat/prospective/si_shift.npy"))[row])
-    ref = hio.load_npz(frozen_path("rat/examples/supp2a_shifted_maps.npz"))
-    assert best == 120 and set(arrays) == set(ref) and all(_same(arrays[k], ref[k]) for k in ref)

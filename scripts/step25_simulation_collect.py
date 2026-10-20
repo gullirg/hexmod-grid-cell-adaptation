@@ -3,17 +3,16 @@
 Examples::
 
     python scripts/step25_simulation_collect.py                    # files of step 24, else the shipped tables
-    python scripts/step25_simulation_collect.py --source precomputed
     python scripts/step25_simulation_collect.py --experiments 50   # Fig 7F over participants 0 to 1,499
     python scripts/step25_simulation_collect.py --quick            # Fig 7A to 7E from participants 0 to 29
 
-Sources (``--source``): ``run`` reads the participant files of step 24
-(``sim/fig7/participants/<module>/p0000.npz`` to ``p1499.npz``); ``precomputed`` reads the shipped
-participant tables ``results_precomputed/sim/fig7/participants_<module>.csv.gz``; ``auto`` (default)
-takes ``run`` when all 1,500 files of both modules are present. The files of a run are used only
-when each was computed with 10,000 cells, from the pool that step 24 uses now
-(``sim/pools/pool_checksums.json`` of step 21, or the shipped large pool) and by this version of
-the code (the ``meta_*`` entries written by step 24); otherwise the step stops with a message.
+Sources: when all 1,500 participant files of both modules are present, the step reads the
+participant files of step 24 (``sim/fig7/participants/<module>/p0000.npz`` to ``p1499.npz``;
+source label ``run``); otherwise it reads the shipped participant tables
+``results_precomputed/sim/fig7/participants_<module>.csv.gz`` (source label ``precomputed``). The
+files of a run are used only when each was computed with 10,000 cells and from the pool that step
+24 uses now (``sim/pools/pool_checksums.json`` of step 21, or the shipped large pool); step 24
+records both in the ``meta_*`` entries of each file. Otherwise the step stops with a message.
 ``--quick`` takes participants 0 to 29 (Fig 7A to 7E) from the files of ``step24 --quick`` and
 participants 30 to 1,499 (Fig 7F) from the shipped tables (source label ``quick``).
 
@@ -44,10 +43,10 @@ From these (rows converted to C order before row-wise means):
 Writes ``sim/fig7/participants_small.csv.gz``, ``participants_large.csv.gz`` (3,000 rows each,
 ``simple`` rows for participants 0 to 1,499, then ``location-controlled``),
 ``fig7ad_direction_bins.csv``, ``fig7be_beta.csv``, ``fig7c_orientation.csv``,
-``fig7f_detection.csv``, ``fig7f_p_per_experiment.csv`` and ``fig7_values.json`` (keys in
-docs/PIPELINE.md, step 25). From the shipped tables every output is identical to the shipped
-``results_precomputed/sim/fig7`` files. ``--smoke`` converts the smoke participants of step 24 (when
-present) and takes the Fig 7 values from the shipped tables.
+``fig7f_detection.csv``, ``fig7f_p_per_experiment.csv`` and ``fig7_values.json`` (keys
+``fig7.*``, ``fig7a.*`` to ``fig7f.*`` and ``fig7f_50.*``, each listed with its reference value in
+``reference/expected_statistics.json``). From the shipped tables every output is identical to the
+shipped ``results_precomputed/sim/fig7`` files.
 """
 
 from __future__ import annotations
@@ -70,7 +69,6 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 import scipy.stats  # noqa: E402
 
-from hexmod import __version__  # noqa: E402
 from hexmod import io as hio  # noqa: E402
 from hexmod.runlog import RunRecord  # noqa: E402
 from hexmod.sim.io_pool import MODULES  # noqa: E402
@@ -78,7 +76,7 @@ from hexmod.sim.io_pool import MODULES  # noqa: E402
 STEP = "step25_simulation_collect"
 #: Cells of each simulated participant.
 N_CELLS = 10000
-#: Entries of ``sim/pools/pool_checksums.json`` (step 21) and ``inputs/simulation/pool_checksums.json``.
+#: Entries of ``sim/pools/pool_checksums.json`` (step 21).
 POOL_SUMMARY_KEYS = {"small": "small_module_pool_40cm", "large": "large_module_pool_70cm"}
 N_PARTICIPANTS = 1500
 N_PER_EXPERIMENT = 30
@@ -162,9 +160,9 @@ def load_participant(path: Path, tables_only: bool = False) -> dict:
 def participant_rows(records: Sequence[dict], module: str) -> pd.DataFrame:
     """Participant table rows (method-major) from participant results.
 
-    The arithmetic is that of the published figure: rates by direction stacked row by row, the
-    cross-validated coefficients averaged per participant and symmetry with pandas, orientations
-    averaged with ``scipy.stats.circmean`` (period 60 deg).
+    Rates by direction are stacked row by row, the cross-validated coefficients are averaged per
+    participant and symmetry with pandas, and the orientations are averaged with
+    ``scipy.stats.circmean`` (period 60 deg).
     """
     records = sorted(records, key=lambda r: int(r["seed"]))
     seeds = [int(r["seed"]) for r in records]
@@ -221,10 +219,11 @@ def expected_pool_fingerprint(module: str) -> str:
     if (pools / io_pool.POOL_FILES[module]).is_file():
         summary_path = pools / "pool_checksums.json"
     elif module == "large":   # step 24 then reads the shipped pool
-        summary_path = config.inputs_dir() / "simulation" / "pool_checksums.json"
+        shipped = config.inputs_dir() / "simulation" / io_pool.SHIPPED_LARGE_POOL
+        return io_pool.pool_fingerprint(io_pool.load_pool(shipped))
     else:
         raise SystemExit(f"error: {pools / io_pool.POOL_FILES[module]} not found; the participant files cannot be "
-                         "checked against their pool (run step 21, or use --source precomputed)")
+                         "checked against their pool (run step 21 first)")
     summary = hio.read_json(summary_path).get(POOL_SUMMARY_KEYS[module]) if summary_path.is_file() else None
     fingerprint = io_pool.fingerprint_from_summary(summary) if summary else None
     if fingerprint is None:
@@ -235,18 +234,15 @@ def expected_pool_fingerprint(module: str) -> str:
 def check_metadata(path: Path, seed: int, module: str, fingerprint: str) -> Optional[str]:
     """Why a participant file of step 24 cannot be used (None when it can)."""
     with np.load(path, allow_pickle=False) as z:
-        meta = {k: z[k].item() for k in ("seed", "module", "meta_n_cells", "meta_pool_fingerprint",
-                                         "meta_hexmod_version") if k in z.files}
+        meta = {k: z[k].item() for k in ("seed", "module", "meta_n_cells", "meta_pool_fingerprint") if k in z.files}
     if int(meta.get("seed", -1)) != int(seed) or str(meta.get("module")) != module:
         return "seed or module differ from the file name"
     if "meta_n_cells" not in meta:
         return "the file does not record how it was computed (run step 24 again)"
     if int(meta["meta_n_cells"]) != N_CELLS:
-        return f"{int(meta['meta_n_cells'])} cells instead of {N_CELLS} (a file of a smoke run?)"
+        return f"{int(meta['meta_n_cells'])} cells instead of {N_CELLS}"
     if str(meta.get("meta_pool_fingerprint")) != fingerprint:
         return "computed from another pool than the one of sim/pools"
-    if str(meta.get("meta_hexmod_version")) != __version__:
-        return f"computed by hexmod {meta.get('meta_hexmod_version')}, this is {__version__}"
     return None
 
 
@@ -258,14 +254,14 @@ def tables_from_run(participants: Sequence[int] = range(N_PARTICIPANTS)) -> Dict
         missing = [s for s in participants if not (folder / f"p{s:04d}.npz").is_file()]
         if missing:
             raise SystemExit(f"error: {len(missing)} participant files of the {m} module are missing in {folder} "
-                             f"(first: participant {missing[0]}); run step 24 or use --source precomputed")
+                             f"(first: participant {missing[0]}); run step 24")
         fingerprint = expected_pool_fingerprint(m)
         bad = [(s, why) for s in participants
                if (why := check_metadata(folder / f"p{s:04d}.npz", s, m, fingerprint)) is not None]
         if bad:
             s, why = bad[0]
             raise SystemExit(f"error: {len(bad)} participant files of the {m} module in {folder} cannot be used "
-                             f"(participant {s}: {why}); run step 24 with --force, or use --source precomputed")
+                             f"(participant {s}: {why}); run step 24 again, which recomputes them")
         records = [load_participant(folder / f"p{s:04d}.npz", tables_only=True) for s in participants]
         out[m] = participant_rows(records, m)
     return out
@@ -296,9 +292,8 @@ def _block(table: pd.DataFrame, columns: Sequence[str], order: str = "C") -> np.
     """Columns of a table as a float array in a given memory order.
 
     The order of the additions in a mean along one axis depends on the memory layout, which can
-    change the last digit. The published values took row-wise means of row-stacked (C-ordered)
-    arrays and column-wise means of column-major (Fortran-ordered) arrays; ``order`` reproduces
-    that layout.
+    change the last digit. Row-wise means are taken of row-stacked (C-ordered) arrays and
+    column-wise means of column-major (Fortran-ordered) arrays; ``order`` sets the layout.
     """
     values = table[list(columns)].to_numpy(dtype=float)
     return np.ascontiguousarray(values) if order == "C" else np.asfortranarray(values)
@@ -310,7 +305,7 @@ def fig7_values(tables: Dict[str, pd.DataFrame], experiments: int = 49):
     Returns
     -------
     values : dict
-        Flat ``{key: number}`` (keys of docs/PIPELINE.md, step 25).
+        Flat ``{key: number}``, the contents of ``fig7_values.json`` (see the module docstring).
     out : dict of DataFrame
         ``fig7ad_direction_bins``, ``fig7be_beta``, ``fig7c_orientation``, ``fig7f_detection``,
         ``fig7f_p_per_experiment``.
@@ -400,36 +395,23 @@ def fig7_values(tables: Dict[str, pd.DataFrame], experiments: int = 49):
 def parse_args(argv: Optional[List[str]] = None):
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0],
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--source", choices=["auto", "run", "precomputed"], default="auto",
-                   help="participant files of step 24 (run) or the shipped tables (precomputed); "
-                        "auto: run when complete")
     p.add_argument("--experiments", type=int, choices=[49, 50], default=49,
                    help="Fig 7F over participants 30 to 1,499 (49, as published) or 0 to 1,499 (50)")
     p.add_argument("--quick", action="store_true",
                    help="participants 0 to 29 (Fig 7A to 7E) from step24 --quick, the others (Fig 7F) from the "
                         "shipped tables")
-    p.add_argument("--smoke", action="store_true",
-                   help="convert the smoke participants; values from the shipped tables")
     return p.parse_args(argv)
 
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
-    config.guard_smoke_results(args.smoke)
     out = config.results_dir() / "sim" / "fig7"
     pre = config.precomputed_dir() / "sim" / "fig7"
     with RunRecord(STEP, argv=argv) as rec:
-        if args.smoke:
-            for m in MODULES:  # exercise the conversion of the smoke participants
-                files = sorted(participant_folder(m).glob("p[0-9][0-9][0-9][0-9].npz"))
-                if files:
-                    rows = participant_rows([load_participant(f, tables_only=True) for f in files], m)
-                    rec.note(f"smoke_{m}_participant_rows", int(len(rows)))
-        source = args.source
-        if args.quick and not args.smoke:
+        if args.quick:
             source = "quick"
-        elif source == "auto":
-            source = "run" if (not args.smoke and complete_run()) else "precomputed"
+        else:
+            source = "run" if complete_run() else "precomputed"
         if source == "run":
             tables = tables_from_run()
         else:
@@ -442,8 +424,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                 tables = tables_quick(tables)
         if source in ("run", "quick"):
             for m in MODULES:
-                for f in sorted(participant_folder(m).glob("manifest.csv")):
-                    rec.add_input(f)
+                rec.add_input(participant_folder(m))
         for m in MODULES:
             hio.write_csv(tables[m], out / f"participants_{m}.csv.gz")
             rec.add_output(out / f"participants_{m}.csv.gz")

@@ -1,7 +1,6 @@
 """Simulation steps 21 to 27: participant files, Fig 7 values, maps, speed sweep and statistics.
 
-The quick tests use small pools and the shipped results in ``results_precomputed/``; the smoke
-test runs steps 21 to 27 with their ``--smoke`` sizes in a temporary results folder.
+The tests use small pools and the shipped results in ``results_precomputed/``.
 """
 
 from __future__ import annotations
@@ -24,7 +23,7 @@ PRE = REPO / "results_precomputed" / "sim"
 FOLDS = list(range(1, 8))
 DIRS = [30 * j for j in range(12)]
 #: Relative tolerance of comparisons of computed floating-point values with the shipped results
-#: (the last bits can differ between CPU architectures and math libraries).
+#: (the last bits can differ between CPU architectures and numerical libraries).
 RTOL = 1e-9
 
 
@@ -142,8 +141,6 @@ def test_participant_resume_and_collect_check_how_files_were_computed(records, t
     small = step24.save_participant(rec, "small", tmp_path / "s" / "p0000.npz",
                                     step24.participant_metadata(200, "f" * 64))
     assert "200 cells" in step25.check_metadata(small, 0, "small", "f" * 64)
-    manifest = hio.read_csv(step24.update_manifest(tmp_path, [0]))
-    assert list(manifest.columns) == step24.MANIFEST_COLUMNS and int(manifest["meta_n_cells"].iloc[0]) == 10000
 
 
 def test_pool_fingerprint_from_summary():
@@ -152,9 +149,21 @@ def test_pool_fingerprint_from_summary():
     table = io_pool.load_pool(REPO / "inputs" / "simulation" / "large_module_pool_70cm.npz").iloc[:20]
     table = table.reset_index(drop=True)
     assert io_pool.fingerprint_from_summary(io_pool.pool_summary(table)) == io_pool.pool_fingerprint(table)
+    # the shipped checksums are of rounded values, which do not identify the exact pool
     shipped = hio.read_json(REPO / "inputs" / "simulation" / "pool_checksums.json")["large_module_pool_70cm"]
-    assert io_pool.fingerprint_from_summary(shipped) is not None
+    assert io_pool.fingerprint_from_summary(shipped) is None
     assert io_pool.fingerprint_from_summary({"n_cells": 3}) is None
+
+
+def test_expected_fingerprint_of_the_shipped_large_pool(results):
+    """Without step 21, step 24 reads the shipped large pool, and step 25 takes its fingerprint from that file."""
+    from hexmod.sim import io_pool
+
+    step25 = load_script("step25_simulation_collect")
+    shipped = io_pool.load_pool(REPO / "inputs" / "simulation" / "large_module_pool_70cm.npz")
+    assert step25.expected_pool_fingerprint("large") == io_pool.pool_fingerprint(shipped)
+    with pytest.raises(SystemExit):
+        step25.expected_pool_fingerprint("small")
 
 
 def test_module_pool_size_is_checked(tmp_path):
@@ -164,8 +173,6 @@ def test_module_pool_size_is_checked(tmp_path):
     io_pool.save_pool(table.reset_index(drop=True), tmp_path / "sim" / "pools" / io_pool.POOL_FILES["small"])
     with pytest.raises(SystemExit):
         io_pool.load_module_pool(tmp_path, "small")
-    small, path = io_pool.load_module_pool(tmp_path, "small", smoke=True)
-    assert len(small) == 30 and path.name == "small_pool_40cm.npz"
     with pytest.raises(SystemExit):
         io_pool.load_module_pool(tmp_path / "empty", "small")
 
@@ -195,16 +202,16 @@ def test_participant_rows(records):
 
 def test_collect_from_precomputed(results):
     step25 = load_script("step25_simulation_collect")
-    assert step25.main(["--source", "precomputed"]) == 0
+    assert step25.main([]) == 0             # no participant files: the shipped tables
     out = results / "sim" / "fig7"
     values = hio.read_json(out / "fig7_values.json")
     shipped = hio.read_json(PRE / "fig7" / "fig7_values.json")
     assert set(values) == set(shipped)
-    # the t and p values are recomputed here; the last bits can differ between CPU architectures and math libraries
+    # the t and p values are recomputed here; the last bits can differ between CPU architectures and numerical libraries
     assert [k for k in shipped if not _same_value(values[k], shipped[k])] == []
     for name in ("participants_small.csv.gz", "participants_large.csv.gz", "fig7ad_direction_bins.csv",
                  "fig7be_beta.csv", "fig7c_orientation.csv", "fig7f_detection.csv"):
-        assert _content(out / name) == _content(PRE / "fig7" / name), name   # the shipped files, byte for byte
+        assert _content(out / name) == _content(PRE / "fig7" / name), name   # identical to the shipped files
     # recomputed p values to RTOL (their last bits can differ in the same way); labels and experiments exactly
     p_tables = [hio.read_csv(folder / "fig7f_p_per_experiment.csv") for folder in (out, PRE / "fig7")]
     assert _columns_that_differ(*p_tables) == []
@@ -250,11 +257,11 @@ def test_collect_fifty_experiments():
     assert len(frames["fig7f_p_per_experiment"]) == 2 * 2 * (49 + 50)
 
 
-def test_supp3e_title():
+def test_supp3e_label():
     step22 = load_script("step22_simulation_maps")
-    assert step22.supp3e_title(0.7270, 0.5440) == "0.7, 0.5 Hz"
-    assert step22.supp3e_title(0.6012, 3.2213) == "0.6, 3 Hz"
-    assert step22.supp3e_title(1.2170, 2.0170) == "1.2, 2 Hz"
+    assert step22.supp3e_label(0.7270, 0.5440) == "0.7, 0.5 Hz"
+    assert step22.supp3e_label(0.6012, 3.2213) == "0.6, 3 Hz"
+    assert step22.supp3e_label(1.2170, 2.0170) == "1.2, 2 Hz"
 
 
 def test_shipped_supp3e_cells():
@@ -267,11 +274,11 @@ def test_shipped_supp3e_cells():
     shipped = hio.load_npz(PRE / "fig6" / "maps.npz")
     assert cells.tolist() == [95331, 83646, 88, 72374, 36659, 2061]
     assert np.array_equal(cells, shipped["supp3e__large__cells"])
-    # recomputed maps and their statistics: the last bits can differ between CPU architectures and math libraries
+    # recomputed maps and their statistics: the last bits can differ between CPU architectures and numerical libraries
     for got, key in ((gridness, "gridness"), (peaks, "peak_rate_hz"), (maps, "maps")):
         ref = shipped[f"supp3e__large__{key}"]
         assert got.shape == ref.shape and np.allclose(got, ref, rtol=RTOL, atol=0), key
-    assert [step22.supp3e_title(g, p) for g, p in zip(gridness, peaks)] == [
+    assert [step22.supp3e_label(g, p) for g, p in zip(gridness, peaks)] == [
         "0.6, 3 Hz", "0.5, 2 Hz", "0.7, 0.5 Hz", "0.8, 6 Hz", "1.2, 2 Hz", "1.2, 4 Hz"]
 
 
@@ -294,11 +301,29 @@ def test_large_pool_tolerance_check():
     assert not diffs["centers"]["ok"] and not diffs["gridness"]["ok"]
 
 
+def test_pool_checksums_ignore_last_digit_differences():
+    """Step 21 compares checksums of values rounded to the digits of the reference entry."""
+    from hexmod.sim import io_pool
+
+    step21 = load_script("step21_simulation_pools")
+    table = io_pool.load_pool(REPO / "inputs" / "simulation" / "large_module_pool_70cm.npz").iloc[:200]
+    table = table.reset_index(drop=True)
+    reference = io_pool.pool_summary(table, digits=6)
+    assert reference["significant_digits"] == 6 and step21.compare_checksums(table, reference) == []
+    other = table.copy()
+    other["gridness"] = np.nextafter(table["gridness"].to_numpy(), 2.0)   # one unit in the last place
+    other["centers"] = [np.nextafter(c, -np.inf) for c in table["centers"]]
+    assert io_pool.column_checksums(other)["gridness"] != io_pool.column_checksums(table)["gridness"]
+    assert step21.compare_checksums(other, reference) == []
+    other["gridness"] = table["gridness"] * (1 + 1e-5)
+    assert step21.compare_checksums(other, reference) == ["column gridness: checksum differs"]
+
+
 def test_statistics_from_precomputed(results):
     step27 = load_script("step27_simulation_statistics")
-    with pytest.raises(SystemExit):                        # no simulation results and no --allow-precomputed
-        step27.main([])
-    assert step27.main(["--allow-precomputed"]) == 0
+    assert step27.main([]) == 0             # no simulation results: the shipped files
+    sources = hio.read_json(results / "logs" / "step27_simulation_statistics.json")["notes"]["sources"]
+    assert len(sources) == 5 and set(sources.values()) == {"results_precomputed"}
     values = hio.read_json(results / "stats" / "step27_simulation_statistics.json")
     assert all(isinstance(v, (int, float)) and np.isfinite(v) for v in values.values())
     rounded = {"fig6d.small.t": (175.8, 1), "fig6d.small.d": (1.76, 2), "fig6d.large.t": (91.7, 1),
@@ -319,71 +344,3 @@ def test_parse_seeds():
     assert step24.parse_seeds("1470:1500") == range(1470, 1500)
     with pytest.raises(SystemExit):
         step24.parse_seeds("30")
-
-
-@pytest.mark.smoke
-def test_smoke_chain(results):
-    """Steps 21 to 27 with their smoke sizes write every file of the results contract."""
-    argv = ["--smoke"]
-    for name in ("step21_simulation_pools", "step22_simulation_maps", "step23_simulation_proximity"):
-        assert load_script(name).main(argv) == 0, name
-    assert load_script("step24_simulation_participants").main(argv + ["--workers", "1"]) == 0
-    assert load_script("step25_simulation_collect").main(argv) == 0
-    assert load_script("step26_speed_sweep").main(argv + ["--workers", "1"]) == 0
-    assert load_script("step27_simulation_statistics").main(argv) == 0
-    sim = results / "sim"
-    for rel in ("pools/small_pool_40cm.npz", "pools/large_pool_70cm.npz", "pools/pool_checksums.json",
-                "fig6/trajectory_seed0.csv", "fig6/trajectory_seed0_objects.json", "fig6/maps.npz",
-                "fig6/fig6d_small.csv", "fig6/fig6d_large.csv", "fig8/fig8a_ideal_grids.npz", "fig8/fig8d_sweep.csv",
-                "fig7/participants/small/p0001.npz", "fig7/participants/large/manifest.csv", "fig7/fig7_values.json",
-                "fig7/participants_small.csv.gz"):
-        assert (sim / rel).is_file(), rel
-    traj = hio.read_csv(sim / "fig6" / "trajectory_seed0.csv")
-    shipped = hio.read_csv(PRE / "fig6" / "trajectory_seed0.csv")
-    assert list(traj.columns) == list(shipped.columns) and len(traj) == len(shipped) == 23990
-    # trial and phase labels exactly; positions, speeds and directions (which can be zero) to RTOL, as the
-    # last bits can differ between CPU architectures and math libraries
-    assert _columns_that_differ(traj, shipped, atol=1e-12) == []
-    maps = hio.load_npz(sim / "fig6" / "maps.npz")
-    assert set(maps) == set(hio.load_npz(PRE / "fig6" / "maps.npz"))
-    fig8a = hio.load_npz(sim / "fig8" / "fig8a_ideal_grids.npz")
-    shipped8a = hio.load_npz(PRE / "fig8" / "fig8a_ideal_grids.npz")
-    assert set(fig8a) == set(shipped8a)
-    for key, ref in shipped8a.items():
-        got = fig8a[key]
-        assert got.shape == ref.shape and got.dtype == ref.dtype, key
-        if ref.dtype.kind == "f" and not key.endswith("__field_locations"):
-            # field centres of the ideal lattices (which can be zero): the last bits can differ between CPU
-            # architectures and math libraries
-            assert np.allclose(got, ref, rtol=RTOL, atol=1e-12), key
-        else:
-            # grid scales and field locations (rate-map bin positions and radii) exactly. In these perfect grids
-            # some fields have two neighbouring bins of equal rate, and the field centre is the bin that
-            # skimage.feature.peak_local_max returns first: scikit-image 0.20 (environment.yml) gives the
-            # shipped positions, while versions that sort equal peaks stably, such as 0.23, move six fields of
-            # the small grid by one bin
-            assert np.array_equal(got, ref), key
-    sweep = hio.read_csv(sim / "fig8" / "fig8d_sweep.csv")
-    assert list(sweep.columns) == list(hio.read_csv(PRE / "fig8" / "fig8d_sweep.csv", nrows=1).columns)
-    assert len(sweep) == 9 and sweep["scale"].tolist() == [30] * 3 + [50] * 3 + [70] * 3
-    manifest = hio.read_csv(sim / "fig7" / "participants" / "small" / "manifest.csv")
-    assert manifest["participant"].tolist() == [0, 1]
-    assert len(hio.read_csv(sim / "fig6" / "fig6d_large.csv")) == 200
-
-
-@pytest.mark.frozen
-def test_collect_matches_reference(results, frozen_path):
-    """Fig 7 tables from the shipped participant tables equal the reference tables value for value."""
-    step25 = load_script("step25_simulation_collect")
-    assert step25.main(["--source", "precomputed"]) == 0
-    out = results / "sim" / "fig7"
-    for name in ("fig7ad_direction_bins", "fig7be_beta", "fig7c_orientation", "fig7f_detection",
-                 "fig7f_p_per_experiment"):
-        mine, ref = hio.read_csv(out / f"{name}.csv"), hio.read_csv(frozen_path(f"sim/fig7/{name}.csv"))
-        assert list(mine.columns) == list(ref.columns) and len(mine) == len(ref), name
-        for col in ref.columns:
-            a, b = mine[col].to_numpy(), ref[col].to_numpy()
-            if a.dtype.kind in "fi":
-                assert a.astype(float).tobytes() == b.astype(float).tobytes(), (name, col)
-            else:
-                assert (a.astype(str) == b.astype(str)).all(), (name, col)

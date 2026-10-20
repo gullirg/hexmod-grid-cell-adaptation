@@ -127,9 +127,8 @@ def _key_item(fig, word, colour, ls, left, row_top, arts):
     return t.get_window_extent(fig.canvas.get_renderer()).width * 25.4 / fig.dpi
 
 
-def _curve_axes(fig, key, name, label, box_h):
+def _curve_axes(fig, key, label, box_h):
     ax = hs.axes_mm(fig, AX_LEFT[key], BOX_TOP, BOX_W, box_h)
-    common.tag(ax, panel=key, name=name)
     ax.set_xlim(0, 160); ax.set_xticks([0, 50, 100, 150]); ax.set_xlabel(hs.LABEL["speed_vm"]); _frame_ticks(ax)
     ax.set_ylabel(label, linespacing=1.1)
     hs.panel_letter(fig, key, COL[key] + hs.LETTER_X, LINE, clear_of=[ax], not_above=LINE, row=1)
@@ -148,7 +147,6 @@ def _draw(out_dir, inp):
     for k, (name, scale) in enumerate(GRIDS):
         ls = LINESTYLE[name]
         ax = hs.axes_mm(fig, map_left[k], map_top, MAP, MAP, full=True); axA.append(ax)      # maps keep the full box
-        common.tag(ax, panel="A", name=f"{name} grid")
         ax.set_xlim(0, 100); ax.set_ylim(0, 100); ax.set_aspect("equal")
         fl = fields[name]
         hs.field_outlines(ax, fl, colour=P["ink"], lw=hs.LW_FRAME, zorder=2)
@@ -184,7 +182,7 @@ def _draw(out_dir, inp):
     # ---- B: proximity, closed form
     AN = analytic_curves()
     v = AN["moveSpeed"]
-    axB = _curve_axes(fig, "B", "analytic proximity", hs.LABEL["proximity"], L["box_h"])
+    axB = _curve_axes(fig, "B", hs.LABEL["proximity"], L["box_h"])
     for name, _ in GRIDS:
         for d, c in (("align", P["aligned"]), ("misalign", P["misaligned"])):
             axB.plot(v, AN[f"proxy_{d}_{name}"], color=c, linestyle=LINESTYLE[name], linewidth=hs.LW_DATA,
@@ -192,14 +190,14 @@ def _draw(out_dir, inp):
     axB.set_ylim(0, 1.0); axB.set_yticks([0, 0.5, 1])
 
     # ---- C: proximity difference, closed form
-    axC = _curve_axes(fig, "C", "analytic difference", hs.LABEL["proximity_diff"], L["box_h"])
+    axC = _curve_axes(fig, "C", hs.LABEL["proximity_diff"], L["box_h"])
     for name, _ in GRIDS:
         axC.plot(v, AN[f"proxy_diff_{name}"], color=P["ink"], linestyle=LINESTYLE[name], linewidth=hs.LW_DATA,
                  dash_capstyle="butt", solid_capstyle="butt", zorder=3)
     axC.set_ylim(0, 0.22); axC.set_yticks([0, 0.1, 0.2])
 
     # ---- D: simulated rate difference, every second speed of the sweep
-    axD = _curve_axes(fig, "D", "simulated rates", LABEL_D, L["box_h"])
+    axD = _curve_axes(fig, "D", LABEL_D, L["box_h"])
     hs.zero_line(axD)
     diff = rate_difference_pct(sweep)
     for name, scale in GRIDS:

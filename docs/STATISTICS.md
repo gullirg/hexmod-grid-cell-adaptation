@@ -6,8 +6,7 @@ computes the few printed numbers that follow from other statistics by a fixed fo
 "40 (derived)" below), and compares every value with `reference/expected_statistics.json`. Its
 report is `results/stats/statistics_check.md`, with one row per statistic: the expected value, the
 computed value and the tolerance. The reference values and their tolerances are described in
-[reference/README.md](../reference/README.md); the keys and the files that hold them in
-[PIPELINE.md](PIPELINE.md), section 4.
+[reference/README.md](../reference/README.md), and the steps in [PIPELINE.md](PIPELINE.md).
 
 ## How to read the tables
 
@@ -19,7 +18,7 @@ computed value and the tolerance. The reference values and their tolerances are 
   Panel letters are those of the figures (docs/FIGURES.md). "Panel" marks a statistic of a figure
   panel; the figures show the plotted values and the asterisks of the brackets (listed as `***` or
   "no bracket"), not the numbers themselves.
-- **Key**: the statistic key.
+- **Key**: the statistic key. A row that lists several keys gives their common printed text and value.
 - **Step**: the pipeline step that writes it, `scripts/stepNN_<name>.py`:
 
   | Step | Script | Statistics file |
@@ -37,13 +36,15 @@ computed value and the tolerance. The reference values and their tolerances are 
   significant digits. Counts, degrees of freedom and indicators (`significant`: 1 when p < 0.05) are
   integers; `p` is two-sided unless the key or the paper says otherwise.
 
-The computed values agree with the reference values within the tolerances of
-`reference/expected_statistics.json`; all but seven agree to the last bit. The exceptions are six
-bootstrap values of Supplementary Figure 4 (one-exponential interval within 1e-6 s, two-exponential
-intervals within 0.02 s, because their refits depend on the starting values, and the share of
-resamples within 0.5 percentage points) and the last digit of `fig2d.fisher_lee.r`, which depends
-on the numerical library build. The values below were computed on a Linux workstation with the
-environment of `environment.yml`.
+The values below were computed on a Linux workstation with the package versions of
+`environment.yml` and an MKL build of numpy. They agree with the reference values within the
+tolerances of `reference/expected_statistics.json`, and all but seven are equal to them. The
+exceptions are six bootstrap values of Supplementary Figure 4 (one-exponential interval within
+1e-6 s, two-exponential intervals within 0.02 s, because their refits depend on the starting values,
+and the share of resamples within 0.5 percentage points) and the last digit of `fig2d.fisher_lee.r`,
+which depends on the numerical library build. An OpenBLAS build of numpy (the conda-forge default)
+gives the same values within these tolerances; 16 of them differ in the eighth or a later
+significant digit.
 
 Four printed numbers differ from the computed value at the printed precision (step 40 lists them,
 `KNOWN_PRINTED_DIFFERENCES`): the running speed of the Methods (19 cm/s printed, 19.5 cm/s
@@ -286,36 +287,15 @@ closed-form values computed by step 27.
 | 30 virtual participants | Results; Fig 7A legend | `fig7a.small.n` | 27 | 30 |
 | p<0.001 | Results | `fig7a.small.p` | 27 | 1.7176e-20 |
 | t(29)=-23.6 | Results | `fig7a.small.t` | 27 | -23.6257 |
-| not significant | Results; Fig 7B legend (large modules: 2- and 3-fold) | `fig7b.large.fold_1.significant` | 27 | 0 |
+| not significant | Results; Fig 7B legend (significant only: small modules 6-fold; large modules 2- and 3-fold) | `fig7b.large.fold_<k>.significant` for k = 1 and 4 to 7; `fig7b.small.fold_<k>.significant` for k = 1 to 5 and 7 | 27 | 0 |
 | significant | Results; Fig 7B legend (large modules: 2- and 3-fold) | `fig7b.large.fold_2.significant` | 27 | 1 |
 | significant | Results; Fig 7B legend (large modules: 2- and 3-fold) | `fig7b.large.fold_3.significant` | 27 | 1 |
-| not significant | Results; Fig 7B legend (large modules: 2- and 3-fold) | `fig7b.large.fold_4.significant` | 27 | 0 |
-| not significant | Results; Fig 7B legend (large modules: 2- and 3-fold) | `fig7b.large.fold_5.significant` | 27 | 0 |
-| not significant | Results; Fig 7B legend (large modules: 2- and 3-fold) | `fig7b.large.fold_6.significant` | 27 | 0 |
-| not significant | Results; Fig 7B legend (large modules: 2- and 3-fold) | `fig7b.large.fold_7.significant` | 27 | 0 |
-| not significant | Results; Fig 7B legend (small modules: 6-fold) | `fig7b.small.fold_1.significant` | 27 | 0 |
-| not significant | Results; Fig 7B legend (small modules: 6-fold) | `fig7b.small.fold_2.significant` | 27 | 0 |
-| not significant | Results; Fig 7B legend (small modules: 6-fold) | `fig7b.small.fold_3.significant` | 27 | 0 |
-| not significant | Results; Fig 7B legend (small modules: 6-fold) | `fig7b.small.fold_4.significant` | 27 | 0 |
-| not significant | Results; Fig 7B legend (small modules: 6-fold) | `fig7b.small.fold_5.significant` | 27 | 0 |
 | significant | Results; Fig 7B legend (small modules: 6-fold) | `fig7b.small.fold_6.significant` | 27 | 1 |
-| not significant | Results; Fig 7B legend (small modules: 6-fold) | `fig7b.small.fold_7.significant` | 27 | 0 |
 | -11.4143 | Fig 7D panel | `fig7d.large.t` | 27 | -11.4143 |
 | -43.3605 | Fig 7D panel | `fig7d.small.t` | 27 | -43.3605 |
-| not significant | Results (only 6-fold symmetry in both modules) | `fig7e.large.fold_1.significant` | 27 | 0 |
-| not significant | Results (only 6-fold symmetry in both modules) | `fig7e.large.fold_2.significant` | 27 | 0 |
-| not significant | Results (only 6-fold symmetry in both modules) | `fig7e.large.fold_3.significant` | 27 | 0 |
-| not significant | Results (only 6-fold symmetry in both modules) | `fig7e.large.fold_4.significant` | 27 | 0 |
-| not significant | Results (only 6-fold symmetry in both modules) | `fig7e.large.fold_5.significant` | 27 | 0 |
+| not significant | Results (only 6-fold symmetry in both modules) | `fig7e.large.fold_<k>.significant` and `fig7e.small.fold_<k>.significant` for k = 1 to 5 and 7 | 27 | 0 |
 | significant | Results (only 6-fold symmetry in both modules) | `fig7e.large.fold_6.significant` | 27 | 1 |
-| not significant | Results (only 6-fold symmetry in both modules) | `fig7e.large.fold_7.significant` | 27 | 0 |
-| not significant | Results (only 6-fold symmetry in both modules) | `fig7e.small.fold_1.significant` | 27 | 0 |
-| not significant | Results (only 6-fold symmetry in both modules) | `fig7e.small.fold_2.significant` | 27 | 0 |
-| not significant | Results (only 6-fold symmetry in both modules) | `fig7e.small.fold_3.significant` | 27 | 0 |
-| not significant | Results (only 6-fold symmetry in both modules) | `fig7e.small.fold_4.significant` | 27 | 0 |
-| not significant | Results (only 6-fold symmetry in both modules) | `fig7e.small.fold_5.significant` | 27 | 0 |
 | significant | Results (only 6-fold symmetry in both modules) | `fig7e.small.fold_6.significant` | 27 | 1 |
-| not significant | Results (only 6-fold symmetry in both modules) | `fig7e.small.fold_7.significant` | 27 | 0 |
 | 19 of 49 | Fig 7F panel | `fig7f.large.simple.fold_1.count` | 27 | 19 |
 | 41 of 49 | Fig 7F panel | `fig7f.large.simple.fold_2.count` | 27 | 41 |
 | 17 of 49 | Fig 7F panel | `fig7f.large.simple.fold_3.count` | 27 | 17 |

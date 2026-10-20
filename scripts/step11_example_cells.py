@@ -52,9 +52,6 @@ TRAJECTORIES = (("fig3ab", "Fig3A", 1, "Fig3B", False),
                 ("fig4ab_small", "Fig4A", 1, "Fig4B", True),
                 ("fig4ab_large", "Fig4A", 2, "Fig4B", True))
 
-#: Panels drawn from the trajectories (the others need only the cohort tables).
-TRAJECTORY_PANELS = ("Fig3A", "Fig3B", "SuppFig2A", "Fig4A", "Fig4B")
-
 #: Module (``inputs/rat/module_labels.csv``) of the Fig 4A cells by position, for the selection check.
 FIG4_MODULES = {1: 1, 2: 3}
 
@@ -62,8 +59,6 @@ FIG4_MODULES = {1: 1, 2: 3}
 def parse_args(argv: Optional[List[str]] = None):
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0],
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--smoke", action="store_true",
-                   help="synthetic smoke run: example cells missing from the cohort are replaced by cohort cells")
     return p.parse_args(argv)
 
 
@@ -75,40 +70,6 @@ def one_example(examples, panel, position=None):
     if len(sel) != 1:
         raise ValueError(f"expected one example cell for {panel} position {position}, found {len(sel)}")
     return sel.iloc[0]
-
-
-def smoke_examples(examples, cells, trajectories):
-    """Replace example cells that are not in the cohort by cohort cells (synthetic smoke run only).
-
-    Cells are taken in order of decreasing gridness, first for the panels drawn from the
-    trajectories; panels that show the same cell (Fig 3A, 3B and Supp Fig 2A; Fig 4A and 4B)
-    keep sharing one cell, and time windows become 10 to 22 s after the first position sample of
-    the session.
-    """
-    present = set(zip(cells["session_id"].astype(str), cells["cell_id"].astype(int)))
-    pool = cells.sort_values("gridness", ascending=False, kind="mergesort")
-    pool = list(zip(pool["animal_id"], pool["session_id"], pool["cell_id"]))
-    if not pool:
-        raise ValueError("the cohort is empty")
-    out = examples.copy().reset_index(drop=True)
-    shared = {"Fig3B": "Fig3A", "SuppFig2A": "Fig3A", "Fig4B": "Fig4A"}
-    first = [i for i in out.index if out.loc[i, "panel"] in TRAJECTORY_PANELS]
-    chosen = {}
-    for i in first + [i for i in out.index if i not in first]:
-        r = out.loc[i]
-        if (str(r["session_id"]), int(r["cell_id"])) in present:
-            continue
-        key = (shared.get(r["panel"], r["panel"]), 1 if r["panel"] == "SuppFig2A" else int(r["position"]))
-        if key not in chosen:
-            chosen[key] = pool[len(chosen) % len(pool)]
-        a, s, c = chosen[key]
-        out.loc[i, ["animal_id", "session_id"]] = [a, s]
-        out.loc[i, "cell_id"] = int(c)
-        if np.isfinite(r["t_start_s"]):
-            t0 = float(trajectories[a][s]["position"]["time"][0])
-            out.loc[i, ["t_start_s", "t_end_s"]] = [t0 + 10.0, t0 + 22.0]
-    out["cell_id"] = out["cell_id"].astype(np.int64)
-    return out
 
 
 def selection_checks(cells, peak_shift_ms, rows):
@@ -132,8 +93,7 @@ def selection_checks(cells, peak_shift_ms, rows):
 
 
 def main(argv: Optional[List[str]] = None) -> int:
-    args = parse_args(argv)
-    config.guard_smoke_results(args.smoke)
+    parse_args(argv)
     res = config.results_dir()
     out = res / "rat" / "examples"
     paths = {
@@ -164,8 +124,6 @@ def main(argv: Optional[List[str]] = None) -> int:
             raise ValueError("the cohort tables have different numbers of cells")
         trajectories = hio.load_cache(paths["trajectories"])
         examples = labels.read_example_cells()
-        if args.smoke:
-            examples = smoke_examples(examples, cells, trajectories)
         out.mkdir(parents=True, exist_ok=True)
         rows = {}
 
@@ -202,12 +160,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         row = ex.example_rows(cells, one_example(examples, "SuppFig2A").to_frame().T)[0]
         rows["SuppFig2A"] = row
         session = trajectories[cells.loc[row, "animal_id"]][cells.loc[row, "session_id"]]
-        try:
-            arrays, best = ex.supp2a_outputs(session, cells, row, shift_ms, si_shift[row])
-        except ValueError:
-            if not args.smoke:
-                raise
-            arrays, best = ex.supp2a_outputs(session, cells, row, shift_ms, si_shift[row], shifts_ms=[0])
+        arrays, best = ex.supp2a_outputs(session, cells, row, shift_ms, si_shift[row])
         if int(peak_shift["peak_shift_ms"].iloc[row]) != best:
             raise ValueError("peak_shift.csv disagrees with si_shift.npy for the Supp Fig 2A cell")
         hio.save_npz(out / "supp2a_shifted_maps.npz", arrays=arrays)
@@ -224,12 +177,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         written("supp3a_cells.npz")
 
         rec.note("rows", {k: (list(map(int, v)) if isinstance(v, list) else int(v)) for k, v in rows.items()})
-        if not args.smoke:
-            checks = selection_checks(cells, peak_shift["peak_shift_ms"].to_numpy(), rows)
-            rec.note("selection_checks", checks)
-            for key, ok in checks.items():
-                if not ok:
-                    print(f"warning: an example cell does not follow its selection rule: {key}", file=sys.stderr)
+        checks = selection_checks(cells, peak_shift["peak_shift_ms"].to_numpy(), rows)
+        rec.note("selection_checks", checks)
+        for key, ok in checks.items():
+            if not ok:
+                print(f"warning: an example cell does not follow its selection rule: {key}", file=sys.stderr)
         print(f"{STEP}: wrote {len(rec.outputs)} files to {out}")
     return 0
 

@@ -59,7 +59,7 @@ SPEC = (("B", "Spatial deviation", "deviation", "deviation", hs.LABEL["spatial_d
          [0, 1, 2, 3], 1.8, [0, 0.5, 1, 1.5]))
 
 
-def map_title(gridness, peak):
+def map_label(gridness, peak):
     """Gridness and peak rate above a map, '0.7, 9 Hz'; one decimal for a peak below 1 Hz (else it would read 0 Hz)."""
     return f"{gridness:.1f}, {peak:.0f} Hz" if peak >= 1 else f"{gridness:.1f}, {peak:.1f} Hz"
 
@@ -90,7 +90,7 @@ def _draw(out_dir, tab_a, z_a, z_b, fits, z_e):
     def head(letter, x, line, row):
         letters[letter] = hs.panel_letter(fig, letter, x, line, clear_of=[], not_above=line, row=row)
 
-    def rate_key(row_top, panel, right=RIGHT):
+    def rate_key(row_top, right=RIGHT):
         """Colour key of the maps above them, flush right: 'Firing rate  Low [viridis bar] High'.
 
         The key's baseline lies one capital height under ``row_top``.
@@ -102,7 +102,6 @@ def _draw(out_dir, tab_a, z_a, z_b, fits, z_e):
         bw, bh = 9.0, 2.4
         bx = right - w_hi - 1.0 - bw
         cax = fig.add_axes([bx / W, 1 - base / H, bw / W, bh / H])
-        common.tag(cax, panel=panel, name=f"{panel} rate key bar")
         cax.imshow(np.linspace(0, 1, 256)[None, :], aspect="auto", cmap=hs.CMAP["rate"], extent=(0, 1, 0, 1),
                    interpolation="bilinear")
         cax.set_xticks([])
@@ -134,7 +133,7 @@ def _draw(out_dir, tab_a, z_a, z_b, fits, z_e):
 
     # ================================================================ A recorded maps
     head("A", hs.LETTER_X, ROW_A, 1)
-    rate_key(ORG_A, "A")
+    rate_key(ORG_A)
     maps_a = []
     for i, rr in enumerate(tab_a.itertuples(index=False)):
         p = f"p{i + 1:02d}"
@@ -144,7 +143,6 @@ def _draw(out_dir, tab_a, z_a, z_b, fits, z_e):
         top = ORG_A + MAP_TOP_OFF + row * MAP_PITCH
         ax, xc = map_axes(col, top, x_edges[-1], y_edges[-1])
         maps_a.append(ax)
-        common.tag(ax, panel="A", name=f"A map {i + 1} ({rr.session_id} cell {rr.cell_id})")
         bg = rate_map.T
         lo, hi = np.percentile(bg[~np.isnan(bg)], 1), np.percentile(bg[~np.isnan(bg)], 99)
         hs.rate_map(ax, rate_map, (np.min(x_edges), np.max(x_edges), np.min(y_edges), np.max(y_edges)),
@@ -158,7 +156,7 @@ def _draw(out_dir, tab_a, z_a, z_b, fits, z_e):
         ax.set_xlabel("")
         ax.set_ylabel("")
         map_ticks(ax, np.arange(0, x_edges[-1], 50), np.arange(0, y_edges[-1], 50))
-        hs.text_mm(fig, xc, top - 1.2, map_title(rr.gridness, np.nanmax(rate_map)), fontsize=hs.FS_SMALL,
+        hs.text_mm(fig, xc, top - 1.2, map_label(rr.gridness, np.nanmax(rate_map)), fontsize=hs.FS_SMALL,
                    ha="center")
         if col == 0:
             ax.set_xlabel(LAB["x_cm"], labelpad=1.5)
@@ -175,13 +173,12 @@ def _draw(out_dir, tab_a, z_a, z_b, fits, z_e):
     for k, (letter, name, key, dist, xlabel, xlim, xt, ytop, yt) in enumerate(SPEC):
         left = BOX_L0 + k * BOX_PITCH
         head(letter, left - (BOX_L0 - hs.LETTER_X), ROW_BCD, 2)
-        ax = common.tag(hs.axes_mm(fig, left, ROW_BCD + BOX_TOP_OFF, BOX_W, BOX_H), panel=letter,
-                        name=f"{letter} histogram")
+        ax = hs.axes_mm(fig, left, ROW_BCD + BOX_TOP_OFF, BOX_W, BOX_H)
         hs.add_clearance(letters[letter], ax)                # its y label and y tick labels
         ymax = 0
         for g, ckey, word in groups:
             x = z_b[f"{key}_{g}"]
-            if len(x) == 0:                       # possible with small synthetic test data only
+            if len(x) == 0:                       # guard against an empty group
                 warnings.warn(f"{FIGURE}{letter}: no values for the {g} grid scale; histogram and fit left out")
                 continue
             n, e, _ = ax.hist(x, bins=30, density=True, histtype="stepfilled", facecolor=P[ckey + "_fill"], alpha=0.75,
@@ -212,7 +209,7 @@ def _draw(out_dir, tab_a, z_a, z_b, fits, z_e):
 
     # ================================================================ E simulated maps
     head("E", hs.LETTER_X, ROW_E, 3)
-    rate_key(ORG_E, "E")
+    rate_key(ORG_E)
     ext = tuple(float(v) for v in z_e["extent"])
     for r_i, mod in enumerate(MODULES):
         top = ORG_E + MAP_TOP_OFF + r_i * MAP_PITCH
@@ -223,14 +220,12 @@ def _draw(out_dir, tab_a, z_a, z_b, fits, z_e):
             peak = float(z_e[f"supp3e__{mod}__peak_rate_hz"][j])
             if abs(peak - float(m.max())) > 1e-9:
                 raise ValueError(f"sim/fig6/maps.npz: the peak rate of {mod} map {j + 1} ({peak}) is not the maximum "
-                                 f"of the map ({m.max()}); titles and maps must come from the same run")
+                                 f"of the map ({m.max()}); labels and maps must come from the same run")
             ax, xc = map_axes(j, top, ext[1], ext[3])
-            common.tag(ax, panel="E", name=f"E {mod} module map {j + 1} (pool index "
-                                           f"{int(z_e[f'supp3e__{mod}__cells'][j])})")
             hs.rate_map(ax, m, ext)                       # colour limits: the map's minimum and maximum
             first_map = ax if j == 0 else first_map
             map_ticks(ax, np.arange(0, ext[1] + 1, 50), np.arange(0, ext[3] + 1, 50))
-            hs.text_mm(fig, xc, top - 1.2, map_title(float(z_e[f"supp3e__{mod}__gridness"][j]), peak),
+            hs.text_mm(fig, xc, top - 1.2, map_label(float(z_e[f"supp3e__{mod}__gridness"][j]), peak),
                        fontsize=hs.FS_SMALL, ha="center")
             if j == 0:
                 ax.set_xlabel(LAB["x_vm"], labelpad=1.5)

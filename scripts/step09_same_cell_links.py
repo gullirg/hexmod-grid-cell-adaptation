@@ -8,8 +8,7 @@ Reads ``rat/cohort/cells.csv`` and ``preprocessed/trajectories.pkl``, the shippe
 Vollan et al. (2025) session files of the animals recorded in more than one cohort session. Writes
 ``rat/same_cell/entries.csv`` (one row per cohort cell: its unit and whether it is the unit's earliest recording),
 ``units.csv`` (one row per unit) and ``links.csv`` (one row per accepted link). The link rules are described in
-``hexmod.rat.same_cell``. The unit features read from the Vollan files are cached in
-``results/cache/step09_same_cell_links/`` (``--no-cache`` reads the files again).
+``hexmod.rat.same_cell``.
 """
 
 from __future__ import annotations
@@ -39,10 +38,6 @@ def parse_args(argv: Optional[List[str]] = None):
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     p.add_argument(
         "--workers", type=int, default=None, help="processes reading the Vollan files (default HEXMOD_WORKERS or 4)"
-    )
-    p.add_argument("--no-cache", action="store_true", help="read the Vollan files again instead of using the cache")
-    p.add_argument(
-        "--smoke", action="store_true", help="smoke run: Vollan links are skipped when the raw files are absent"
     )
     return p.parse_args(argv)
 
@@ -98,8 +93,8 @@ def tetrode_keys(cells: pd.DataFrame, trajectories: dict):
     from hexmod.rat.same_cell import hafting_label, tetrode_entry_maps, tetrode_rate_map
 
     t = cells[cells["dataset"] != VOLLAN]
-    # the published comparison read grid orientation and scale from a table after two CSV round trips
-    # (docs/PIPELINE.md, section 2.7); this matters only for pairs exactly at a threshold
+    # grid orientation and scale enter the comparison after two CSV round trips
+    # (docs/PIPELINE.md, Rounded per-cell inputs); this matters only for pairs exactly at a threshold
     ori = io.csv_float_roundtrip(t["orientation_deg"].to_numpy(float), 2)
     scale = io.csv_float_roundtrip(t["scale_cm"].to_numpy(float), 2)
     hafting = {}
@@ -216,7 +211,6 @@ def main(argv: Optional[List[str]] = None) -> int:
     from hexmod.runlog import RunRecord
     from hexmod.rat import same_cell
 
-    config.guard_smoke_results(args.smoke)
     workers = config.workers(args.workers)
     res = config.results_dir()
     out_dir = res / "rat" / "same_cell"
@@ -237,22 +231,14 @@ def main(argv: Optional[List[str]] = None) -> int:
         groups, session_files, rel_paths = vollan_groups(cells)
         base = config.data_dir() / VOLLAN
         missing = [rel_paths[f] for fs in groups for f in fs if not (base / rel_paths[f]).is_file()]
-        if missing and not args.smoke:
+        if missing:
             print(
                 f"error: {len(missing)} Vollan et al. (2025) session files are missing under {base} "
                 f"(first: {missing[0]}); run scripts/data_download.py",
                 file=sys.stderr,
             )
             return 1
-        if missing:
-            print(f"smoke run: {len(missing)} Vollan files absent, Vollan links skipped", flush=True)
-            groups, session_files = [], {}
-        cache_dir = None if args.no_cache else res / "cache" / STEP
-        jobs = [
-            (str(base / rel_paths[f]), f, str(cache_dir / f"vollan_{f}.pkl") if cache_dir else None)
-            for fs in groups
-            for f in fs
-        ]
+        jobs = [(str(base / rel_paths[f]), f) for fs in groups for f in fs]
         for job in jobs:
             rec.add_input(Path(job[0]), hash_it=False)
         recs = dict(

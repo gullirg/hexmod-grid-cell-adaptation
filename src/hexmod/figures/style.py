@@ -3,24 +3,20 @@
 Every figure module uses this one style. It holds:
 
 - ``use_style``: the matplotlib parameters (type, line weights, axes) and the typeface;
-- ``PALETTE``, ``LOCAL``, ``tint``: one colour for every concept, and colours that belong to one panel only;
+- ``PALETTE``, ``tint``: one colour for every concept, and the fill tone of a line colour;
 - ``VAR``, ``LABEL``, ``TICKS``: variable names as mathtext, and the axis labels and tick words built from them;
 - ``new_figure``, ``axes_mm``, ``polar_mm``, ``text_mm``: figures and axes addressed in mm from the top left corner
   of the figure (fixed Agg canvas);
 - ``panel_letter``, ``add_clearance``, ``panels_top``, ``settle_letters``, ``extent_mm``: panel letters (one line
   per row of panels, above the panels' topmost element) and the extents of drawn artists;
-- ``colour_key``, ``line_key``, ``solid_key``, ``note_above``, ``words_above``: keys and notes;
-- ``box_axes``, ``zero_line``, ``polar_style``, ``polar_bars``, ``even_polar_labels``, ``alignment_wedges``,
-  ``DEG``, ``NUM``: axes frames and formatters;
+- ``colour_key``, ``line_key``, ``solid_key``, ``note_above``: keys and notes;
+- ``box_axes``, ``zero_line``, ``polar_style``, ``even_polar_labels``, ``DEG``, ``NUM``: axes frames and formatters;
 - ``boxplot``, ``sig_stars``, ``sig_mark``, ``sig_bracket``, ``bracket_stack``, ``holm``, ``pt_to_data``,
   ``box_width_data``: box plots and significance marks;
-- ``box_stats``, ``read_boxes``, ``read_bp``: the numbers of a box plot, computed from the values and read back from
-  the drawing;
-- ``histogram``, ``sem_band``, ``errorbars``, ``chance_band``, ``rate_map``, ``colour_bar``, ``field_outlines``,
-  ``spikes_on_map``, ``stacked_traces``: other plot kinds;
-- ``save_figure``, ``stable_svg_clip_ids``, ``type_sizes``, ``script_sizes``, ``svg_type_sizes``: PDF with editable
-  text, SVG with text kept as text, PNG at 600 dpi, and checks of the type sizes;
-- ``simulate_cvd``, ``colour_distance``, ``lightness``, ``palette_report``: colour-blindness and greyscale checks.
+- ``box_stats``: the numbers of a box plot, computed from the values;
+- ``histogram``, ``errorbars``, ``rate_map``, ``colour_bar``, ``field_outlines``, ``spikes_on_map``,
+  ``stacked_traces``: other plot kinds;
+- ``save_figure``, ``stable_svg_clip_ids``: PDF with editable text, SVG with text kept as text, PNG at 600 dpi.
 
 Panels carry no titles (the figure legends name them). A panel letter stands at the left of its panel, its capital
 ``LETTER_ABOVE`` (1.5 mm) above the topmost element of its row of panels, on one line with the other letters of the
@@ -35,7 +31,6 @@ DejaVu Sans, and a warning is given once.
 """
 
 import hashlib
-import itertools
 import re
 import warnings
 from pathlib import Path
@@ -65,8 +60,7 @@ FS_MIN = 7.0          # pt: tick labels of grids of small maps only; nothing is 
 # Subscripts and superscripts: matplotlib sets a script at 0.7 of the size of its text, so a subscript in 8 pt text
 # would be 5.6 pt, below FS_MIN. Any text that carries a script (t_prev, tau_1, T_12, FR_2 ...) is therefore set at
 # FS_SCRIPT_TEXT (10 pt: axis labels, colour keys, keys inside a panel, tick labels that carry a script), which puts
-# the script at 7 pt. A script inside a script (e^{-t_prev/tau}) would be 4.9 pt and is not used in a figure. Check a
-# saved figure with script_sizes() or svg_type_sizes().
+# the script at 7 pt. A script inside a script (e^{-t_prev/tau}) would be 4.9 pt and is not used in a figure.
 SCRIPT_SCALE = 0.7    # matplotlib's ratio of script to text size (mathtext SHRINK_FACTOR)
 FS_SCRIPT_TEXT = FS_TITLE
 
@@ -123,7 +117,7 @@ PALETTE = {
     "dot": "#3C3C3C",                # dots of a scatter plot, points on a box plot
     "neutral": "#858585",            # bars that are not split by a factor; a baseline condition
     "guide": "#929292",              # guide lines inside a plot, zero line
-    "neutral_fill": "#D2D2D2",       # boxes and histograms that are not split by a factor; firing fields in schematics
+    "neutral_fill": "#D2D2D2",       # boxes and histograms that are not split by a factor
     "chance": "#DCDCDC",             # band of a null or chance distribution
     "chance_edge": "#8C8C8C",
     "span": "#EBEBEB",               # shaded time spans (inside a firing field)
@@ -134,16 +128,6 @@ PALETTE = {k: v.upper() for k, v in PALETTE.items()}
 assert PALETTE["aligned_fill"] == tint(PALETTE["aligned"]) and PALETTE["misaligned_fill"] == tint(PALETTE["misaligned"])
 for _k in ("module_small", "module_large", "method_location", "method_simple", "adaptation"):
     assert PALETTE[_k + "_fill"] == tint(PALETTE[_k]), _k
-
-# Colours that belong to one panel only; they name single cells or animals, not a concept, and are explained in the
-# legend of that panel. They are not used anywhere else.
-LOCAL = {
-    "fig2_tuning_example": "#0000FF",      # Fig 2A, tuning curve and preferred direction of an example cell
-    "fig2_tuning_mean": "#1F77B4",         # Fig 2C, mean tuning curve
-    "fig2_polar_cross": "#B0B0B0",         # Fig 2B and 2C, cross lines (0.8 pt)
-    "fig2_animals": ["#0F4BF7", "#C61E58", "#0FA626", "#581378", "#B775FE", "#354E03"],   # Fig 2D, six animals
-    "fig2_animals_other": "#969696",       # Fig 2D, animals without a colour of their own
-}
 
 CMAP = {"rate": "viridis",          # firing rate maps, single cells and summed population (low = dark)
         "rate_under_colour": "gray",  # a rate map that lies under a coloured trajectory (low = black)
@@ -572,7 +556,6 @@ def solid_key(fig, items, right, row_top=LETTER_TOP):
 
 
 FS_SUBHEAD = FS_TITLE    # pt: sub-panel headings (column or condition headers inside a panel); numeric notes stay 8 pt
-FS_CBAR = FS_SMALL       # pt: colour-bar labels (the bar sits right of a map or below a row of maps)
 BOX_WIDTH_MM = 7.6       # mm: drawn width of a box in population box plots
 
 
@@ -580,22 +563,6 @@ def note_above(ax, s, ha="right"):
     """Write a short note above the box of an axes, 8 pt, its lower edge 1 mm above the box."""
     return ax.annotate(s, (1.0 if ha == "right" else 0.0, 1.0), xytext=(0, NOTE_UP / PT), textcoords="offset points",
                        xycoords="axes fraction", ha=ha, va="bottom", fontsize=FS_SMALL)
-
-
-def words_above(fig, ax, items, gap_mm=2.0):
-    """Write coloured words above the box of an axes, 8 pt, ending at its right edge (a key without swatches).
-
-    Parameters
-    ----------
-    items : list of (str, colour)
-        Left to right.
-    """
-    r = fig.canvas.get_renderer(); x_pt = 0.0; arts = []
-    for word, colour in reversed(list(items)):
-        t = ax.annotate(word, (1.0, 1.0), xytext=(x_pt, NOTE_UP / PT), textcoords="offset points",
-                        xycoords="axes fraction", ha="right", va="bottom", fontsize=FS_SMALL, color=colour)
-        x_pt -= t.get_window_extent(r).width * 72.0 / fig.dpi + gap_mm / PT; arts.append(t)
-    return arts
 
 
 # ------------------------------------------------------------------------------------------------ axes
@@ -651,34 +618,6 @@ def even_polar_labels(fig, ax):
                        textcoords="offset points", ha="right", va="center", fontsize=size, annotation_clip=False)
 
 
-def polar_bars(ax, centres_deg, counts, width_deg, colours, angle_factor=1.0):
-    """Draw a histogram on a circle: bars at 60% opacity with white edges of 1 pt.
-
-    ``angle_factor=6`` maps 60 degrees onto the full circle.
-    """
-    for c, n, col in zip(centres_deg, counts, colours):
-        ax.bar(angle_factor * np.deg2rad(c), n, width=angle_factor * np.deg2rad(width_deg), align="center",
-               facecolor=col, edgecolor="white", linewidth=1.0, alpha=0.6)
-    ax.set_ylim(0, max(counts))
-
-
-def polar_guides(ax, angles_deg=(0, 90), rmax=None):
-    """Draw thin guide lines through the centre of a polar plot (grid axes or cross lines)."""
-    rmax = ax.get_ylim()[1] if rmax is None else rmax
-    for a in angles_deg:
-        ax.plot(np.deg2rad([a, a + 180]), [rmax, rmax], color=PALETTE["guide"], linewidth=LW_GUIDE, zorder=1,
-                solid_capstyle="butt")
-
-
-def alignment_wedges(ax, orientation_deg, rmax):
-    """Draw the background of a polar tuning plot: 30 degree wedges, aligned on the grid axes and misaligned between."""
-    for i in range(6):
-        ax.bar(np.deg2rad(orientation_deg + 60 * i), rmax, width=np.deg2rad(30), color=PALETTE["aligned"], alpha=0.6,
-               linewidth=0)
-        ax.bar(np.deg2rad(orientation_deg + 30 + 60 * i), rmax, width=np.deg2rad(30), color=PALETTE["misaligned"],
-               alpha=0.6, linewidth=0)
-
-
 # -------------------------------------------------------------------------------------------- box plots, significance
 def boxplot(ax, groups, positions=None, colours=None, width=0.6, points=False, seed=0):
     """Draw a box plot in the house convention.
@@ -723,7 +662,6 @@ def boxplot(ax, groups, positions=None, colours=None, width=0.6, points=False, s
     for i in range(len(groups)):
         lo = bp["whiskers"][2 * i].get_ydata(); hi = bp["whiskers"][2 * i + 1].get_ydata()
         ends.append((float(np.min(lo)), float(np.max(hi))))
-    ax.__dict__.setdefault("_hexmod_boxes", []).append(dict(positions=positions, bp=bp, n=[len(g) for g in groups]))
     return ends
 
 
@@ -746,31 +684,6 @@ def box_stats(groups):
         out.append(dict(n=int(g.size), median=float(med), q1=float(q1), q3=float(q3), whisker_low=float(min(lo, q1)),
                         whisker_high=float(max(hi, q3))))
     return out
-
-
-def read_boxes(ax):
-    """Read back what the house box plots of an axes drew (median, box edges, whisker ends), in data units.
-
-    Reads the boxes drawn by ``boxplot``; for any other ``ax.boxplot`` call pass its return value to ``read_bp``.
-    Used to check that a panel draws the numbers of its source data.
-    """
-    rows = []
-    for rec in ax.__dict__.get("_hexmod_boxes", []):
-        rows += read_bp(rec["bp"], rec["positions"])
-    return rows
-
-
-def read_bp(bp, positions=None):
-    """Return the numbers drawn by one matplotlib boxplot call (the dict it returns); notched boxes read at corners."""
-    rows = []
-    nbox = len(bp["medians"]); positions = list(range(nbox)) if positions is None else list(positions)
-    for i in range(nbox):
-        med = bp["medians"][i].get_ydata(); box = bp["boxes"][i]
-        yb = np.asarray(box.get_path().vertices)[:, 1] if hasattr(box, "get_path") else np.asarray(box.get_ydata())
-        wl = bp["whiskers"][2 * i].get_ydata(); wh = bp["whiskers"][2 * i + 1].get_ydata()
-        rows.append(dict(position=float(positions[i]), median=float(np.mean(med)), q1=float(np.min(yb)),
-                         q3=float(np.max(yb)), whisker_low=float(np.min(wl)), whisker_high=float(np.max(wh))))
-    return rows
 
 
 def holm(p):
@@ -977,30 +890,11 @@ def histogram(ax, x, bins, colour=None, fill=None, **kw):
     return n, edges
 
 
-def sem_band(ax, x, mean, sem, colour=None, **kw):
-    """Draw a mean as a line of 1.5 pt with its s.e.m. as a band of the same colour at 30%, without an edge."""
-    colour = PALETTE["ink"] if colour is None else colour
-    ax.fill_between(x, np.asarray(mean) - np.asarray(sem), np.asarray(mean) + np.asarray(sem), color=colour, alpha=0.3,
-                    linewidth=0, zorder=2)
-    return ax.plot(x, mean, color=colour, linewidth=LW_DATA, zorder=3, **kw)[0]
-
-
 def errorbars(ax, x, y, err, colour=None, **kw):
     """Draw points with error bars: no caps, 0.8 pt, marker of 3 pt."""
     colour = PALETTE["ink"] if colour is None else colour
     return ax.errorbar(x, y, yerr=err, linestyle="", marker="o", ms=3.0, mfc=colour, mec=colour, mew=0, ecolor=colour,
                        elinewidth=LW_FRAME, capsize=0, zorder=4, **kw)
-
-
-SCATTER_MANY = dict(s=3.4, color=PALETTE["dot"], alpha=0.6, linewidths=0, zorder=3)                 # hundreds of points
-SCATTER_FEW = dict(marker="o", linestyle="", ms=3.0, mfc=mpl.colors.to_rgba(PALETTE["dot"], 0.65), mec=PALETTE["dot"],
-                   mew=0.5, zorder=4, clip_on=False)                         # up to about 30 points (with ax.plot)
-
-
-def chance_band(ax, x, upper, lower=0.0):
-    """Draw the band of a chance distribution from lower to upper, with its upper edge as a thin line."""
-    ax.fill_between(x, lower, upper, color=PALETTE["chance"], linewidth=0, zorder=1)
-    return ax.plot(x, upper, color=PALETTE["chance_edge"], linewidth=LW_MINOR, zorder=2, solid_joinstyle="round")[0]
 
 
 def rate_map(ax, rate, extent, under_colour=False, **kw):
@@ -1025,55 +919,7 @@ def colour_bar(fig, im, left, top, width, height, label=None, orientation="verti
 
 
 # ------------------------------------------------------------------------------------------------ saving
-def type_sizes(fig):
-    """Return the type sizes used in a figure (pt), smallest first."""
-    return sorted({round(t.get_fontsize(), 2) for t in fig.findobj(mpl.text.Text)
-                   if t.get_visible() and t.get_text().strip()})
-
-
-def _script_depth(s):
-    """Return the deepest level of sub- or superscript in a mathtext string (0: none)."""
-    deepest = 0
-    for seg in s.split("$")[1::2]:                      # the parts between dollar signs
-        stack, level, pending = [], 0, False
-        for c in seg:
-            if c.isspace():
-                continue
-            if c in "_^":
-                pending = True
-            elif c == "{":
-                stack.append(level)
-                if pending: level += 1; deepest = max(deepest, level)
-                pending = False
-            elif c == "}":
-                level = stack.pop() if stack else 0
-            elif pending:                                # a script of one token (a letter, a digit or a command)
-                deepest = max(deepest, level + 1); pending = False
-    return deepest
-
-
-def script_sizes(fig):
-    """Return [(text, size of its smallest script in pt)] for every visible text that carries a sub- or superscript."""
-    out = []
-    for t in fig.findobj(mpl.text.Text):
-        s = t.get_text()
-        if t.get_visible() and s.count("$") >= 2:
-            d = _script_depth(s)
-            if d: out.append((s, round(t.get_fontsize() * SCRIPT_SCALE ** d, 2)))
-    return out
-
-
-def svg_type_sizes(svg_path):
-    """Return every type size (pt) written in a saved SVG, scripts included, smallest first.
-
-    The figure must be saved with ``svg.fonttype`` 'none' (text kept as text).
-    """
-    import re
-    txt = open(svg_path, encoding="utf-8").read()
-    return sorted({float(v) for v in re.findall(r"font:\s*(?:italic\s+|bold\s+|oblique\s+)*([0-9.]+)px", txt)})
-
-
-def save_figure(fig, stem, check=True):
+def save_figure(fig, stem):
     """Save a figure at its designed size, without cropping, as PDF, SVG and PNG.
 
     The panel letters placed with ``clear_of``, ``not_above`` or ``row`` are settled first (``settle_letters``).
@@ -1088,8 +934,6 @@ def save_figure(fig, stem, check=True):
     fig : matplotlib.figure.Figure
     stem : str or Path
         Output path without extension.
-    check : bool
-        Warn when a text is smaller than ``FS_MIN``.
 
     Returns
     -------
@@ -1098,10 +942,6 @@ def save_figure(fig, stem, check=True):
     """
     stem = str(stem)
     settle_letters(fig)
-    if check:
-        sizes = type_sizes(fig)
-        if sizes and sizes[0] < FS_MIN:
-            warnings.warn(f"{stem}: type of {sizes[0]} pt is below the smallest allowed size ({FS_MIN} pt)")
     with mpl.rc_context({"pdf.fonttype": 42, "ps.fonttype": 42, "svg.fonttype": "none", "svg.hashsalt": "hexmod"}):
         fig.savefig(stem + ".pdf", metadata={"CreationDate": None})
         fig.savefig(stem + ".svg", metadata={"Date": None})
@@ -1150,120 +990,3 @@ def stable_svg_clip_ids(path):
     text = pattern.sub(lambda m: m.group(1) + rename[m.group(2)] + m.group(3), text)
     path.write_bytes(text.encode("utf-8"))
     return len(rename)
-
-
-# ------------------------------------------------------------------------------------------------ colour vision
-# Machado, Oliveira and Fernandes (2009), severity 1.0: red-blind (protan), green-blind (deutan), blue-blind (tritan)
-_CVD = {"normal": np.eye(3),
-        "protan": np.array([[0.152286, 1.052583, -0.204868], [0.114503, 0.786281, 0.099216],
-                            [-0.003882, -0.048116, 1.051998]]),
-        "deutan": np.array([[0.367322, 0.860646, -0.227968], [0.280085, 0.672501, 0.047413],
-                            [-0.011820, 0.042940, 0.968881]]),
-        "tritan": np.array([[1.255528, -0.076749, -0.178779], [-0.078411, 0.930809, 0.147602],
-                            [0.004733, 0.691367, 0.303900]])}
-VISION = tuple(_CVD)
-
-
-def _lin(c): return np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
-
-
-def _unlin(c): c = np.clip(c, 0, 1); return np.where(c <= 0.0031308, 12.92 * c, 1.055 * c ** (1 / 2.4) - 0.055)
-
-
-def simulate_cvd(colour, kind):
-    """Return the colour as seen with a colour vision deficiency ('protan', 'deutan', 'tritan') or in grey ('grey')."""
-    c = np.array(mpl.colors.to_rgb(colour))
-    if kind == "grey":
-        y = float(np.dot([0.2126729, 0.7151522, 0.0721750], _lin(c)))
-        return mpl.colors.to_hex(_unlin(np.array([y, y, y]))).upper()
-    return mpl.colors.to_hex(_unlin(_CVD[kind] @ _lin(c))).upper()
-
-
-def _lab(colour):
-    X = np.array([[0.4124564, 0.3575761, 0.1804375], [0.2126729, 0.7151522, 0.0721750],
-                  [0.0193339, 0.1191920, 0.9503041]]) @ _lin(np.array(mpl.colors.to_rgb(colour)))
-    X = X / np.array([0.95047, 1.0, 1.08883]); f = np.where(X > 216 / 24389, np.cbrt(X), (24389 / 27 * X + 16) / 116)
-    return np.array([116 * f[1] - 16, 500 * (f[0] - f[1]), 200 * (f[1] - f[2])])
-
-
-def lightness(colour):
-    """Return CIE L* (0 black, 100 white): what is left of a colour in a greyscale print."""
-    return float(_lab(colour)[0])
-
-
-def _de2000(l1, l2):
-    L1, a1, b1 = l1; L2, a2, b2 = l2
-    C1, C2 = np.hypot(a1, b1), np.hypot(a2, b2); Cb = (C1 + C2) / 2
-    G = 0.5 * (1 - np.sqrt(Cb ** 7 / (Cb ** 7 + 25.0 ** 7)))
-    a1p, a2p = (1 + G) * a1, (1 + G) * a2; C1p, C2p = np.hypot(a1p, b1), np.hypot(a2p, b2)
-    h1 = np.degrees(np.arctan2(b1, a1p)) % 360; h2 = np.degrees(np.arctan2(b2, a2p)) % 360
-    dL = L2 - L1; dC = C2p - C1p
-    dh = 0.0 if C1p * C2p == 0 else ((h2 - h1 + 180) % 360) - 180
-    dH = 2 * np.sqrt(C1p * C2p) * np.sin(np.radians(dh) / 2)
-    Lb = (L1 + L2) / 2; Cbp = (C1p + C2p) / 2
-    if C1p * C2p == 0: hb = h1 + h2
-    else: hb = (h1 + h2) / 2 if abs(h1 - h2) <= 180 else ((h1 + h2 + 360) / 2 if h1 + h2 < 360 else (h1 + h2 - 360) / 2)
-    T = (1 - 0.17 * np.cos(np.radians(hb - 30)) + 0.24 * np.cos(np.radians(2 * hb))
-         + 0.32 * np.cos(np.radians(3 * hb + 6)) - 0.20 * np.cos(np.radians(4 * hb - 63)))
-    SL = 1 + 0.015 * (Lb - 50) ** 2 / np.sqrt(20 + (Lb - 50) ** 2); SC = 1 + 0.045 * Cbp; SH = 1 + 0.015 * Cbp * T
-    RT = -2 * np.sqrt(Cbp ** 7 / (Cbp ** 7 + 25.0 ** 7)) * np.sin(np.radians(60 * np.exp(-((hb - 275) / 25) ** 2)))
-    return float(np.sqrt((dL / SL) ** 2 + (dC / SC) ** 2 + (dH / SH) ** 2 + RT * (dC / SC) * (dH / SH)))
-
-
-def colour_distance(c1, c2, kind="normal"):
-    """Return the CIEDE2000 distance between two colours, with normal vision or a colour vision deficiency.
-
-    About 1 is a just noticeable difference for large patches side by side; thin lines and small marks need 10 or more.
-    """
-    if kind != "normal": c1, c2 = simulate_cvd(c1, kind), simulate_cvd(c2, kind)
-    return _de2000(_lab(c1), _lab(c2))
-
-
-# the colours a reader has to tell apart: the line tone of every concept and the four steps of grey
-DISTINCT = ("aligned", "misaligned", "module_small", "module_large", "method_location", "adaptation", "ink", "dot",
-            "neutral", "neutral_fill")
-# fill tones stand for the same concept as their line tone, and the paired greys are one step of grey each
-SAME_CONCEPT = [("aligned", "aligned_fill"), ("misaligned", "misaligned_fill"), ("module_small", "module_small_fill"),
-                ("module_large", "module_large_fill"), ("method_location", "method_location_fill"),
-                ("adaptation", "adaptation_fill"), ("method_simple", "method_simple_fill")]
-# colours that share a figure (fills as drawn)
-FIGURE_SETS = {
-    "Fig 2": ["aligned", "aligned_fill", "misaligned", "misaligned_fill", "ink", "dot", "chance"],
-    "Fig 3": ["neutral_fill", "ink", "span"],        # spikes and numbers black (white only on the colour map of A)
-    "Fig 4": ["aligned", "aligned_fill", "misaligned", "misaligned_fill", "neutral_fill", "ink"],
-    "Fig 5": ["neutral_fill", "ink"],
-    "Fig 6": ["aligned_fill", "misaligned_fill", "ink"],
-    "Fig 7": ["aligned_fill", "misaligned_fill", "neutral_fill", "dot", "ink", "method_simple", "method_simple_fill",
-              "method_location", "method_location_fill"],     # no coloured tick labels or frames
-    "Fig 8": ["aligned", "misaligned", "ink"],
-    "Supp Fig 3": ["module_small", "module_small_fill", "module_large", "module_large_fill", "ink"],
-    "Supp Fig 4": ["ink", "adaptation", "no_adaptation"],
-}
-
-
-def _pairs_min(names, colours=None):
-    colours = PALETTE if colours is None else colours; skip = {frozenset(p) for p in SAME_CONCEPT}; rows = {}
-    for kind in VISION:
-        rows[kind] = min((colour_distance(colours[a], colours[b], kind), a, b)
-                         for a, b in itertools.combinations(names, 2)
-                         if frozenset((a, b)) not in skip and colours[a] != colours[b])
-    return rows
-
-
-def palette_report(verbose=True):
-    """Return the smallest colour distances of the palette (normal vision and three deficiencies) and its lightness."""
-    out = {"distinct": _pairs_min(DISTINCT)}
-    fills = list(DISTINCT) + [b for _, b in SAME_CONCEPT]
-    out["with_fills"] = _pairs_min(fills)
-    out["figures"] = {k: _pairs_min(v) for k, v in FIGURE_SETS.items()}
-    out["lightness"] = {k: round(lightness(PALETTE[k]), 1) for k in fills}
-    out["overall_min_distinct"] = min(out["distinct"].values())
-    out["overall_min_with_fills"] = min(out["with_fills"].values())
-    if verbose:
-        fmt = lambda r: "; ".join("%s %.1f (%s / %s)" % ((k,) + r[k]) for k in VISION)  # noqa: E731
-        print("Line tones and greys that a reader must tell apart:\n   " + fmt(out["distinct"]))
-        print("The same with the fill tones added:\n   " + fmt(out["with_fills"]))
-        for k, r in out["figures"].items(): print("%-10s %s" % (k, fmt(r)))
-        print("Lightness L* (greyscale):",
-              ", ".join("%s %.0f" % kv for kv in sorted(out["lightness"].items(), key=lambda kv: kv[1])))
-    return out

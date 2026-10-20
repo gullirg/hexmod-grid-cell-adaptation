@@ -211,8 +211,20 @@ def load_pool(path: PathLike):
 
 
 # ------------------------------------------------------------------------------------ checks
-def _update(h, array: np.ndarray) -> None:
+def _rounded(a: np.ndarray, digits: int) -> np.ndarray:
+    """Floating-point values rounded to ``digits`` significant digits.
+
+    The rounding goes through Python's decimal formatting, which is correctly rounded, so it gives
+    the same result on every machine.
+    """
+    values = [float(f"{v:.{digits - 1}e}") for v in a.ravel().tolist()]
+    return np.array(values, dtype=a.dtype).reshape(a.shape) + 0.0   # + 0.0 turns -0.0 into 0.0
+
+
+def _update(h, array: np.ndarray, digits: Optional[int] = None) -> None:
     a = np.asarray(array)
+    if digits is not None and a.dtype.kind == "f":
+        a = _rounded(a, digits)
     if a.dtype.byteorder == ">" or (a.dtype.byteorder == "=" and np.little_endian is False):
         a = a.astype(a.dtype.newbyteorder("<"))
     a = np.ascontiguousarray(a)
@@ -220,7 +232,7 @@ def _update(h, array: np.ndarray) -> None:
     h.update(a.tobytes())
 
 
-def column_checksums(table) -> Dict[str, str]:
+def column_checksums(table, digits: Optional[int] = None) -> Dict[str, str]:
     """sha256 of every column of a pool table, independent of the file format.
 
     A scalar column is hashed as its values; a ragged column as its ``__shapes`` array followed by
@@ -232,6 +244,10 @@ def column_checksums(table) -> Dict[str, str]:
     ----------
     table : pandas.DataFrame
         Pool table.
+    digits : int, optional
+        Round floating-point values to this many significant digits before hashing. Such checksums
+        do not change with differences in the last digits, as between builds of the numerical
+        libraries. None (default) hashes the exact values.
 
     Returns
     -------
@@ -243,15 +259,15 @@ def column_checksums(table) -> Dict[str, str]:
     for name in arrays[COLUMNS_KEY].tolist():
         h = hashlib.sha256()
         if name in arrays:
-            _update(h, arrays[name])
+            _update(h, arrays[name], digits)
         else:
             _update(h, arrays[name + RAGGED_SHAPES])
-            _update(h, arrays[name + RAGGED_DATA])
+            _update(h, arrays[name + RAGGED_DATA], digits)
         out[name] = h.hexdigest()
     return out
 
 
-def pool_summary(table, path: PathLike = None) -> dict:
+def pool_summary(table, path: PathLike = None, digits: Optional[int] = None) -> dict:
     """Describe a pool table: size, column order, columns with kind, dtype and sha256, and the file checksum.
 
     Parameters
@@ -260,12 +276,15 @@ def pool_summary(table, path: PathLike = None) -> dict:
         Pool table.
     path : str or Path, optional
         npz file of the pool; its size and sha256 are added when given.
+    digits : int, optional
+        Significant digits of the column checksums (``column_checksums``); when given, the summary
+        records them as ``significant_digits``.
 
     Returns
     -------
     dict
     """
-    sums = column_checksums(table)
+    sums = column_checksums(table, digits)
     ragged = set(ragged_columns(table))
     columns = {}
     for name in sums:
@@ -277,6 +296,8 @@ def pool_summary(table, path: PathLike = None) -> dict:
         else:
             columns[name] = {"kind": "scalar", "dtype": str(values.dtype), "sha256": sums[name]}
     out = {"n_cells": int(len(table)), "column_order": list(sums), "columns": columns}
+    if digits is not None:
+        out["significant_digits"] = int(digits)
     if path is not None:
         out["file_bytes"] = int(Path(path).stat().st_size)
         out["file_sha256"] = sha256_file(path)
@@ -286,8 +307,8 @@ def pool_summary(table, path: PathLike = None) -> dict:
 def pool_differences(a, b) -> List[str]:
     """List every difference between two pool tables (an empty list means identical).
 
-    Compares column names and order, row labels, scalar dtypes and values (bit for bit, NaN equal
-    to NaN), and for ragged columns the type, dtype, shape and values of every array.
+    Compares column names and order, row labels, scalar dtypes and values (exactly, NaN equal to
+    NaN), and for ragged columns the type, dtype, shape and values of every array.
 
     Parameters
     ----------
@@ -325,7 +346,7 @@ def pool_differences(a, b) -> List[str]:
 
 
 # ------------------------------------------------------------------------------ module pools
-def load_module_pool(results_dir: PathLike, module: str, smoke: bool = False) -> Tuple[object, Path]:
+def load_module_pool(results_dir: PathLike, module: str) -> Tuple[object, Path]:
     """Pool of a module written by step 21, for steps 22 to 24.
 
     Parameters
@@ -334,8 +355,6 @@ def load_module_pool(results_dir: PathLike, module: str, smoke: bool = False) ->
         ``results/``.
     module : {"small", "large"}
         Module.
-    smoke : bool
-        Accept a pool of another size (the smoke run builds a 500-cell small pool).
 
     Returns
     -------
@@ -349,7 +368,7 @@ def load_module_pool(results_dir: PathLike, module: str, smoke: bool = False) ->
     ------
     SystemExit
         With a one-line message when the small pool is missing or a pool does not have
-        ``N_POOL_CELLS`` cells outside a smoke run.
+        ``N_POOL_CELLS`` cells.
     """
     from hexmod import config
 
@@ -359,9 +378,9 @@ def load_module_pool(results_dir: PathLike, module: str, smoke: bool = False) ->
             raise SystemExit(f"error: {path} not found; run scripts/step21_simulation_pools.py first")
         path = config.inputs_dir() / "simulation" / SHIPPED_LARGE_POOL
     table = load_pool(path)
-    if not smoke and len(table) != N_POOL_CELLS:
-        raise SystemExit(f"error: {path} holds {len(table)} cells, not {N_POOL_CELLS} (a pool of a smoke run?); "
-                         "run scripts/step21_simulation_pools.py without --smoke")
+    if len(table) != N_POOL_CELLS:
+        raise SystemExit(f"error: {path} holds {len(table)} cells, not {N_POOL_CELLS}; "
+                         "run scripts/step21_simulation_pools.py again")
     return table, path
 
 
@@ -381,8 +400,11 @@ def pool_fingerprint(table) -> str:
 def fingerprint_from_summary(summary: Mapping) -> Optional[str]:
     """``pool_fingerprint`` of the pool described by an entry of a ``pool_checksums.json`` file.
 
-    Returns None when the entry lacks the number of cells or a column checksum.
+    Returns None when the entry lacks the number of cells or a column checksum, or when its
+    checksums are of rounded values (``significant_digits``).
     """
+    if summary.get("significant_digits") is not None:
+        return None
     try:
         order = list(summary["column_order"])
         digests = {name: summary["columns"][name]["sha256"] for name in order}

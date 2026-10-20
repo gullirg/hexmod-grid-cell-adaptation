@@ -168,34 +168,10 @@ def extract_vollan_units(path, file_key: Optional[str] = None) -> dict:
     return rec
 
 
-#: Version of the cached unit features (a change of the extraction invalidates older caches).
-CACHE_VERSION = 1
-
-
 def extract_vollan_units_job(item) -> dict:
-    """Worker function: ``(path, file_key, cache_path)`` to the record of :func:`extract_vollan_units`.
-
-    When ``cache_path`` is given, a cache written for the same file (same size and modification
-    time) is reused, and a new extraction is cached there.
-    """
-    import os
-
-    from ..io import load_cache, save_cache
-
-    path, file_key, cache_path = item
-    st = os.stat(path)
-    stamp = {"bytes": int(st.st_size), "mtime_ns": int(st.st_mtime_ns), "version": CACHE_VERSION}
-    if cache_path and os.path.isfile(cache_path):
-        try:
-            cached = load_cache(cache_path)
-            if cached.get("stamp") == stamp:
-                return cached["record"]
-        except Exception:  # an unreadable or outdated cache is rebuilt
-            pass
-    rec = extract_vollan_units(path, file_key)
-    if cache_path:
-        save_cache({"stamp": stamp, "record": rec}, cache_path)
-    return rec
+    """Worker function: ``(path, file_key)`` to the record of :func:`extract_vollan_units`."""
+    path, file_key = item
+    return extract_vollan_units(path, file_key)
 
 
 def site_coordinates(rec: dict, probe: int) -> np.ndarray:

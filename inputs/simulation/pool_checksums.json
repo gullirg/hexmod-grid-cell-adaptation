@@ -1,6 +1,6 @@
 {
- "checksum_method": "hexmod.sim.io_pool.column_checksums: sha256 per column over dtype, shape and little-endian bytes; ragged columns hash their shapes array, then their data array.",
- "description": "Checksums of the two simulated grid cell pools of the paper (100,000 cells each). The large-module pool (grid scale 70 vm) is shipped as large_module_pool_70cm.npz. The small-module pool (grid scale 40 vm) is not shipped: scripts/step21_simulation_pools.py rebuilds it with hexmod.sim.pool.set_gridcells_pool (base seed 0) and checks it against the column checksums below.",
+ "checksum_method": "hexmod.sim.io_pool.column_checksums(table, digits=6): sha256 per column over dtype, shape and little-endian bytes, after rounding floating-point values to six significant digits; ragged columns hash their shapes array, then their data array.",
+ "description": "Checksums of the two simulated grid cell pools of the paper (100,000 cells each). The large-module pool (grid scale 70 vm) is shipped as large_module_pool_70cm.npz. The small-module pool (grid scale 40 vm) is not shipped: scripts/step21_simulation_pools.py rebuilds it with hexmod.sim.pool.set_gridcells_pool (base seed 0) and checks it against the column checksums below. The checksums are taken over values rounded to six significant digits, so that differences in the last digits between builds of the numerical libraries do not change them.",
  "large_module_pool_70cm": {
   "column_order": [
    "centers",
@@ -37,29 +37,29 @@
     "kind": "ragged",
     "n_values": 1362104,
     "ndim": 2,
-    "sha256": "5633e6c998c895d9584a55e47af6fed35ddc8646ba139f056b0cf97b8b3490b7"
+    "sha256": "11118f6c6bd488a0b8119403c9b5239f9049c246ee6a5e4e5b5d46ed58de0f94"
    },
    "gridness": {
     "dtype": "float64",
     "kind": "scalar",
-    "sha256": "df7215890d246842d1977c18ab74ba02284edb5e2e7f034264a2b03b025f2ee8"
+    "sha256": "693967725f50930c8983b32d4a5d6b70573672594d84c28df57d1cfa27efa782"
    },
    "gridori_est": {
     "dtype": "float64",
     "kind": "scalar",
-    "sha256": "9b065ec842b447ca116524086906c92749362aa8a42a5e7832f5b0f1af3b6dc5"
+    "sha256": "091bd0cf59ca4fb9d9fc93a82f5c5df5a8b31afbd6fb146e8be5cacbf5765265"
    },
    "gridscale_est": {
     "dtype": "float64",
     "kind": "scalar",
-    "sha256": "dc1b58fffb36d10b765eff3a571ea25cfd7a94e8e865e73aca42c2f3e07a9a07"
+    "sha256": "85dbcd2c7661ccd9e9673631c68aa3d3398dba6dd4c556c72d1c0f90e8af8def"
    },
    "peakFR_jitter": {
     "dtype": "float64",
     "kind": "ragged",
     "n_values": 681052,
     "ndim": 1,
-    "sha256": "d11f5a96aa539fa4952a2dec312d32448503569aaa24d2575b5bf2775f2fbe7e"
+    "sha256": "fe94408f489090691af921419fa77f3f473fdea90b416d27fb523c7561a831ee"
    },
    "peaks_x": {
     "dtype": "float64",
@@ -80,7 +80,7 @@
     "kind": "ragged",
     "n_values": 438189,
     "ndim": 1,
-    "sha256": "5e3957b5567ed14ee82fafd262f8a2bcff4fd55e74aadd40262da6473f0ed944"
+    "sha256": "b2e898e25a1bb10f1fe38933d600fcf7de751ce33795c486a79f9fbd9032d1d4"
    },
    "speedGamma": {
     "dtype": "float64",
@@ -93,7 +93,8 @@
   "file_sha256": "e293ff9ef4f939f833cc82ae81a245e4fa8a9517bced4713361e612ef5838ad0",
   "grid_scale_vm": 70,
   "n_cells": 100000,
-  "shipped": true
+  "shipped": true,
+  "significant_digits": 6
  },
  "small_module_pool_40cm": {
   "column_order": [
@@ -112,29 +113,29 @@
     "kind": "ragged",
     "n_values": 2832246,
     "ndim": 2,
-    "sha256": "1813a5ee67bd47b7f137e4770517341729e38cd0d98e2cedde79a532ef37f968"
+    "sha256": "08a3860cf1f35a675c31f5fd8a3db57a406eba76372385cd36763bc0aca153b5"
    },
    "gridness": {
     "dtype": "float64",
     "kind": "scalar",
-    "sha256": "2f6b90c465fa02190d44356c71ad0601d9bcf887217bbc2a7b85673a0ad0922a"
+    "sha256": "12fa9d16fb7569d3716198f66583f71ce57c94a26ec7dcd368c040094b3c70c5"
    },
    "gridori_est": {
     "dtype": "float64",
     "kind": "scalar",
-    "sha256": "ecb0baa3d57cca5ca7e6c3fb96de56e4621107151dc3aa04fe761e783de84868"
+    "sha256": "9746786812e8e06a39b047ebf478eacda8e87de06aea56aeaa2329dde912281f"
    },
    "gridscale_est": {
     "dtype": "float64",
     "kind": "scalar",
-    "sha256": "0a2c1259fd3f1cd25f77197a2cdac05be6f3c90198acba3ff9a9ff6467c1acbd"
+    "sha256": "62bb5870f6512415f69e8e619ff5c9db640aefd90f77a6983427ba4c3b58a378"
    },
    "peakFR_jitter": {
     "dtype": "float64",
     "kind": "ragged",
     "n_values": 1416123,
     "ndim": 1,
-    "sha256": "60e2b6740b443eba4cc554f23b9503564ec18d8ad8a253c4264a091c7786c2de"
+    "sha256": "0cd46bb4a55059ec7d5ff35d6d97fdf721050b47c1a4f9d21d7c75249acf143e"
    },
    "peaks_x": {
     "dtype": "float64",
@@ -155,12 +156,13 @@
     "kind": "ragged",
     "n_values": 1046076,
     "ndim": 1,
-    "sha256": "a8d9dad2441bb1e09ed7e2b5f78e991523128838785a0795615a6c0645cad6f3"
+    "sha256": "bcce0a6a74fa7f403fb0860dd2c0d1b4621eda022ce20e98044b9e5d5ba815f4"
    }
   },
   "file": "sim/pools/small_pool_40cm.npz (results folder, rebuilt)",
   "grid_scale_vm": 40,
   "n_cells": 100000,
-  "shipped": false
+  "shipped": false,
+  "significant_digits": 6
  }
 }

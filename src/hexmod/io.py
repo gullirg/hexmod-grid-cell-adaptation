@@ -1,6 +1,6 @@
 """Readers and writers for the result formats.
 
-Formats (see ``docs/CONVENTIONS.md``):
+Formats:
 
 - CSV: comma separated, header row, no index column, floats written with ``"%.17g"`` so that
   every value reads back exactly; read back with ``float_precision="round_trip"``.
@@ -9,9 +9,10 @@ Formats (see ``docs/CONVENTIONS.md``):
   ``<name>__data`` (all items raveled and concatenated) and ``<name>__shapes`` (one row of
   int64 dimensions per item).
 - JSON: UTF-8, keys sorted, numbers written with Python's shortest exact representation.
-- Pickle caches: only plain dicts, lists and tuples of numpy arrays, numbers and strings, and
-  only for local caches; they are read with an unpickler that rebuilds numpy arrays, numpy
-  scalars and a few builtin containers and refuses every other global.
+- Pickle: the preprocessed recordings of step 01 (``save_cache``, ``load_cache``). Only plain
+  dicts, lists and tuples of numpy arrays, numbers and strings are written; they are read with an
+  unpickler that rebuilds numpy arrays, numpy scalars and a few builtin containers and refuses
+  every other global.
 
 All writers create parent folders and replace files atomically; written files get the usual
 permissions (0644 with umask 022).
@@ -163,10 +164,10 @@ def csv_float_roundtrip(values, times: int = 1) -> np.ndarray:
     Each round trip writes the values with pandas' default float format (the shortest
     representation that reads back exactly) and reads them with pandas' default float parser
     (``float_precision="high"``), which returns the neighbouring double for a sizeable share of
-    17-digit values (one unit in the last place). Some per-cell values enter the published
-    statistics after such round trips (for example the grid orientation passed to the adaptation
-    fits; docs/PIPELINE.md, section 2.7); applying the same transformation reproduces those
-    statistics bit for bit.
+    17-digit values (one unit in the last place). Some per-cell values enter the statistics of the
+    paper after such round trips (for example the grid orientation passed to the adaptation fits;
+    docs/PIPELINE.md, Rounded per-cell inputs); applying the same transformation gives the
+    reference values exactly.
 
     Parameters
     ----------
@@ -200,8 +201,9 @@ def array_text_roundtrip(values) -> np.ndarray:
     """Return a 1-d array after it is stored as text in a CSV cell and parsed back.
 
     The text is numpy's default form of the array (8 significant decimals), and the numbers are
-    parsed back with a regular expression. Per-field arrays enter some published statistics in this
-    form (the field rates passed to the adaptation fits; docs/PIPELINE.md, section 2.7).
+    parsed back with a regular expression. Per-field arrays enter some statistics of the paper in
+    this form (the field rates passed to the adaptation fits; docs/PIPELINE.md, Rounded per-cell
+    inputs).
 
     Parameters
     ----------
@@ -394,7 +396,7 @@ def ragged_from_npz(npz: Mapping[str, np.ndarray], name: str) -> List[np.ndarray
     return unpack_ragged(npz[name + RAGGED_DATA], npz[name + RAGGED_SHAPES])
 
 
-# ---------------------------------------------------------------------------------- pickle caches
+# ---------------------------------------------------------------------------------------- pickles
 _SAFE_SCALARS = (str, bytes, int, float, bool, complex, type(None), np.generic)
 
 
@@ -442,7 +444,7 @@ class _RestrictedUnpickler(pickle.Unpickler):
 
 
 def save_cache(obj: Any, path: PathLike) -> Path:
-    """Save a local cache (plain dicts and lists of numpy arrays and scalars) as a pickle."""
+    """Save plain dicts and lists of numpy arrays and scalars as a pickle (the preprocessed recordings)."""
     _check_plain(obj)
     path = Path(path)
     with atomic_path(path, suffix=".pkl") as tmp:

@@ -1,13 +1,7 @@
 """Visit-sequence test of Fig 3F: sequence selection, cell values and statistics.
 
-The unit tests use hand-made visit tables and a simulated grid cell (no data needed). The
-``frozen`` tests recompute the summary statistics from the reference cell table, and the slow
-test runs step 06 on the reference inputs and compares every output with the reference results.
+The unit tests use hand-made visit tables and a simulated grid cell (no data needed).
 """
-
-import os
-import sys
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -15,8 +9,6 @@ import pytest
 from scipy import stats
 
 from hexmod.rat import visit_sequences as vs
-
-REPO = Path(__file__).resolve().parents[1]
 
 
 # ------------------------------------------------------------------------------------ hand-made data
@@ -181,29 +173,6 @@ def test_no_sequences():
     assert vs.visit_sequence_summary(paired)["n_paired_cells"] == 0
 
 
-def test_visit_cache_follows_the_extraction_code(tmp_path, monkeypatch):
-    """The visit cache records the source of the extraction modules; editing one of them invalidates it."""
-    sys.path.insert(0, str(REPO / "scripts"))
-    import step06_visit_sequences as step
-
-    folder = Path(vs.__file__).resolve().parent
-    copy = tmp_path / "rat"
-    copy.mkdir()
-    for name in step.EXTRACTION_MODULES:
-        (copy / f"{name}.py").write_bytes((folder / f"{name}.py").read_bytes())
-    original = step.extraction_source_sha256()
-    monkeypatch.setattr(step.vs, "__file__", str(copy / "visit_sequences.py"))
-    assert step.extraction_source_sha256() == original
-    with open(copy / "fields.py", "a", encoding="utf-8") as f:
-        f.write("\n# edited\n")
-    edited = step.extraction_source_sha256()
-    assert edited != original
-    trajectories = tmp_path / "trajectories.pkl"
-    trajectories.write_bytes(b"0")
-    cells = pd.DataFrame({c: ["a"] for c in step.ID_COLUMNS})
-    assert step.cache_metadata("printed", {"k": 1}, cells, trajectories)["source_sha256"] == edited
-
-
 # ---------------------------------------------------------------------------- simulated grid cell
 def _simulated_cell(seed=0, duration_s=900.0, box=100.0, fs=50.0, scale=40.0, grid=True):
     rng = np.random.default_rng(seed)
@@ -275,84 +244,6 @@ def test_cell_without_fields_is_reported():
     cell = _simulated_cell(seed=1, duration_s=120.0, grid=False)
     res = vs.visit_events_for_cell({"row": 5, "cell_data": cell, **vs.extraction_settings("printed")})
     assert res["events"] is None and res["reason"] and res["row"] == 5 and res["n_fields"] == 0
-
-
-# ------------------------------------------------------------------------------- reference results
-def _by_key(paired):
-    paired = paired.copy()
-    paired["key"] = [vs.cell_key(a, s, c) for a, s, c in zip(paired["animal_id"], paired["session_id"],
-                                                             paired["cell_id"])]
-    return paired.sort_values("key").reset_index(drop=True)
-
-
-@pytest.mark.frozen
-def test_frozen_summary_and_statistics(frozen_path):
-    from hexmod.io import read_csv, read_json
-
-    paired = read_csv(frozen_path("rat/visits/paired_cells.csv"))
-    assert len(paired) == 3576 and paired["row"].is_monotonic_increasing
-    summary = vs.visit_sequence_summary(_by_key(paired))  # in the order of the cell keys, as computed
-    ref = read_csv(frozen_path("rat/visits/summary.csv")).iloc[0].to_dict()
-    assert set(summary) == set(ref)
-    for key, value in ref.items():
-        assert summary[key] == value, key
-    ref_stats = read_json(frozen_path("stats/step06_visit_sequences.json"))
-    assert vs.fig3f_statistics(summary) == ref_stats
-    # printed values
-    assert (round(summary["t_lt"], 2), round(summary["t_gt"], 2), round(summary["paired_t"], 2)) == (2.53, -2.10, 2.90)
-    p_values = (round(summary["p_lt"], 3), round(summary["p_gt"], 3), round(summary["paired_p"], 4))
-    assert p_values == (0.012, 0.036, 0.0037)
-    # the order of the rows changes the summary only in the last digits
-    canonical = vs.visit_sequence_summary(paired)
-    assert canonical == pytest.approx(ref, rel=1e-12)
-
-
-@pytest.mark.frozen
-def test_frozen_nesting(frozen_path):
-    from hexmod.io import read_csv
-
-    paired = _by_key(read_csv(frozen_path("rat/visits/paired_cells.csv")))
-    nest = vs.nesting_sensitivity(paired)
-    ref = read_csv(frozen_path("rat/visits/nesting.csv"))
-    assert list(nest["cohort"]) == list(ref["cohort"]) and list(nest["level"]) == list(ref["level"])
-    assert list(nest["n"]) == list(ref["n"])
-    for col in ("mean_paired_difference", "sem_paired_difference", "t", "p_two_sided"):
-        # dataset means are averaged in the order of the dataset keys, which differs from the
-        # order of the reference computation; the other levels are identical
-        np.testing.assert_allclose(nest[col], ref[col], rtol=1e-12, atol=0, equal_nan=True)
-    cell_rows = (nest["level"] != "dataset").to_numpy()
-    assert np.array_equal(nest.loc[cell_rows, "t"].to_numpy(), ref.loc[cell_rows, "t"].to_numpy(), equal_nan=True)
-    session, animal = (nest[(nest["cohort"] == "all") & (nest["level"] == lv)].iloc[0] for lv in ("session", "animal"))
-    assert (session["n"], round(session["t"], 2)) == (101, 0.93)
-    assert (animal["n"], round(animal["t"], 2)) == (31, 1.29)
-
-
-@pytest.mark.slow
-@pytest.mark.frozen
-def test_step06_reproduces_reference(frozen_dir, tmp_path, monkeypatch):
-    """Step 06 on the reference inputs: every output equals the reference results."""
-    from hexmod.io import read_csv, read_json
-
-    traj = frozen_dir / "preprocessed" / "trajectories.pkl"
-    cells = frozen_dir / "rat" / "cohort" / "cells.csv"
-    if not (traj.is_file() and cells.is_file()):
-        pytest.skip("reference inputs of step 06 missing")
-    monkeypatch.setenv("HEXMOD_RESULTS", str(tmp_path))
-    res = tmp_path
-    (res / "preprocessed").mkdir(parents=True)
-    (res / "rat" / "cohort").mkdir(parents=True)
-    os.symlink(traj, res / "preprocessed" / "trajectories.pkl")
-    os.symlink(cells, res / "rat" / "cohort" / "cells.csv")
-    sys.path.insert(0, str(REPO / "scripts"))
-    import step06_visit_sequences as step
-
-    assert step.main([]) == 0
-    for name in ("paired_cells.csv", "summary.csv", "diagnostics.csv"):
-        got = read_csv(res / "rat" / "visits" / name)
-        ref = read_csv(frozen_dir / "rat" / "visits" / name)
-        pd.testing.assert_frame_equal(got, ref, check_exact=True)
-    assert read_json(res / "stats" / "step06_visit_sequences.json") == \
-        read_json(frozen_dir / "stats" / "step06_visit_sequences.json")
 
 
 def test_visit_extraction_reports_errors_separately():

@@ -1,18 +1,12 @@
 """Tests of the preprocessing step (``hexmod.preprocessing``, ``scripts/step01_preprocess.py``).
 
-The synthetic tests need no data: they build small recordings (MATLAB files written with
-``scipy.io.savemat``, HDF5 files written with ``h5py``, where the reader takes a file) and check each
-convention of the dataset modules and of the trajectory stage. Tests marked ``data`` read the raw datasets
-(``HEXMOD_DATA``); those also marked ``frozen`` compare the result with the reference preprocessed files in
-``HEXMOD_FROZEN`` (``preprocessed/<dataset>.pkl`` and ``preprocessed/trajectories.pkl``): positions, times,
-spikes, labels, dict order, dtypes and the type of ``sample_rate`` must be identical. The reference may hold
-entries that the preprocessing does not write (``reference_as_written``): sessions outside the session
-manifest and the theta phase (``theta_phases``), which no analysis uses.
+The tests need no data: they build small recordings (MATLAB files written with ``scipy.io.savemat``,
+HDF5 files written with ``h5py``, where the reader takes a file) and check each convention of the
+dataset modules and of the trajectory stage.
 """
 
 from __future__ import annotations
 
-import copy
 import os
 import subprocess
 import sys
@@ -32,80 +26,9 @@ REPO = Path(__file__).resolve().parents[1]
 
 
 # ------------------------------------------------------------------------------------- helpers
-def differences(a, b, path="", out=None):
-    """Return a list of differences between two nested recordings (empty when identical).
-
-    Identical means: same dict keys in the same order, same Python types, arrays with the same dtype,
-    shape and values (NaN equal to NaN), numpy scalars with the same dtype and value.
-    """
-    out = [] if out is None else out
-    if len(out) > 20:
-        return out
-    if type(a) is not type(b):
-        out.append(f"{path}: type {type(a).__name__} != {type(b).__name__}")
-    elif isinstance(a, dict):
-        if list(a) != list(b):
-            out.append(f"{path}: keys or key order differ")
-        else:
-            for k in a:
-                differences(a[k], b[k], f"{path}[{k!r}]", out)
-    elif isinstance(a, np.ndarray):
-        if a.dtype != b.dtype or a.shape != b.shape:
-            out.append(f"{path}: {a.dtype}{a.shape} != {b.dtype}{b.shape}")
-        elif not np.array_equal(a, b, equal_nan=a.dtype.kind in "fc"):
-            out.append(f"{path}: values differ")
-    elif isinstance(a, np.generic):
-        if a.dtype != b.dtype or not (a == b or (a != a and b != b)):
-            out.append(f"{path}: {a!r} != {b!r}")
-    elif a != b and not (isinstance(a, float) and a != a and b != b):
-        out.append(f"{path}: {a!r} != {b!r}")
-    return out
-
-
-def frozen_recordings(frozen_dir: Path, name: str):
-    path = frozen_dir / "preprocessed" / name
-    if not path.is_file():
-        pytest.skip(f"reference file missing: preprocessed/{name}")
-    from hexmod.io import load_cache
-
-    return reference_as_written(load_cache(path))
-
-
-#: Entries of reference session dicts that the preprocessing does not write.
-NOT_WRITTEN = ("theta_phases",)
-
-
-def reference_as_written(data: dict) -> dict:
-    """Reference recordings restricted to the sessions of the manifest, without the entries ``NOT_WRITTEN``."""
-    known = set(labels.read_sessions()["session_id"])
-    out = {}
-    for animal, sessions in data.items():
-        kept = {s: {k: v for k, v in sd.items() if k not in NOT_WRITTEN} for s, sd in sessions.items() if s in known}
-        if kept:
-            out[animal] = kept
-    return out
-
-
 def session(xy, time, sample_rate=50, sid="X1_1"):
     return {"position": {"xy": xy, "time": time, "sample_rate": sample_rate}, "spike_times": {1: np.array([0.5])},
             "unique_cell_ids": {1: "u"}, "animal_id": "X1", "session_id": sid}
-
-
-def test_differences_helper():
-    a = {"A": {"s": {"position": {"xy": np.zeros((3, 2)), "sample_rate": 50}, "spike_times": {1: np.ones(2)}}}}
-    assert differences(a, copy.deepcopy(a)) == []
-    b = copy.deepcopy(a)
-    b["A"]["s"]["position"]["sample_rate"] = 50.0
-    assert differences(a, b)
-    b = copy.deepcopy(a)
-    b["A"]["s"]["position"]["xy"] = b["A"]["s"]["position"]["xy"].astype(np.float32)
-    assert differences(a, b)
-    b = copy.deepcopy(a)
-    b["A"]["s"]["spike_times"][1][1] += 1e-12
-    assert differences(a, b)
-    c = {"A": {"s": {"spike_times": {1: 1, 2: 2}}}}
-    d = {"A": {"s": {"spike_times": {2: 2, 1: 1}}}}
-    assert differences(c, d)
 
 
 # ------------------------------------------------------------------------------ trajectory stage
@@ -482,79 +405,3 @@ def test_step01_reports_missing_data(step01, tmp_path, capsys):
 
     assert read_json(tmp_path / "logs" / "step01_preprocess.json")["status"] == "failed"
     assert not (tmp_path / "preprocessed" / "sargolini2006.pkl").exists()
-
-
-@pytest.mark.smoke
-def test_step01_smoke(step01, tmp_path):
-    assert step01.main(["--smoke", "--workers", "1"]) == 0
-    from hexmod.io import load_cache, read_csv
-
-    out = tmp_path / "preprocessed"
-    merged = load_cache(out / "trajectories.pkl")
-    assert list(merged) == ["H1", "H2"]
-    assert sum(len(s["spike_times"]) for v in merged.values() for s in v.values()) == 23
-    pos = merged["H1"]["H1_1"]["position"]
-    assert list(pos) == ["xy", "time", "sample_rate", "xy_smoothed", "speed", "move_dir"]
-    assert len(read_csv(out / "sessions.csv")) == 3
-    assert (tmp_path / "logs" / "step01_preprocess.json").is_file()
-
-
-# ------------------------------------------------------------------------------------ data tests
-def _require_files(key: str, data_dir: Path) -> None:
-    if not all((data_dir / p).exists() for p in ds.DATASETS[key]["raw_subpaths"]):
-        pytest.skip(f"files of {key} not found in the data folder")
-
-
-@pytest.mark.data
-@pytest.mark.frozen
-@pytest.mark.parametrize("key", ["sargolini2006", "brun2008", "hafting2005", "olafsdottir2016", "barry2012"])
-def test_small_datasets_equal_reference(key, frozen_dir, data_dir):
-    _require_files(key, data_dir)
-    got = dataset_module(key).preprocess()
-    assert differences(got, frozen_recordings(frozen_dir, f"{key}.pkl")) == []
-
-
-@pytest.mark.data
-@pytest.mark.frozen
-@pytest.mark.parametrize("key", ["olafsdottir2016", "barry2012"])
-def test_release_datasets_keep_the_memory_layout_of_the_reference(key, frozen_dir, data_dir):
-    _require_files(key, data_dir)
-    got = dataset_module(key).preprocess()
-    ref = frozen_recordings(frozen_dir, f"{key}.pkl")
-    for animal, sessions in ref.items():
-        for sid, s in sessions.items():
-            a, b = got[animal][sid]["position"]["xy"], s["position"]["xy"]
-            assert (a.flags["C_CONTIGUOUS"], a.flags["F_CONTIGUOUS"]) == (b.flags["C_CONTIGUOUS"],
-                                                                          b.flags["F_CONTIGUOUS"]), sid
-
-
-@pytest.mark.data
-@pytest.mark.frozen
-@pytest.mark.slow
-def test_vollan_equals_reference(frozen_dir):
-    got = vollan2025.preprocess(workers=2)
-    assert differences(got, frozen_recordings(frozen_dir, "vollan2025.pkl")) == []
-
-
-@pytest.mark.data
-@pytest.mark.slow
-def test_vollan_files_without_session_give_none(data_dir):
-    used = {f"vollan2025/{s['raw_path']}" for s in labels.sessions_of("vollan2025")}
-    unused = [r for r in data_sources.read_manifest("vollan2025")
-              if r["path"].startswith(vollan2025.FOLDER) and r["path"] not in used]
-    assert len(unused) == 4
-    for r in unused:
-        assert vollan2025.read_session(data_dir / r["path"], "V0", "V0_1") is None
-
-
-@pytest.mark.frozen
-@pytest.mark.slow
-def test_trajectory_stage_reproduces_reference(frozen_dir):
-    """Smoothing the reference per-dataset files gives the reference merged file."""
-    ref = frozen_recordings(frozen_dir, "trajectories.pkl")
-    present = [k for k in ds.CANONICAL_ORDER if (frozen_dir / "preprocessed" / f"{k}.pkl").is_file()]
-    keys = sorted({ds.key_from_label(a) for a in ref}, key=ds.canonical_rank)
-    if keys != present:
-        pytest.skip("per-dataset reference files do not cover the merged reference")
-    per = {k: frozen_recordings(frozen_dir, f"{k}.pkl") for k in keys}
-    assert differences(trajectories.merge_and_smooth(per), ref) == []

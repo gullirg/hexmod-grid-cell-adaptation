@@ -18,7 +18,7 @@ Panels
 The statistics table is computed from the plotted arrays. The tests of A and D compare the mean of the aligned bins
 with the mean of the misaligned bins of the summed rate in Hz (the values from which the plotted percentages are
 derived), read from the participant tables; their effect size ``cohens_dz_ddof0`` is the mean paired difference over
-its standard deviation computed with ddof 0, as in the published analysis.
+its standard deviation computed with ddof 0, as printed in the paper.
 
 Inputs (``sim/fig7/`` in the results folder, else the shipped ``results_precomputed/sim/fig7/``):
 ``fig7ad_direction_bins.csv``, ``fig7be_beta.csv``, ``fig7c_orientation.csv``, ``fig7f_p_per_experiment.csv``,
@@ -151,7 +151,7 @@ def load_inputs(results_dir):
                                                                                                     kind="stable")
             if list(t["participant"]) != first:
                 raise ValueError(f"participants_{m}.csv.gz lacks participants 0 to 29 of the {w} method")
-            # C order: row-wise means of row-stacked arrays, as in the published analysis
+            # C order for the row-wise means of row-stacked arrays, as for the reference values
             V[("rate_hz", m, w)] = np.ascontiguousarray(t[[f"rate_dir_{d}_hz" for d in DIRS]].to_numpy(dtype=float))
     return V
 
@@ -202,7 +202,6 @@ def _draw(out_dir, V):
         r, c = WHERE[p]; kind, w = PANEL[p]
         for m in MODULES:
             ax = hs.axes_mm(fig, box_x(c, m), box_top[r], BOX_W, BOX_H); AX[(p, m)] = ax
-            common.tag(ax, panel=p, name=MODULE_WORD[m])
             A = V[(kind, m, w)]; groups = [A[:, j] for j in range(A.shape[1])]; GROUPS[(p, m)] = groups
             if kind == "AD":
                 ax.set_xlim(-18, 348); ax.set_ylim(*YL[p]); hs.zero_line(ax)
@@ -231,7 +230,6 @@ def _draw(out_dir, V):
     for m in MODULES:
         cx = COLX[c] + POLAR_CX[m]; cy = box_top[r] + 3.6 + POL_D / 2.0
         ax = hs.polar_mm(fig, cx, cy, POL_D); AX[("C", m)] = ax
-        common.tag(ax, panel="C", name=MODULE_WORD[m])
         hs.polar_style(ax, labels=False, cross=True)
         ax.spines["polar"].set_zorder(5)     # the frame stays on top where a bar or the outline reaches it
         ax.set_xticks(np.deg2rad([0, 90, 180, 270])); ax.set_xticklabels(["0°", "15°", "30°", "45°"])
@@ -262,7 +260,6 @@ def _draw(out_dir, V):
     r, c = WHERE["F"]
     for m in MODULES:
         ax = hs.axes_mm(fig, box_x(c, m), box_top[r], BOX_W, BOX_H); AX[("F", m)] = ax
-        common.tag(ax, panel="F", name=MODULE_WORD[m])
         ax.set_xlim(0.4, 7.6); ax.set_ylim(0, 1.05)     # 1.05: a bar at 1 stays below the frame
         hs.zero_line(ax, ALPHA)
         wbar = 0.36

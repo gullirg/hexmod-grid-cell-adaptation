@@ -61,7 +61,7 @@ def _draw(out_dir, cells):
     P = hs.PALETTE
 
     # ---- A: box plots of the two halves, asterisks for the one-sample tests against zero
-    axA = common.tag(hs.axes_mm(fig, **AX_A), panel="A", name="A box plots")
+    axA = hs.axes_mm(fig, **AX_A)
     hs.panel_letter(fig, "A", x=hs.LETTER_X, row_top=ROW1, clear_of=[axA], not_above=ROW1, row=1)
     axA.set_xlim(-0.55, 1.55)
     axA.set_ylim(-0.26, 0.16)
@@ -78,7 +78,7 @@ def _draw(out_dir, cells):
         hs.sig_mark(axA, x, low_A, p, side="below")
 
     # ---- B: scatter of the two halves and the fitted line
-    axB = common.tag(hs.axes_mm(fig, **AX_B), panel="B", name="B scatter")
+    axB = hs.axes_mm(fig, **AX_B)
     hs.panel_letter(fig, "B", x=COLB + hs.LETTER_X, row_top=ROW1, clear_of=[axB], not_above=ROW1, row=1)
     axB.scatter(odd, even, s=3.4, c=P["dot"], alpha=0.6, linewidths=0, zorder=2)
     x_fit = np.linspace(odd.min(), odd.max(), 100)

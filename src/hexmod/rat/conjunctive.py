@@ -44,7 +44,7 @@ __all__ = [
     "KL_SMOOTH_SD_DEG",
     "KL_MIN",
     "FIG2D_PERMUTATIONS",
-    "FIG2D_KEY",
+    "FIG2D_PERMUTATION_SEED",
     "CHANCE_BAND_N",
     "deviation_from_axes",
     "fig2b_bins",
@@ -72,9 +72,9 @@ MIN_CELLS_PER_ANIMAL = 5
 KL_SMOOTH_SD_DEG = math.sqrt(10.0**2 - 15.0**2 / 12.0)
 #: Smallest divergence from uniform of a directional cell in Fig 2D (nats).
 KL_MIN = 0.15
-#: Permutations of the Fig 2D test and the text key of its random seed (``stats.seed_of``).
+#: Permutations of the Fig 2D test and the seed of its random generator.
 FIG2D_PERMUTATIONS = 20000
-FIG2D_KEY = "q2sel_kl|one|all|dir_mean"
+FIG2D_PERMUTATION_SEED = 1802094013
 #: Range of cell numbers over which the chance band of Fig 2E is drawn.
 CHANCE_BAND_N = (5, 300)
 
@@ -120,7 +120,8 @@ def fig2b_bins(deviation_deg, edges: np.ndarray = FIG2B_BIN_EDGES):
 def tuning_width_deg(R) -> np.ndarray:
     """Circular standard deviation of a tuning curve with resultant length R, in degrees.
 
-    Computed as ``sqrt(-2 ln R) * 180 / pi`` (the order of operations of the published values).
+    Computed as ``sqrt(-2 ln R) * 180 / pi``, in this order (the order of operations can change
+    the last digit).
     """
     return np.sqrt(-2 * np.log(np.asarray(R, float))) * 180 / np.pi
 
@@ -261,13 +262,13 @@ def tuning_kl(dir_maps: np.ndarray) -> np.ndarray:
 
 
 def direction_orientation_correlation(
-    orientation_deg, direction_deg, n_perm: int = FIG2D_PERMUTATIONS, key: str = FIG2D_KEY
+    orientation_deg, direction_deg, n_perm: int = FIG2D_PERMUTATIONS, seed: int = FIG2D_PERMUTATION_SEED
 ) -> Dict[str, float]:
     """Fisher-Lee correlation of grid orientation and preferred direction modulo 60 degrees.
 
     Both angles are multiplied by 6 (one 60-degree cycle becomes a full circle). The permutation
-    null shuffles directions across cells with ``numpy.random.default_rng(stats.seed_of(key))``,
-    so the result depends on the order of the cells (canonical order).
+    null shuffles directions across cells with ``numpy.random.default_rng(seed)``, so the result
+    depends on the order of the cells (canonical order).
 
     Returns
     -------
@@ -276,7 +277,7 @@ def direction_orientation_correlation(
     """
     a6 = np.radians(6 * np.asarray(orientation_deg, float))
     b6 = np.radians(6 * (np.asarray(direction_deg, float) % 60))
-    return stats.fisher_lee_permutation(a6, b6, n_perm, key=key)
+    return stats.fisher_lee_permutation(a6, b6, n_perm, seed=seed)
 
 
 # --------------------------------------------------------------------------------------- Fig 2E
@@ -395,8 +396,8 @@ def fig2_results(
     -----
     Grid orientation, preferred direction, resultant length and scale enter Fig 2B, 2D and 2E
     rounded as after two CSV round trips with pandas' default float parser, and one more for the
-    per-animal tests of Fig 2E (``io.csv_float_roundtrip``; docs/PIPELINE.md, section 2.7), which
-    reproduces every published value bit for bit. Fig 2C uses the exact values.
+    per-animal tests of Fig 2E (``io.csv_float_roundtrip``; docs/PIPELINE.md, Rounded per-cell
+    inputs), which gives the reference values exactly. Fig 2C uses the exact values.
     """
     from ..io import csv_float_roundtrip
     from ..preprocessing import labels

@@ -5,11 +5,11 @@ data. `python scripts/step30_figures.py` draws all figures; `--figure Fig3` (rep
 selected ones and `--list` lists them. The tables below give, for every panel, the step that writes
 the values it shows, the result files it reads (under `results/`) and the source-data files the
 figure writes. The statistics shown in the panels and legends are listed with their keys in
-[STATISTICS.md](STATISTICS.md); file contents are described in [PIPELINE.md](PIPELINE.md).
+[STATISTICS.md](STATISTICS.md), and the steps in [PIPELINE.md](PIPELINE.md).
 
-Figure 1 is a schematic and is not produced by the code; the code draws Figures 2 to 8 and
-Supplementary Figures 1 to 5. The keys `fig1.*` hold the closed-form values behind the legend of
-Figure 1, computed by step 27.
+The code draws Figures 2 to 8 and Supplementary Figures 1 to 5. Figure 1 and panel E of Figure 3
+are schematics and are not produced by the code. The keys `fig1.*` hold the closed-form values
+behind the legend of Figure 1, computed by step 27.
 
 ## Output files
 
@@ -20,44 +20,14 @@ For each figure `F`, step 30 writes to `results/figures/F/`:
 | `F.pdf` | the figure at its printed size, with embedded TrueType fonts and editable text |
 | `F.svg` | the figure with text kept as text |
 | `F.png` | the figure at 600 dpi |
-| `positions.csv` | every axes box and every visible text of the figure, in mm from its bottom left corner |
-| `source_data/<F><panel>_<description>.csv` | the values drawn in a panel, from which the statistics of the figure are recomputed (see Checks below); Figures 3 to 8 and Supplementary Figures 1 and 2 also write their statistics to `<F>_statistics.csv` |
+| `source_data/<F><panel>_<description>.csv` | the values drawn in a panel; Figures 3 to 8 and Supplementary Figures 1 and 2 also write their statistics, recomputed from these values, to `<F>_statistics.csv` |
 
-A figure is drawn into a temporary folder that replaces the previous output only when the build
-succeeds. A figure whose input files are missing is reported as skipped. The simulation figures
-(6, 7 and 8) therefore build without any data: their inputs are taken from
-`results_precomputed/` when the simulation steps have not been run (or always with
-`--precomputed`). Supplementary Figure 3E also reads the shipped simulated maps when step 22 has not
-been run.
-
-## Layout
-
-The panels carry no titles: the figure legends of the paper name them. Labels inside a panel that
-tell its plots apart (for example "Small module" and "Large module", the map headings or the keys)
-are drawn. The panel letters stand above their panels. In each row of panels the letters share one
-line, and the top of every letter is 1.5 mm above the highest element of the row (a frame, heading,
-key or colour bar), or higher where a letter would otherwise come closer than 0.5 mm to a label or
-line (`hexmod.figures.style.settle_letters`; Figure 2 places its letters at fixed positions
-in mm by the same rule). Panel letters in this document are those of the drawn figures. Sizes (width
-x height, mm):
-
-| Figure | Size | Panels |
-|---|---|---|
-| Fig2 | 165 x 90.88 | A to E |
-| Fig3 | 174 x 125.5 | A to F |
-| Fig4 | 174 x 105.14 | A to D |
-| Fig5 | 114 x 63 | A to C |
-| Fig6 | 174 x 93.58 | A to D |
-| Fig7 | 174 x 146 | A to F |
-| Fig8 | 174 x 57.64 | A to D |
-| SuppFig1 | 114 x 48 | A, B |
-| SuppFig2 | 174 x 104.14 | A to E |
-| SuppFig3 | 174 x 196 | A to E |
-| SuppFig4 | 85 x 66 | one panel, no letter |
-| SuppFig5 | 114 x 62 | A, B |
-
-Figures are set in Arial when it is available (`HEXMOD_FONT_DIR` or an installed copy), otherwise
-in Liberation Sans or DejaVu Sans (README, Reproducibility notes).
+The panels carry no titles; the figure legends of the paper name them. A figure whose input files
+are missing is reported as skipped. The simulation figures (6, 7 and 8) therefore build without any
+data: their inputs are taken from `results_precomputed/` when the simulation steps have not been
+run. Supplementary Figure 3E also reads the shipped simulated maps when step 22 has not been run.
+`tests/test_plotted_vs_stats.py` checks, after a run, that the statistics recomputed from the
+source data equal the statistics files.
 
 ## Figure 2: movement-direction tuning of conjunctive grid cells relative to the grid axes
 
@@ -71,11 +41,10 @@ Module `hexmod.figures.fig2`.
 | D | preferred direction modulo 60 deg against grid orientation for the 890 directional cells (earliest recording of each cell), coloured by animal | 10 (uses step 09) | `rat/conjunctive/fig2d_cells.csv` | `Fig2D_cells.csv` |
 | E | six-fold clustering of preferred directions in each of the 12 Vollan et al. (2025) animals, with the chance band | 10 | `rat/conjunctive/fig2e_per_animal.csv`, `fig2e_band.csv` | `Fig2E_animals.csv`, `Fig2E_chance_band.csv` |
 
-Statistics: `fig2b.*` to `fig2e.*`, written by step 10 (and three derived in step 40). Panel
-positions are fixed constants in mm (`fig2.LAYOUT`). The coloured dots of D are drawn in a seeded
-random order (`PUBLISHED_DRAW_ORDER_SEED`), so that no animal systematically covers another; the
-colour of each animal is chosen to stay distinguishable under simulated colour-vision deficiency
-(`fig2.assign_colours`).
+Statistics: `fig2b.*` to `fig2e.*`, written by step 10 (and three derived in step 40). In D, the
+six animals with the most cells have fixed colours (`fig2.ANIMAL_COLOURS`) and the other animals are
+grey. The dots are drawn in a seeded random order (`PUBLISHED_DRAW_ORDER_SEED`), so that no animal
+systematically covers another.
 
 ## Figure 3: firing rate adaptation of grid cells
 
@@ -87,7 +56,7 @@ Module `hexmod.figures.fig3`.
 | B | time since the previous field visit, location input and adaptation variable along that path | 11 | as A | `Fig3B_time_courses.csv`, `Fig3B_field_visits.csv` |
 | C | firing rate change by time since the last field visit (four bins), all cells | 04, statistics 12 | `rat/adaptation/fr_percent_change.npy`, `rat/cohort/cells.csv` | `Fig3C_firing_rate_change_pct.csv` |
 | D | adaptation coefficient alpha of the parametric model, all cells | 03, statistics 12 | `rat/adaptation/param_cells.csv` | `Fig3D_adaptation_coefficient.csv` |
-| E | schematic of three successive field visits | drawing constants | | |
+| E | schematic of three successive field visits, not produced by the code | | | |
 | F | firing rate ratio of the third visit for shorter and longer second intervals (3,576 cells) | 06 | `rat/visits/paired_cells.csv` | `Fig3F_firing_rate_ratio.csv` |
 
 Statistics: `fig3c.*`, `fig3d.*` (step 12) and `fig3f.*` (step 06); recomputed from the plotted
@@ -223,11 +192,3 @@ Module `hexmod.figures.supp5`.
 | B | the same on a log scale, with the narrowest and the median conjunctive cell marked, and the distribution of the circular SD of the 1,171 conjunctive cells | closed form and 12 (from 02) | `rat/figure_tables/supp5_widths.csv` | `SuppFig5AB_sixfold_component_curve.csv`, `SuppFig5B_conjunctive_cell_widths.csv`, `SuppFig5B_width_histogram.csv`, `SuppFig5_marked_points.csv` |
 
 Statistics: `supp5.*` (step 12, two derived in step 40).
-
-## Checks
-
-`tests/test_plotted_vs_stats.py` recomputes, for every figure, the statistics from the values in
-its `source_data/` files and compares them with the statistics files of the same results folder,
-which shows that each figure draws the values its statistics were computed from.
-`tests/test_figures_smoke.py` builds every figure from the smoke results and the shipped
-simulation results.

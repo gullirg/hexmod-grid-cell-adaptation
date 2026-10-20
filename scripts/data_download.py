@@ -6,9 +6,8 @@ Examples::
     python scripts/data_download.py                                # all six datasets (about 13.6 GB)
     python scripts/data_download.py --datasets brun2008,hafting2005
     python scripts/data_download.py --datasets vollan2025 --only 28063_4.mat   # one file
-    python scripts/data_download.py --check-remote                 # compare the archives' listings with the manifests
 
-Files go into the data folder (``--dest``, default ``HEXMOD_DATA`` or ``<repo>/data``) in the
+Files go into the data folder (``--data``, default ``HEXMOD_DATA`` or ``<repo>/data``) in the
 layout described in docs/DATA.md. Interrupted downloads resume where they stopped; every file is
 checked against its size and sha256 checksum (and md5 where the archive publishes one) before it
 is accepted. Running the script again skips files that are already present and valid.
@@ -121,55 +120,15 @@ def list_downloads(keys: List[str], dest: Path, full_archive: bool) -> int:
     return 0
 
 
-def check_remote(keys: List[str], full_archive: bool) -> int:
-    """Compare the archives' listings with the manifests and send one HEAD request per dataset."""
-    problems = 0
-    for key in keys:
-        rows = dsrc.download_rows(dsrc.read_manifest(key), full_archive=True)
-        try:
-            listing = dsrc.list_remote(key)
-        except Exception as exc:
-            say(f"{key}: listing failed: {exc}")
-            problems += 1
-            continue
-        bad = []
-        for r in rows:
-            got = listing.get(r["source"])
-            if got is None:
-                bad.append(f"{r['source']}: not listed")
-            elif got[0] != r["bytes"]:
-                bad.append(f"{r['source']}: {got[0]} bytes listed, {r['bytes']} expected")
-            elif r.get("etag") and got[1] != r["etag"]:
-                bad.append(f"{r['source']}: etag {got[1]} listed, {r['etag']} expected")
-            elif dsrc.SOURCES[key]["host"] == "zenodo" and r["md5"] and got[1] != r["md5"]:
-                bad.append(f"{r['source']}: md5 {got[1]} listed, {r['md5']} expected")
-        first = dsrc.download_rows(rows, full_archive)[0]
-        url = dsrc.resolve_url(key, first["source"])
-        try:
-            status, length, final = dsrc.head(url)
-        except Exception as exc:
-            status, length, final = None, None, f"{type(exc).__name__}: {exc}"
-        head_ok = status == 200 and length == first["bytes"]
-        say(f"{key}: listing {len(rows) - len(bad)} of {len(rows)} files match; "
-            f"HEAD {first['name']}: status {status}, {length} bytes {'(ok)' if head_ok else '(PROBLEM)'}")
-        if not head_ok:
-            say(f"  HEAD {url}: {final}")
-        for b in bad:
-            say(f"  {b}")
-        problems += len(bad) + (not head_ok)
-    say("remote check: " + ("all match" if not problems else f"{problems} problem(s)"))
-    return 0 if not problems else 1
-
-
-def present_and_valid(path: Path, row: dict, trust_existing: bool) -> bool:
-    """True when a file is present with the right size (and checksum unless trusted)."""
-    return dsrc.verify_file(path, row, "size" if trust_existing else "sha256") == "ok"
+def present_and_valid(path: Path, row: dict) -> bool:
+    """True when a file is present with the right size and checksum."""
+    return dsrc.verify_file(path, row) == "ok"
 
 
 def fetch(key: str, row: dict, dest: Path, args) -> str:
     """Download one manifest row unless it is already present and valid."""
     target = dest / row["path"]
-    if present_and_valid(target, row, args.trust_existing):
+    if present_and_valid(target, row):
         return "present"
     if target.exists():
         say(f"  {row['path']}: present but invalid, downloading again")
@@ -188,7 +147,7 @@ def download_dataset(key: str, dest: Path, args, pool: ThreadPoolExecutor) -> bo
     rows = dsrc.read_manifest(key)
     members = [r for r in rows if r["role"] == "member"]
     say(f"{key}: {ds.DATASETS[key]['label']}; {ds.DATASETS[key]['licence']}")
-    if members and all(present_and_valid(dest / r["path"], r, args.trust_existing) for r in members):
+    if members and all(present_and_valid(dest / r["path"], r) for r in members):
         say(f"  all {len(members)} extracted files are present and valid")
         todo = [r for r in rows if r["role"] == "file"]
     else:
@@ -235,11 +194,8 @@ def parse_args(argv: Optional[List[str]] = None):
                                 formatter_class=argparse.RawDescriptionHelpFormatter,
                                 epilog=__doc__.split("\n\n", 1)[1] if "\n\n" in __doc__ else None)
     p.add_argument("--datasets", default="all", help="'all' (default) or comma-separated dataset keys")
-    p.add_argument("--dest", default=None, help="data folder (default HEXMOD_DATA or <repo>/data)")
+    p.add_argument("--data", default=None, metavar="DIR", help="data folder (default HEXMOD_DATA or <repo>/data)")
     p.add_argument("--list", action="store_true", help="dry run: list files, sizes and addresses, then exit")
-    p.add_argument("--check-remote", action="store_true",
-                   help="compare the archives' file listings with the manifests and send one HEAD request "
-                        "per dataset (no data are downloaded), then exit")
     p.add_argument("--sargolini-full-archive", action="store_true",
                    help="download all three volumes of the split Sargolini archive (2.37 GB) instead of the "
                         "last volume only (270 MB)")
@@ -249,19 +205,15 @@ def parse_args(argv: Optional[List[str]] = None):
     p.add_argument("--delete-archives", action="store_true", help="remove archives after successful extraction")
     p.add_argument("--jobs", type=int, default=2, help="parallel downloads (default 2)")
     p.add_argument("--retries", type=int, default=5, help="further attempts per file after a failure (default 5)")
-    p.add_argument("--trust-existing", action="store_true",
-                   help="accept files already present with the right size without computing their checksum")
     return p.parse_args(argv)
 
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
     keys = parse_datasets(args.datasets)
-    dest = Path(args.dest).expanduser() if args.dest else config.data_dir()
+    dest = Path(args.data).expanduser() if args.data else config.data_dir()
     if args.list:
         return list_downloads(keys, dest, args.sargolini_full_archive)
-    if args.check_remote:
-        return check_remote(keys, args.sargolini_full_archive)
     say(f"data folder: {dest}")
     failed = []
     with ThreadPoolExecutor(max_workers=max(1, args.jobs)) as pool:

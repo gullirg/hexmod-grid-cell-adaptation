@@ -255,7 +255,7 @@ def visit_events_for_cell(item: dict) -> dict:
             ev["t_prev_valid"] = np.ones(len(ev), dtype=bool)
             ev["spans_recording_gap"] = np.zeros(len(ev), dtype=bool)
         out["events"] = {col: ev[col].to_numpy() for col in EVENT_COLUMNS}
-    except Exception as exc:  # reported per cell; step 06 stops unless failures are allowed
+    except Exception as exc:  # reported per cell; step 06 stops when any cell fails
         out["error"] = repr(exc)
         out["reason"] = f"error: {exc!r}"
         out["events"] = None
@@ -273,7 +273,7 @@ def events_frame(events: Dict[str, np.ndarray], cells: pd.DataFrame) -> pd.DataF
     Parameters
     ----------
     events : dict
-        ``row`` and the ``EVENT_COLUMNS`` arrays of all visits (as stored in the visit cache).
+        ``row`` and the ``EVENT_COLUMNS`` arrays of all visits, joined over cells.
     cells : pandas.DataFrame
         Cohort table with ``row``, ``animal_id``, ``session_id``, ``cell_id``,
         ``unique_cell_id`` and ``dataset``.
@@ -653,7 +653,7 @@ def visit_sequence_summary(paired: pd.DataFrame) -> Dict[str, object]:
 
 
 def fig3f_statistics(summary: Dict[str, object]) -> Dict[str, object]:
-    """Statistic keys of Fig 3F (docs/PIPELINE.md, section 4) from ``visit_sequence_summary``."""
+    """Statistic keys of Fig 3F (docs/STATISTICS.md) from ``visit_sequence_summary``."""
     n = int(summary["n_paired_cells"])
     return {
         "fig3f.n_cells": n,

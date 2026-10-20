@@ -94,7 +94,7 @@ def _draw(out_dir, PTS, FITS):
     reach = 20.0 - lab_left_mm
     probe.remove()
     box_left = round((W - (reach + BOX_W)) / 2.0 + reach, 2)
-    ax = common.tag(hs.axes_mm(fig, box_left, BOX_TOP, BOX_W, BOX_H), panel="", name="curves and points")
+    ax = hs.axes_mm(fig, box_left, BOX_TOP, BOX_W, BOX_H)
     tt = np.linspace(0.0, X_MAX, 4001)
     hs.zero_line(ax)
     C_ONE, LS_ONE, C_TWO, LS_TWO = PAL["aligned"], "-", PAL["misaligned"], (0, (4, 2))   # teal solid, orange dashed

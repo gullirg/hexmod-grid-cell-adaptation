@@ -55,7 +55,6 @@ from hexmod.runlog import RunRecord  # noqa: E402
 STEP = "step07_adaptation_timescales"
 VARIANTS = ("unshifted", "shifted")
 WEIGHTINGS = (("weighted_by_SEM", True), ("unweighted", False))
-SMOKE_N_BOOT = 50
 
 
 def parse_args(argv: Optional[List[str]] = None):
@@ -64,10 +63,9 @@ def parse_args(argv: Optional[List[str]] = None):
     p.add_argument("--workers", type=int, default=None, help="worker processes (default HEXMOD_WORKERS or 4)")
     p.add_argument("--variant", choices=["both", *VARIANTS], default="both",
                    help="cells and spikes to analyse (default both)")
-    p.add_argument("--n-boot", type=int, default=None,
-                   help=f"animal bootstrap resamples (default {ts.N_BOOTSTRAP}; {SMOKE_N_BOOT} with --smoke)")
+    p.add_argument("--n-boot", type=int, default=ts.N_BOOTSTRAP,
+                   help=f"animal bootstrap resamples (default {ts.N_BOOTSTRAP})")
     p.add_argument("--seed", type=int, default=ts.PUBLISHED_BOOTSTRAP_SEED, help="seed of the animal bootstrap")
-    p.add_argument("--smoke", action="store_true", help="smoke run on synthetic results (fewer resamples)")
     return p.parse_args(argv)
 
 
@@ -110,12 +108,12 @@ def fits_table(weighted: dict) -> pd.DataFrame:
 
 
 def statistics(n_cells: int, summary: dict, weighted: dict, boot: Optional[dict], n_boot: int) -> dict:
-    """Printed Supp Fig 4 statistics (docs/PIPELINE.md, section 4)."""
+    """Printed Supp Fig 4 statistics (docs/STATISTICS.md)."""
     k_single, k_double = 3, 5
     out = {"supp4.n_cells": int(n_cells), "supp4.n_cells_last_bin": int(summary["cells_in_bin"][-1]),
            "supp4.n_bins": int(len(summary["x_s"])), "supp4.bin_edges.first_s": float(ts.FINE_TPREV_EDGES[0]),
            "supp4.bin_edges.last_s": float(ts.FINE_TPREV_EDGES[-1])}
-    if "extra_SS_F" not in weighted:   # a model could not be fitted (possible on small synthetic data)
+    if "extra_SS_F" not in weighted:   # a model could not be fitted
         return out
     out.update({
         "supp4.single.tau_s": weighted["single"]["tau"],
@@ -143,9 +141,8 @@ def statistics(n_cells: int, summary: dict, weighted: dict, boot: Optional[dict]
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
-    config.guard_smoke_results(args.smoke)
     workers = config.workers(args.workers)
-    n_boot = args.n_boot if args.n_boot is not None else (SMOKE_N_BOOT if args.smoke else ts.N_BOOTSTRAP)
+    n_boot = args.n_boot
     res = config.results_dir()
     out_dir = res / "rat" / "timescales"
     variants = VARIANTS if args.variant == "both" else (args.variant,)
@@ -206,8 +203,8 @@ def main(argv: Optional[List[str]] = None) -> int:
             boot = ts.animal_bootstrap(pct, ids["animal_id"].to_numpy(), settings, x=x, n_boot=n_boot, rng=rng)
             draws = boot.pop("draws")
             boots[variant] = {k: v for k, v in boot.items() if k != "n_double_preferred"}
-            cache = res / "cache" / "timescales"
-            hio.save_npz(cache / f"bootstrap_draws_{variant}.npz", arrays=draws)
+            p = hio.save_npz(out_dir / f"bootstrap_draws_{variant}.npz", arrays=draws)
+            rec.add_output(p)
             rec.note(f"{variant}.n_cells", int(len(pct)))
             rec.note(f"{variant}.n_cells_complete", summary["n_cells_complete"])
             rec.note(f"{variant}.samples_per_bin_total", counts.sum(axis=0).tolist())
@@ -221,7 +218,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                     rec.add_output(p)
                 stats_out = statistics(len(pct), summary, fits[variant]["weighted_by_SEM"], boot, n_boot)
             else:
-                p = hio.save_npy(cache / "finebin_percent_change_shifted.npy", pct)
+                p = hio.save_npy(out_dir / "finebin_percent_change_shifted.npy", pct)
                 rec.add_output(p)
         p = hio.write_json(fits, out_dir / "fits.json")
         rec.add_output(p)

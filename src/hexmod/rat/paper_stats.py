@@ -1,7 +1,7 @@
 """Printed statistics of the cohort, Table 1, Fig 3C, 3D, 4C, 4D, 5A to 5C and Supp Figs 1 and 2.
 
 The functions take the per-cell results of steps 02 to 05 (docs/PIPELINE.md) and return flat
-dicts that map statistic keys (PIPELINE.md, section 4) to numbers. The tests themselves are those
+dicts that map statistic keys (docs/STATISTICS.md) to numbers. The tests themselves are those
 of :mod:`hexmod.stats`.
 
 Grouping rules:
@@ -25,7 +25,6 @@ a limit can be counted.
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence
 
 import numpy as np
@@ -42,7 +41,7 @@ __all__ = [
     "thirds", "conjunctive_mask", "cohort_statistics", "table1",
     "fig3c_statistics", "fig3d_statistics", "fig4c_statistics", "fig4d_statistics", "fig5_statistics",
     "supp1_statistics", "supp2_statistics", "example_shift_index", "core_statistics",
-    "core_statistics_from_results", "alpha_bounds", "alpha_bound_counts",
+    "alpha_bounds", "alpha_bound_counts",
 ]
 
 #: Rayleigh vector length above which a cell counts as conjunctive (direction-tuned).
@@ -459,21 +458,6 @@ def core_statistics(cells, param, fr_percent_change, peak_shift_ms, shift_cells,
     out.update(supp2_statistics(peak_shift_ms, shift_cells["alpha_original"], shift_cells["alpha_tprevXloc_all"],
                                 fr_percent_change_shifted))
     return out
-
-
-def core_statistics_from_results(results_dir) -> Dict[str, float]:
-    """Read the outputs of steps 02 to 05 under ``results/`` and return :func:`core_statistics`."""
-    from ..io import load_npy, read_csv
-
-    r = Path(results_dir)
-    cells = read_csv(r / "rat" / "cohort" / "cells.csv")
-    param = read_csv(r / "rat" / "adaptation" / "param_cells.csv")
-    peak = read_csv(r / "rat" / "prospective" / "peak_shift.csv")
-    if not np.array_equal(peak["row"].to_numpy(), cells["row"].to_numpy()):
-        raise ValueError("peak_shift.csv and cells.csv hold different rows")
-    return core_statistics(cells, param, load_npy(r / "rat" / "adaptation" / "fr_percent_change.npy"),
-                           peak["peak_shift_ms"].to_numpy(), read_csv(r / "rat" / "prospective" / "shift_cells.csv"),
-                           load_npy(r / "rat" / "prospective" / "fr_percent_change_shifted.npy"))
 
 
 # ------------------------------------------------------------------------------- alpha limits

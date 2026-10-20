@@ -137,7 +137,6 @@ def _module_block(fig, letter, x0, maps_top, line, row, module, seed_keys, maps,
     for i in range(6):
         r_, c_ = divmod(i, 3)
         a_ = hs.axes_mm(fig, mx0 + c_ * (MAP + MGAP), my0 + r_ * (MAP + MGAP), MAP, MAP)
-        common.tag(a_, panel=letter, name=f"single cell {i + 1}")
         im = hs.rate_map(a_, maps[module][i], ENV, vmin=0.0, vmax=vmax)
         _draw_runs(a_)
         a_.set_xticks([]); a_.set_yticks([]); a_.set_xlim(0, 100); a_.set_ylim(0, 100)
@@ -148,7 +147,6 @@ def _module_block(fig, letter, x0, maps_top, line, row, module, seed_keys, maps,
     cb1 = hs.colour_bar(fig, ims[0], mx0, grid_bottom + CB_GAP, grid_w, CB_H, label=hs.LABEL["fr"],
                         orientation="horizontal", ticks=ticks)
     cb1.ax.xaxis.set_major_formatter(hs.NUM)
-    common.tag(cb1.ax, panel=letter, name="colour bar, single cells")
     # sum arrow with its words
     ax0 = mx0 + grid_w + 1.0; ax1 = ax0 + ARROW_W + extra - 1.0; sy0 = grid_bottom - SUM; yc = sy0 + SUM / 2.0
     fig.add_artist(FancyArrowPatch((hs.fx(fig, ax0), hs.fy(fig, yc)), (hs.fx(fig, ax1), hs.fy(fig, yc)),
@@ -160,7 +158,6 @@ def _module_block(fig, letter, x0, maps_top, line, row, module, seed_keys, maps,
     sx0 = ax1 + 1.5; sums = []
     for j, (k, who) in enumerate(zip(seed_keys, hs.TICKS["participants"])):
         a_ = hs.axes_mm(fig, sx0 + j * (SUM + SGAP), sy0, SUM, SUM)
-        common.tag(a_, panel=letter, name=f"summed map, {who}")
         im = hs.rate_map(a_, summed[k], ENV, vmin=95.0, vmax=105.0)
         _draw_runs(a_)
         a_.set_xticks([]); a_.set_yticks([]); a_.set_xlim(0, 100); a_.set_ylim(0, 100)
@@ -175,7 +172,6 @@ def _module_block(fig, letter, x0, maps_top, line, row, module, seed_keys, maps,
     cb2 = hs.colour_bar(fig, sums[0][1], sx0, grid_bottom + CB_GAP, sw, CB_H, label=hs.LABEL["summed_rate"],
                         orientation="horizontal", ticks=[95, 100, 105])
     cb2.ax.xaxis.set_major_formatter(hs.NUM)
-    common.tag(cb2.ax, panel=letter, name="colour bar, summed maps")
     return dict(maps=axs, sums=sums, right=dx + 2 * 1.3 + 0.32, vmax=vmax)
 
 
@@ -190,7 +186,6 @@ def _draw(out_dir, inp):
     sa = 2 * MAP + MGAP                # as tall as the grid of six maps, so the boxes of row 1 share their bottom
     axA = hs.axes_mm(fig, xa, ya, sa, sa, full=True)       # the arena wall keeps the full box
     hs.panel_letter(fig, "A", 1.5, LINE1, clear_of=[axA], not_above=LINE1, row=1)
-    common.tag(axA, panel="A", name="path")
     mA = (traj["time"] >= WIN_A[0]) & (traj["time"] <= WIN_A[1])
     axA.plot(traj["x"][mA], traj["y"][mA], color=P["neutral"], linewidth=0.4, solid_joinstyle="round", zorder=2)
     axA.plot(objects[:, 0], objects[:, 1], linestyle="", marker="o", ms=5.5, mfc="none", mec=P["ink"], mew=1.0,
@@ -216,7 +211,6 @@ def _draw(out_dir, inp):
     key_to_box = 10.0 - 1.5 - hs.TITLE_PITCH
     dtop = key_row_top + key_to_box; dh = 2 * MAP + MGAP
     axD = hs.axes_mm(fig, dl, dtop, dr - dl, dh)
-    common.tag(axD, panel="D", name="proximity")
     pos_d = [0, 1, 2.5, 3.5]
     groups = [prox[m][c].to_numpy(float) for m in MODULES for c in ("aligned", "misaligned")]
     hs.boxplot(axD, groups, positions=pos_d, colours=[P["aligned_fill"], P["misaligned_fill"]] * 2)

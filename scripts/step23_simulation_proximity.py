@@ -12,8 +12,7 @@ its fields is averaged over samples moving within 15 deg of a grid axis (``align
 cos 6 theta > 0) and further from the axes (``misaligned``).
 
 Writes ``sim/fig6/fig6d_small.csv`` and ``fig6d_large.csv``: ``cell_index`` (pool row), ``aligned``,
-``misaligned``; 10,000 rows in draw order. About 45 s per module on one core. ``--smoke`` simulates
-the first 200 cells.
+``misaligned``; 10,000 rows in draw order. About 45 s per module on one core.
 """
 
 from __future__ import annotations
@@ -41,23 +40,22 @@ from hexmod.runlog import RunRecord  # noqa: E402
 STEP = "step23_simulation_proximity"
 MODULES = ("small", "large")
 N_CELLS = 10000
-SMOKE_CELLS = 200
 CHUNK = 1000
 PARTICIPANT = 0
 ALPHA = 0.1
 
 
-def load_pool(module: str, rec: Optional[RunRecord] = None, smoke: bool = False):
+def load_pool(module: str, rec: Optional[RunRecord] = None):
     """Pool of a module written by step 21 (``hexmod.sim.io_pool.load_module_pool``)."""
     from hexmod.sim import io_pool
 
-    table, path = io_pool.load_module_pool(config.results_dir(), module, smoke=smoke)
+    table, path = io_pool.load_module_pool(config.results_dir(), module)
     if rec is not None:
         rec.add_input(path)
     return table
 
 
-def proximity_table(pool_table, module: str, n_cells: int = N_CELLS, chunk: int = CHUNK) -> pd.DataFrame:
+def proximity_table(pool_table, module: str, chunk: int = CHUNK) -> pd.DataFrame:
     """Per-cell aligned and misaligned proximity of the cells of participant 0 of a module."""
     from hexmod.sim import pool, simulate, trajectory_v2
 
@@ -65,7 +63,7 @@ def proximity_table(pool_table, module: str, n_cells: int = N_CELLS, chunk: int 
     par = pool.module_param(module, adaptEff_mean=ALPHA, speedGamma_mean=0)
     traj = trajectory_v2.make_trajectory(par_small, base_seed=PARTICIPANT)
     n_draw = min(N_CELLS, len(pool_table))
-    cells = np.random.default_rng(PARTICIPANT).choice(len(pool_table), n_draw, replace=False)[:n_cells]
+    cells = np.random.default_rng(PARTICIPANT).choice(len(pool_table), n_draw, replace=False)
     g = pool_table.loc[cells]
     res = []
     for c0 in range(0, len(g), chunk):
@@ -79,25 +77,19 @@ def proximity_table(pool_table, module: str, n_cells: int = N_CELLS, chunk: int 
 def parse_args(argv: Optional[List[str]] = None):
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0],
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--module", choices=["small", "large", "both"], default="both", help="module(s) to simulate")
-    p.add_argument("--smoke", action="store_true", help=f"first {SMOKE_CELLS} cells only")
     return p.parse_args(argv)
 
 
 def main(argv: Optional[List[str]] = None) -> int:
-    args = parse_args(argv)
-    config.guard_smoke_results(args.smoke)
+    parse_args(argv)
     out = config.results_dir() / "sim" / "fig6"
-    modules = MODULES if args.module == "both" else (args.module,)
-    n_cells = SMOKE_CELLS if args.smoke else N_CELLS
     with RunRecord(STEP, argv=argv) as rec:
-        for m in modules:
-            table = proximity_table(load_pool(m, rec, smoke=args.smoke), m, n_cells=n_cells)
+        for m in MODULES:
+            table = proximity_table(load_pool(m, rec), m)
             hio.write_csv(table, out / f"fig6d_{m}.csv")
             rec.add_output(out / f"fig6d_{m}.csv")
             rec.note(f"{m}_mean_aligned", float(table["aligned"].to_numpy().mean()))
             rec.note(f"{m}_mean_misaligned", float(table["misaligned"].to_numpy().mean()))
-        rec.note("smoke", bool(args.smoke))
     print(f"proximity tables written to {out}")
     return 0
 
