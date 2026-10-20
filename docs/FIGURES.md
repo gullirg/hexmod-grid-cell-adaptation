@@ -7,6 +7,10 @@ the values it shows, the result files it reads (under `results/`) and the source
 figure writes. The statistics shown in the panels and legends are listed with their keys in
 [STATISTICS.md](STATISTICS.md); file contents are described in [PIPELINE.md](PIPELINE.md).
 
+Figure 1 is a schematic and is not produced by the code; the code draws Figures 2 to 8 and
+Supplementary Figures 1 to 5. The keys `fig1.*` hold the closed-form values behind the legend of
+Figure 1, computed by step 27.
+
 ## Output files
 
 For each figure `F`, step 30 writes to `results/figures/F/`:
@@ -21,7 +25,7 @@ For each figure `F`, step 30 writes to `results/figures/F/`:
 
 A figure is drawn into a temporary folder that replaces the previous output only when the build
 succeeds. A figure whose input files are missing is reported as skipped. The simulation figures
-(1, 6, 7 and 8) therefore build without any data: their inputs are taken from
+(6, 7 and 8) therefore build without any data: their inputs are taken from
 `results_precomputed/` when the simulation steps have not been run (or always with
 `--precomputed`). Supplementary Figure 3E also reads the shipped simulated maps when step 22 has not
 been run.
@@ -33,13 +37,12 @@ tell its plots apart (for example "Small module" and "Large module", the map hea
 are drawn. The panel letters stand above their panels. In each row of panels the letters share one
 line, and the top of every letter is 1.5 mm above the highest element of the row (a frame, heading,
 key or colour bar), or higher where a letter would otherwise come closer than 0.5 mm to a label or
-line (`hexmod.figures.style.settle_letters`; Figures 1 and 2 place their letters at fixed positions
+line (`hexmod.figures.style.settle_letters`; Figure 2 places its letters at fixed positions
 in mm by the same rule). Panel letters in this document are those of the drawn figures. Sizes (width
 x height, mm):
 
 | Figure | Size | Panels |
 |---|---|---|
-| Fig1 | 174 x 166.15 | A to D |
 | Fig2 | 165 x 90.88 | A to E |
 | Fig3 | 174 x 125.5 | A to F |
 | Fig4 | 174 x 105.14 | A to D |
@@ -54,22 +57,7 @@ x height, mm):
 | SuppFig5 | 114 x 62 | A, B |
 
 Figures are set in Arial when it is available (`HEXMOD_FONT_DIR` or an installed copy), otherwise
-in Liberation Sans or DejaVu Sans (README, Reproducibility notes). The colour key of Figure 1B is
-placed for Arial, at least 3 mm right of the labels of the direction wheel (`fig1.KEY_GAP_MIN`);
-in another font that brings it closer, the module warns and draws the figure all the same.
-
-## Figure 1: grid cell properties and the two hypotheses for hexadirectional modulation
-
-Module `hexmod.figures.fig1`. A schematic that reads no result files.
-
-| Panel | Content | Computed by | Source data |
-|---|---|---|---|
-| A | grid cell properties: orientation, scale and offset tiles | drawing constants | `Fig1A_tile_fields.csv` |
-| B | the wheel of movement directions, aligned and misaligned with the grid axes, with the Aligned and Misaligned key to its right | drawing constants | |
-| C | conjunctive hypothesis: von Mises tuning (circular SD 15 deg) and cosine tuning (circular SD 67.46 deg), the sum of six cells and the predicted rates and beta | `hexmod.sim.analytic`, `hexmod.circular` (closed form) | `Fig1C_tuning_curves.csv`, `Fig1C_predictions.csv` |
-| D | adaptation hypothesis: suppression after a field visit and its prediction | illustrative bar heights (`D_RATIO`); the beta bar follows from the rate bars by `hexmod.sim.analytic.beta_from_bars` | `Fig1D_schematic_bars.csv` |
-
-Statistics: `fig1.*`, written by step 27.
+in Liberation Sans or DejaVu Sans (README, Reproducibility notes).
 
 ## Figure 2: movement-direction tuning of conjunctive grid cells relative to the grid axes
 

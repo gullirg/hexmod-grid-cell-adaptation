@@ -143,12 +143,6 @@ LOCAL = {
     "fig2_polar_cross": "#B0B0B0",         # Fig 2B and 2C, cross lines (0.8 pt)
     "fig2_animals": ["#0F4BF7", "#C61E58", "#0FA626", "#581378", "#B775FE", "#354E03"],   # Fig 2D, six animals
     "fig2_animals_other": "#969696",       # Fig 2D, animals without a colour of their own
-    "fig1_cell_reference": ("#D2D2D2", "#4D4D4D"),     # Fig 1A and 1C, fill and outline of the reference cell
-    "fig1_cell_second": ("#B9A6E8", "#6F52C0"),        # Fig 1A, second cell
-    "fig1_cell_third": ("#7A5FC9", "#3F2B8C"),         # Fig 1A, third cell (Module tile)
-    "fig1_example_cell_1": ("#F3ABA2", "#D93A2B"),     # Fig 1C, cell preferring the grid orientation
-    "fig1_example_cell_2": ("#B5DDAD", "#3E9E38"),     # Fig 1C, cell preferring 60 degrees further
-    "fig1_sum": ("#DDDDDD", "#000000"),                # Fig 1C, sum of six cells
 }
 
 CMAP = {"rate": "viridis",          # firing rate maps, single cells and summed population (low = dark)

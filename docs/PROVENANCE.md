@@ -232,12 +232,12 @@ them changes a published value.
   titles (the figure legends name them); labels that tell the plots of a panel apart are drawn. The
   panel letters of a row share one line, 1.5 mm above the highest element of the row or higher where
   a letter would otherwise come within 0.5 mm of a label (`hexmod.figures.style.settle_letters`,
-  `LETTER_ABOVE`, `LETTER_CLEAR`; Figures 1 and 2 place their letters at fixed positions by the same
+  `LETTER_ABOVE`, `LETTER_CLEAR`; Figure 2 places its letters at fixed positions by the same
   rule). Count notes such as "3,938 cells" are not drawn.
 - All statistics shown in a figure or written to its `source_data/` are computed from the plotted
   arrays (`hexmod.stats`, `hexmod.figures.style.holm`).
-- Fig 1 is a schematic with its own type settings; the bar heights of panel D (`D_RATIO`) are
-  illustrative constants, not results.
+- Figure 1 is a schematic and is not drawn by the code; step 27 computes the closed-form values of
+  its legend.
 - The panel positions of Fig 2 are fixed constants in mm (`fig2.LAYOUT`).
 - Fig 4B draws the arrays `grid_alignment` and `movedir_rad_pm_pi` of step 11, computed from the
   movement directions at their stored precision (single precision for the Vollan et al. data); the
@@ -251,9 +251,7 @@ them changes a published value.
 - Supplementary Figure 5 finds the von Mises concentration with `hexmod.circular.kappa_from_sd`; the
   curve agrees with that of the published figure to 4e-12 percentage points.
 - `hexmod.figures.style` takes Arial from `HEXMOD_FONT_DIR`, then from the system, then falls back to
-  Liberation Sans or DejaVu Sans with one warning. The colour key of Figure 1B is placed for Arial;
-  in a fallback font that brings it closer to the wheel labels than `fig1.KEY_GAP_MIN`, the module
-  warns and draws the figure all the same. PDF and SVG files carry no creation date, SVG
+  Liberation Sans or DejaVu Sans with one warning. PDF and SVG files carry no creation date, SVG
   element identifiers use a fixed salt, and the identifiers of clip paths that are not rectangles
   (polar axes), which matplotlib derives from memory addresses, are renamed after their outline
   once the file is written (`hexmod.figures.style.stable_svg_clip_ids`). Repeated builds with the

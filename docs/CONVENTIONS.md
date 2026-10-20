@@ -32,8 +32,8 @@ text rules on every file that would be committed.
   stem (`logs/step04_adaptation_nonparametric.json`).
 - Statistic keys: dot separated, beginning with the figure in lower case and ending with the
   statistic (`fig3c.rm_anova.F`); see docs/PIPELINE.md, section 4.
-- Figure files: `Fig1` to `Fig8`, `SuppFig1` to `SuppFig5`; source data
-  `<Figure><panel>_<description>.csv`.
+- Figure files: `Fig2` to `Fig8`, `SuppFig1` to `SuppFig5` (Figure 1 is a schematic and is not drawn
+  by the code); source data `<Figure><panel>_<description>.csv`.
 
 ## Units and angles
 

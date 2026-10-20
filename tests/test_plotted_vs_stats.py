@@ -41,7 +41,7 @@ REPO = Path(__file__).resolve().parents[1]
 RTOL = 1e-12
 ATOL = 1e-15
 #: Looser relative tolerance where a statistic is recomputed through a different but equivalent formula
-#: (chi-square from the drawn fit curves, the six-fold component from the drawn tuning curve).
+#: (chi-square from the drawn fit curves).
 RTOL_RECOMPUTED = 1e-9
 
 MODULES = {"Small module": "small", "Large module": "large"}
@@ -83,22 +83,6 @@ def entries(values: Dict[str, float], rtol: float = RTOL) -> List[Entry]:
 
 
 # ------------------------------------------------------------------------------------------- figures
-@check("Fig1")
-def fig1(src: Source) -> List[Entry]:
-    d = src("Fig1C_predictions").set_index("row")
-    out = [("fig1.narrow.circular_sd_deg", d.loc["narrow", "circular_sd_deg"], RTOL),
-           ("fig1.narrow.kappa", d.loc["narrow", "kappa"], RTOL),
-           ("fig1.narrow.sixfold", d.loc["narrow", "sixfold_component"], RTOL),
-           ("fig1.broad.circular_sd_deg", d.loc["broad", "circular_sd_deg"], RTOL),
-           ("fig1.broad.sixfold", d.loc["broad", "sixfold_component"], RTOL)]
-    # six-fold component of the drawn sum of six narrow tuning curves (uniform samples over 360 deg)
-    c = src("Fig1C_tuning_curves")
-    theta = np.radians(c["direction_deg"].to_numpy(float))
-    f = c["narrow_sum_of_six"].to_numpy(float)
-    out.append(("fig1.narrow.sixfold", 2 * np.mean(f * np.cos(6 * theta)) / np.mean(f), RTOL_RECOMPUTED))
-    return out
-
-
 @check("Fig2")
 def fig2(src: Source) -> List[Entry]:
     from hexmod import stats

@@ -1,4 +1,4 @@
-"""Simulated grid cells with firing rate adaptation (Figs 1, 6, 7 and 8, Supp Figs 3E and 5).
+"""Simulated grid cells with firing rate adaptation (Figs 6, 7 and 8, Supp Figs 3E and 5, Fig 1 legend).
 
 Modules:
 
@@ -16,7 +16,7 @@ Modules:
     hexadirectional modulation (``calc_hm``, ``calc_hm_control_location``).
 ``analytic``
     Closed forms: proximity against running speed (Fig 8B, 8C) and the six-fold component of
-    summed von Mises tuning curves (Fig 1, Supp Fig 5).
+    von Mises tuning curves (Fig 1 legend, Supp Fig 5).
 ``speed_sweep``
     One run of the running-speed sweep of Fig 8D (``sweep_run``).
 ``io_pool``

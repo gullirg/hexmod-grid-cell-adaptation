@@ -7,10 +7,11 @@ Examples::
     python scripts/step30_figures.py --precomputed                     # simulation figures from the shipped results
     python scripts/step30_figures.py --list
 
-Each figure is drawn by ``hexmod.figures.<module>.build(results_dir, out_dir)`` (``fig1`` to ``fig8``,
+Each figure is drawn by ``hexmod.figures.<module>.build(results_dir, out_dir)`` (``fig2`` to ``fig8``,
 ``supp1`` to ``supp5``) and written to ``results/figures/<Figure>/``: the figure as PDF (editable TrueType
 text), SVG (text kept as text) and PNG (600 dpi), ``positions.csv`` and ``source_data/*.csv``. A figure is drawn
-into a temporary folder that replaces the previous output only when the build succeeds.
+into a temporary folder that replaces the previous output only when the build succeeds. Figure 1 is a schematic
+and is not drawn by the code.
 
 The figures read only ``results/`` and, for the simulation results, the shipped ``results_precomputed/``
 (used when ``results/sim`` lacks a file, or always with ``--precomputed``). A figure whose input files are
@@ -52,7 +53,7 @@ def parse_args(argv: Optional[List[str]] = None):
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0],
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--figure", action="append", default=None, metavar="NAME",
-                   help="figure to draw (Fig1 to Fig8, SuppFig1 to SuppFig5, or 'all'); repeat or separate with "
+                   help="figure to draw (Fig2 to Fig8, SuppFig1 to SuppFig5, or 'all'); repeat or separate with "
                         "commas (default all)")
     p.add_argument("--results", default=None, metavar="DIR",
                    help="results folder (default HEXMOD_RESULTS or <repo>/results); figures go to "

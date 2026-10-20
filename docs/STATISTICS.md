@@ -100,6 +100,9 @@ figure draws (`results/figures/<Figure>/source_data/`) and compares them with th
 
 ### Figure 1
 
+Figure 1 is a schematic and is not drawn by the code. The numbers in the legend of its panel C are
+closed-form values computed by step 27.
+
 | Printed | Where | Key | Step | Value |
 |---|---|---|---|---|
 | 67.5° | Fig 1C legend; Methods; Supp Fig 5A legend | `fig1.broad.circular_sd_deg` | 27 | 67.4606 |

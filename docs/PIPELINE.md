@@ -796,22 +796,22 @@ int64), `FR_align`, `FR_misalign` [Hz], `proximity_align`, `proximity_misalign`,
 
 `python scripts/step27_simulation_statistics.py`
 
-Reads the outputs of steps 22 to 26 and computes the analytic values of Fig 1 and Fig 8B/8C.
-Writes `stats/step27_simulation_statistics.json` (Fig 1, 6, 7, 8 keys). A missing input stops the
-step unless `--allow-precomputed` is given, which takes it from `results_precomputed/sim/`; the run
-record lists the source of every input (`sources`), and step 40 reports it.
+Reads the outputs of steps 22 to 26 and computes the analytic values of the Fig 1 legend and of
+Fig 8B/8C. Writes `stats/step27_simulation_statistics.json` (Fig 1, 6, 7, 8 keys). A missing input
+stops the step unless `--allow-precomputed` is given, which takes it from `results_precomputed/sim/`;
+the run record lists the source of every input (`sources`), and step 40 reports it.
 
 ### 30. Figures
 
 `python scripts/step30_figures.py [--figure Fig3]`
 
-Reads only `results/` and `results_precomputed/`. Figures: `Fig1` to `Fig8`, `SuppFig1` to
+Reads only `results/` and `results_precomputed/`. Figures: `Fig2` to `Fig8`, `SuppFig1` to
 `SuppFig5`, each drawn by `hexmod.figures.<module>.build(results_dir, out_dir)` (modules
-`fig1` to `fig8`, `supp1` to `supp5`).
+`fig2` to `fig8`, `supp1` to `supp5`). Figure 1 is a schematic and is not drawn by the code.
 
 | Option | Meaning |
 |---|---|
-| `--figure NAME` | figure to draw (`Fig1` to `Fig8`, `SuppFig1` to `SuppFig5`, or `all`, the default); repeatable, also as a comma-separated list |
+| `--figure NAME` | figure to draw (`Fig2` to `Fig8`, `SuppFig1` to `SuppFig5`, or `all`, the default); repeatable, also as a comma-separated list |
 | `--results DIR` | results folder (default `HEXMOD_RESULTS` or `<repo>/results`); figures go to `DIR/figures/` |
 | `--precomputed [DIR]` | take the simulation results from `results_precomputed/` (or DIR) even when `results/sim/` holds them; without it, the shipped files are used only for files missing under `results/sim/` |
 | `--font-dir DIR` | folder with the Arial TrueType files (default `HEXMOD_FONT_DIR`); without Arial the figures use Liberation Sans or DejaVu Sans, with a warning |

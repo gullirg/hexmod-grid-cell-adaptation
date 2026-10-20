@@ -1,4 +1,4 @@
-"""Tests of the closed-form results in hexmod.sim.analytic (Fig 1, Fig 8B and 8C, Supp Fig 5)."""
+"""Tests of the closed-form results in hexmod.sim.analytic (Fig 1 legend, Fig 8B and 8C, Supp Fig 5)."""
 
 from __future__ import annotations
 
@@ -14,22 +14,6 @@ def test_von_mises_values_printed_for_fig1():
     assert round(k, 4) == 15.1055
     assert round(analytic.sixfold_component(k), 4) == 0.5929
     assert round(analytic.sixfold_from_sd(15.0), 4) == 0.5929
-
-
-def test_population_sum():
-    theta = np.deg2rad(np.arange(0.0, 360.0, 0.25))
-    # each von Mises cell has mean 1
-    k = analytic.kappa_from_sd(15.0)
-    assert analytic.von_mises_cell(theta, 30.0, k).mean() == pytest.approx(1.0, rel=1e-12)
-    # six cells, one per grid axis: the six-fold modulation of the sum equals that of one cell
-    s = analytic.population_summary(15.0, theta)
-    assert s["sixfold_numeric"] == pytest.approx(s["sixfold_formula"], rel=1e-9)
-    assert s["aligned_over_mean"] > 1 > s["misaligned_over_mean"]
-    assert analytic.beta_from_bars(s["aligned_over_mean"], s["misaligned_over_mean"]) == pytest.approx(0.593, abs=5e-4)
-    # cosine tuning (circular SD 67.46 deg): the sum is flat
-    flat = analytic.population_sum_cosine(theta)
-    assert np.max(np.abs(flat - 1.0)) < 1e-12
-    assert analytic.cosine_cell(theta, 0.0).mean() == pytest.approx(1.0, abs=1e-12)
 
 
 def test_sixfold_curve():

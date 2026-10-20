@@ -378,7 +378,7 @@ def test_trajectory_segment_on_given_axes():
 
 # ---------------------------------------------------------------------------------------------------- figure step
 def test_figure_names():
-    assert len(FIGURES) == 13 and FIGURES[0] == "Fig1" and FIGURES[-1] == "SuppFig5"
+    assert len(FIGURES) == 12 and FIGURES[0] == "Fig2" and FIGURES[-1] == "SuppFig5"
     assert figure_name("supp2") == "SuppFig2" == figure_name("SUPPFIG2")
     assert module_name("Fig3") == "hexmod.figures.fig3" and MODULES["SuppFig5"] == "supp5"
     with pytest.raises(ValueError):
@@ -386,7 +386,7 @@ def test_figure_names():
 
 
 def _fake_figure_module(build):
-    module = types.ModuleType("hexmod.figures.fig1")
+    module = types.ModuleType("hexmod.figures.fig2")
     module.build = build
     return module
 
@@ -398,53 +398,53 @@ def _found(root, pattern):
 
 def _demo_build(results_dir, out_dir):
     fig, *_ = demo_figure()
-    common.write_source_data(out_dir, "Fig1", "A", "values", {"value": [1.0, 2.0]})
-    common.save_outputs(fig, out_dir, "Fig1")
+    common.write_source_data(out_dir, "Fig2", "A", "values", {"value": [1.0, 2.0]})
+    common.save_outputs(fig, out_dir, "Fig2")
 
 
 def test_step30_builds_a_figure(tmp_path, monkeypatch):
-    monkeypatch.setitem(sys.modules, "hexmod.figures.fig1", _fake_figure_module(_demo_build))
+    monkeypatch.setitem(sys.modules, "hexmod.figures.fig2", _fake_figure_module(_demo_build))
     monkeypatch.setenv("HEXMOD_RESULTS", str(tmp_path))
     step30 = load_step30()
-    assert step30.main(["--figure", "Fig1", "--results", str(tmp_path)]) == 0
-    (out,) = _found(tmp_path, "figures/Fig1")
-    assert sorted(p.name for p in out.iterdir()) == ["Fig1.pdf", "Fig1.png", "Fig1.svg", "positions.csv",
+    assert step30.main(["--figure", "Fig2", "--results", str(tmp_path)]) == 0
+    (out,) = _found(tmp_path, "figures/Fig2")
+    assert sorted(p.name for p in out.iterdir()) == ["Fig2.pdf", "Fig2.png", "Fig2.svg", "positions.csv",
                                                      "source_data"]
-    assert (out / "source_data" / "Fig1A_values.csv").is_file()
+    assert (out / "source_data" / "Fig2A_values.csv").is_file()
     (log,) = _found(tmp_path, "logs/step30_figures.json")
     record = hio.read_json(log)
-    assert record["status"] == "ok" and record["notes"]["figures"]["Fig1"]["status"] == "ok"
+    assert record["status"] == "ok" and record["notes"]["figures"]["Fig2"]["status"] == "ok"
     assert len(record["outputs"]) == 5
 
 
 def test_step30_keeps_previous_output_on_failure(tmp_path, monkeypatch):
-    monkeypatch.setitem(sys.modules, "hexmod.figures.fig1", _fake_figure_module(_demo_build))
+    monkeypatch.setitem(sys.modules, "hexmod.figures.fig2", _fake_figure_module(_demo_build))
     monkeypatch.setenv("HEXMOD_RESULTS", str(tmp_path))
     step30 = load_step30()
-    assert step30.main(["--figure", "Fig1", "--results", str(tmp_path)]) == 0
-    (out,) = _found(tmp_path, "figures/Fig1")
-    before = (out / "Fig1.pdf").read_bytes()
+    assert step30.main(["--figure", "Fig2", "--results", str(tmp_path)]) == 0
+    (out,) = _found(tmp_path, "figures/Fig2")
+    before = (out / "Fig2.pdf").read_bytes()
 
     def build(results_dir, out_dir):
         raise RuntimeError("broken")
 
-    monkeypatch.setitem(sys.modules, "hexmod.figures.fig1", _fake_figure_module(build))
-    assert step30.main(["--figure", "fig1", "--results", str(tmp_path)]) == 1
-    assert (out / "Fig1.pdf").read_bytes() == before
-    assert not (out.parent / ".Fig1.building").exists()
+    monkeypatch.setitem(sys.modules, "hexmod.figures.fig2", _fake_figure_module(build))
+    assert step30.main(["--figure", "fig2", "--results", str(tmp_path)]) == 1
+    assert (out / "Fig2.pdf").read_bytes() == before
+    assert not (out.parent / ".Fig2.building").exists()
 
 
 def test_step30_skips_missing_inputs(tmp_path, monkeypatch):
     def build(results_dir, out_dir):
         common.find_input(results_dir, "rat/cohort/cells.csv")
 
-    monkeypatch.setitem(sys.modules, "hexmod.figures.fig1", _fake_figure_module(build))
+    monkeypatch.setitem(sys.modules, "hexmod.figures.fig2", _fake_figure_module(build))
     monkeypatch.setenv("HEXMOD_RESULTS", str(tmp_path))
     step30 = load_step30()
-    args = ["--figure", "Fig1", "--results", str(tmp_path)]
+    args = ["--figure", "Fig2", "--results", str(tmp_path)]
     assert step30.main(args) == 0
     assert step30.main(args + ["--strict"]) == 1
-    assert not _found(tmp_path, "figures/Fig1")
+    assert not _found(tmp_path, "figures/Fig2")
 
 
 @pytest.mark.parametrize("module", sorted(set(MODULES.values())))
@@ -454,18 +454,3 @@ def test_figure_modules_take_results_and_output_folders(module):
 
     params = inspect.signature(importlib.import_module(f"hexmod.figures.{module}").build).parameters
     assert list(params) == ["results_dir", "out_dir"]
-
-
-def test_fig1_key_gap_is_an_error_in_arial_and_a_warning_in_other_fonts(monkeypatch):
-    """The colour key of Fig 1B is placed for Arial; in a fallback font a key too close to the wheel only warns."""
-    from hexmod.figures import fig1
-
-    monkeypatch.setattr(fig1, "KEY_GAP_MIN", 1000.0)      # every layout fails the check
-
-    def panels(font):
-        fig1._panels_a_b(fig1._new_canvas(fig1.W_MM, fig1.H_A), 0.0, font)
-
-    with pytest.raises(ValueError, match="too close"):
-        panels(style.HOUSE_FONT)
-    with pytest.warns(UserWarning, match="made for Arial"):
-        panels("Liberation Sans")

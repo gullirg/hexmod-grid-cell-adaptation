@@ -1,4 +1,4 @@
-"""Step 27: the simulation statistics printed in the paper (Figs 1, 6, 7 and 8).
+"""Step 27: the simulation statistics printed in the paper (Fig 1 legend, Figs 6, 7 and 8).
 
 Example::
 
@@ -10,10 +10,11 @@ step, unless ``--allow-precomputed`` is given: it is then taken from the shipped
 ``results_precomputed/sim`` (the run record lists the source of every input, and step 40 reports
 it). Computes:
 
-- Fig 1 (closed form, ``hexmod.sim.analytic``): the six-fold component 2 I6(kappa) / I0(kappa) of a
-  von Mises tuning curve of circular SD 15 deg (``fig1.narrow.*``), and the circular SD of a cosine
-  tuning curve (resultant length 0.5; ``fig1.broad.circular_sd_deg``) and its six-fold component,
-  which is zero because a cosine curve has no six-fold Fourier term (``fig1.broad.sixfold``);
+- Fig 1 legend (closed form, ``hexmod.sim.analytic``): the six-fold component 2 I6(kappa) /
+  I0(kappa) of a von Mises tuning curve of circular SD 15 deg (``fig1.narrow.*``), and the circular
+  SD of a cosine tuning curve (resultant length 0.5; ``fig1.broad.circular_sd_deg``) and its six-fold
+  component, which is zero because a cosine curve has no six-fold Fourier term
+  (``fig1.broad.sixfold``);
 - Fig 6C: maximum, minimum and SD of the summed rate map of participant 0 of the large module, in
   percent of its mean (100 subtracted from maximum and minimum);
 - Fig 6D: per module the mean aligned and misaligned proximity, the paired t-test over the 10,000

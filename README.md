@@ -2,13 +2,14 @@
 
 Analysis code for Reggio G, Kim M, Ji Z, Bush D, Barry C and Burgess N (2026). *Firing rate adaptation in grid cells produces macroscopic hexadirectional modulation*.
 
-The repository computes every statistic printed in the paper and draws every figure (Figures 1 to 8
-and Supplementary Figures 1 to 5). The rat analyses start from the raw recordings of six published
-datasets (3,938 grid cells from 32 rats), all of which are publicly available; the simulations start
-from the model parameters. A final step compares each statistic with its reference value and checks
-that it rounds to the printed number. [docs/STATISTICS.md](docs/STATISTICS.md) lists every printed
-statistic with the step that computes it and its value, and [docs/FIGURES.md](docs/FIGURES.md) lists
-every figure panel with the step and the files it is drawn from.
+The repository computes every statistic printed in the paper and draws Figures 2 to 8 and
+Supplementary Figures 1 to 5. Figure 1 is a schematic and is not produced by the code. The rat
+analyses start from the raw recordings of six published datasets (3,938 grid cells from 32 rats),
+all of which are publicly available; the simulations start from the model parameters. A final step
+compares each statistic with its reference value and checks that it rounds to the printed number.
+[docs/STATISTICS.md](docs/STATISTICS.md) lists every printed statistic with the step that computes
+it and its value, and [docs/FIGURES.md](docs/FIGURES.md) lists every figure panel with the step and
+the files it is drawn from.
 
 ## Quick start
 
@@ -40,10 +41,9 @@ Figures without any data:
 python scripts/step30_figures.py
 ```
 
-This draws the schematic Figure 1 and, from the simulation results shipped in
-`results_precomputed/`, Figures 6, 7 and 8, in a few seconds, and writes them to
-`results/figures/`; the figures of recorded data are reported as skipped until the rat steps have
-been run.
+This draws Figures 6, 7 and 8 from the simulation results shipped in `results_precomputed/`, in a
+few seconds, and writes them to `results/figures/`; the figures of recorded data are reported as
+skipped until the rat steps have been run.
 
 A smoke run runs the pipeline in about a minute and without any data:
 `python scripts/run_pipeline.py --smoke`. Small synthetic recordings made with the simulator
@@ -146,7 +146,7 @@ inputs, outputs, software versions and runtime in `results/logs/`.
 | 24 | `step24_simulation_participants.py` | simulated participants (optional, about 6 hours) | Fig 7 |
 | 25 | `step25_simulation_collect.py` | Fig 7 values from the participant results | Fig 7 |
 | 26 | `step26_speed_sweep.py` | running-speed sweep | Fig 8D |
-| 27 | `step27_simulation_statistics.py` | simulation and closed-form statistics | Figs 1, 6 to 8 |
+| 27 | `step27_simulation_statistics.py` | simulation and closed-form statistics | Fig 1 legend; Figs 6 to 8 |
 | 30 | `step30_figures.py` | draws the figures from the result files | all figures |
 | 40 | `step40_check_statistics.py` | compares every statistic with the reference values | |
 
@@ -211,9 +211,7 @@ figure can be redrawn without running any analysis again, for example
 - **Fonts.** The figures are set in Arial, which cannot be distributed here. Set `HEXMOD_FONT_DIR`
   (or `--font-dir`) to a folder holding `Arial.ttf`, `Arial Bold.ttf`, `Arial Italic.ttf` and
   `Arial Bold Italic.ttf`, or install Arial. Without Arial the figures use Liberation Sans, which
-  has the same letter widths, or DejaVu Sans, with a warning. In Figure 1 the colour key of panel B
-  is placed for Arial; when another font brings it closer than 3 mm to the labels of the direction
-  wheel (`fig1.KEY_GAP_MIN`), step 30 warns and draws the figure all the same.
+  has the same letter widths, or DejaVu Sans, with a warning.
 - **Configuration.** Environment variables `HEXMOD_DATA` (raw data, default `data/`),
   `HEXMOD_RESULTS` (default `results/`), `HEXMOD_WORKERS` (default 4) and `HEXMOD_FONT_DIR`, and the
   command-line options of each script. Nothing else needs to be set.
@@ -272,8 +270,9 @@ and Sargolini et al. (2006) from the NIRD Research Data Archive (doi:10.11582/20
 doi:10.11582/2017.00017 and doi:10.11582/2017.00019); and the sessions of Barry et al. (2012) and
 Ólafsdóttir et al. (2016) analysed here from Zenodo (doi:10.5281/zenodo.23477461). All original code
 is available at https://github.com/gullirg/hexmod-grid-cell-adaptation under the MIT licence. It
-downloads these data, computes every statistic and draws every figure of the paper, and includes
-the simulated grid cell pool and the simulation results (CC BY 4.0).
+downloads these data, computes every statistic and draws every figure of the paper except the
+schematic Figure 1, and includes the simulated grid cell pool and the simulation results
+(CC BY 4.0).
 
 ## Licences
 

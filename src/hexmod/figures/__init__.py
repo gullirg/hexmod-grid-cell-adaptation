@@ -1,8 +1,8 @@
 """Figures of the paper.
 
 Each figure has one module that draws it from the result files only (never from raw data):
-``fig1`` to ``fig8`` for Figures 1 to 8 and ``supp1`` to ``supp5`` for Supplementary Figures 1 to 5. A figure
-module exposes::
+``fig2`` to ``fig8`` for Figures 2 to 8 and ``supp1`` to ``supp5`` for Supplementary Figures 1 to 5. Figure 1 is
+a schematic and is not drawn by the code. A figure module exposes::
 
     build(results_dir, out_dir)
 
@@ -20,10 +20,10 @@ from __future__ import annotations
 from typing import Dict, Tuple
 
 #: Figure names, in the order of the paper.
-FIGURES: Tuple[str, ...] = tuple([f"Fig{i}" for i in range(1, 9)] + [f"SuppFig{i}" for i in range(1, 6)])
+FIGURES: Tuple[str, ...] = tuple([f"Fig{i}" for i in range(2, 9)] + [f"SuppFig{i}" for i in range(1, 6)])
 
 #: Module of each figure within ``hexmod.figures``.
-MODULES: Dict[str, str] = {**{f"Fig{i}": f"fig{i}" for i in range(1, 9)},
+MODULES: Dict[str, str] = {**{f"Fig{i}": f"fig{i}" for i in range(2, 9)},
                            **{f"SuppFig{i}": f"supp{i}" for i in range(1, 6)}}
 
 

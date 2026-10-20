@@ -19,7 +19,7 @@ entries in the order of step and key. Each entry has:
 | `step` | script stem of the step that writes the key; `step40_check_statistics` for the derived statistics below |
 | `kind` | `printed`: the statistic is printed in the paper (text, figure legend or table) or belongs to a figure panel (location "Fig X panel": the panel draws the values, and for the post-hoc tests behind a bracket the asterisks, but not the number itself); `reported`: a constant of the analysis or a simulation statistic that the paper does not print |
 | `printed` | the text as printed, with minus signs written as hyphens; for a statistic of a figure panel, the number at a fixed precision, which step 40 also checks (empty for `reported` entries) |
-| `location` | where it is printed: a section of the text, a figure legend, Table 1 or the figure panel it belongs to, with the panel letters of the figures (docs/FIGURES.md) |
+| `location` | where it is printed: a section of the text, a figure legend, Table 1 or the figure panel it belongs to, with the panel letters of the figures (docs/FIGURES.md; Figure 1, a schematic that the code does not draw, has the letters of the paper) |
 | `value` | reference value at full precision |
 | `tolerance` | absolute tolerance: a statistic passes when `abs(computed - value) <= tolerance` |
 

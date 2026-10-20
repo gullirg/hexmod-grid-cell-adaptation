@@ -1,9 +1,9 @@
 """Every figure module builds from the smoke results and the shipped simulation results.
 
-The smoke run (``run_pipeline.py --smoke``, shared with ``test_pipeline_smoke.py``) draws all thirteen figures
+The smoke run (``run_pipeline.py --smoke``, shared with ``test_pipeline_smoke.py``) draws all twelve figures
 with ``step30_figures.py --smoke --strict`` from its synthetic results, falling back on
 ``results_precomputed/`` for the simulation results it does not compute. The first test checks the output of
-each figure. The second draws the simulation figures (Fig 1, 6, 7 and 8) from ``results_precomputed/`` alone,
+each figure. The second draws the simulation figures (Figs 6, 7 and 8) from ``results_precomputed/`` alone,
 into an empty results folder, as a reader without the recorded data would.
 """
 
@@ -22,7 +22,7 @@ from hexmod.figures import FIGURES
 pytestmark = pytest.mark.smoke
 
 REPO = Path(__file__).resolve().parents[1]
-SIMULATION_FIGURES = ("Fig1", "Fig6", "Fig7", "Fig8")
+SIMULATION_FIGURES = ("Fig6", "Fig7", "Fig8")
 
 
 def _helper():
